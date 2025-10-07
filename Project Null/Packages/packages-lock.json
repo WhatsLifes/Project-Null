@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.leth.instantpipes": {
+      "version": "https://github.com/leth4/InstantPipes.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "2f12853123ea315c5e1745c33213e51188516399"
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.8",
       "depth": 0,
