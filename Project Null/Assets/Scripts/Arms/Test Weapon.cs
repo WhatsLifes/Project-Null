@@ -7,8 +7,9 @@ public class TestWeapon : MonoBehaviour
     private bool CanAttack = true;
     public float AttackCooldown = 1f;
     public bool IsAttacking = false;
-    public float HitWindowDuration = 0.3f; 
-    
+    public float HitWindowDuration = 0.3f;
+    public Animator anim;
+
     void Update()
     {
         // On left click
@@ -27,10 +28,10 @@ public class TestWeapon : MonoBehaviour
     public void MeleeAttack()
     {
         
-        print("attacked enemy");
+        print("attacking");
         IsAttacking = true; 
         CanAttack = false;
-        Animator anim = Melee.GetComponent<Animator>();
+        anim = Melee.GetComponent<Animator>();
         anim.SetTrigger("Attack");
         StartCoroutine(ResetAttack());
         StartCoroutine(ResetIsAttacking()); 
