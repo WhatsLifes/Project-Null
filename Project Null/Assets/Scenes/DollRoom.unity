@@ -938,7 +938,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
-  scaryClip: {fileID: 0}
+  scaryClip: {fileID: 8300000, guid: c44bdd9db14c1484f98e53f74cd9127b, type: 3}
   volume: 1
   maxHealth: 3
   agent: {fileID: 320292008}
@@ -1318,7 +1318,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
-  scaryClip: {fileID: 0}
+  scaryClip: {fileID: 8300000, guid: 4f6f88b4f7cbff24ca483bdc3fcfc3cb, type: 3}
   volume: 1
   maxHealth: 3
   agent: {fileID: 409999418}
@@ -95024,7 +95024,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
-  scaryClip: {fileID: 0}
+  scaryClip: {fileID: 8300000, guid: 4f6f88b4f7cbff24ca483bdc3fcfc3cb, type: 3}
   volume: 1
   maxHealth: 3
   agent: {fileID: 1102724820}
@@ -96378,7 +96378,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
-  scaryClip: {fileID: 0}
+  scaryClip: {fileID: 8300000, guid: 4f6f88b4f7cbff24ca483bdc3fcfc3cb, type: 3}
   volume: 1
   maxHealth: 3
   agent: {fileID: 1445936063}
@@ -96866,7 +96866,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
-  scaryClip: {fileID: 0}
+  scaryClip: {fileID: 8300000, guid: c44bdd9db14c1484f98e53f74cd9127b, type: 3}
   volume: 1
   maxHealth: 3
   agent: {fileID: 1531609355}
@@ -97840,7 +97840,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
-  scaryClip: {fileID: 0}
+  scaryClip: {fileID: 8300000, guid: c44bdd9db14c1484f98e53f74cd9127b, type: 3}
   volume: 1
   maxHealth: 3
   agent: {fileID: 1691050040}
@@ -99838,7 +99838,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
-  scaryClip: {fileID: 0}
+  scaryClip: {fileID: 8300000, guid: c44bdd9db14c1484f98e53f74cd9127b, type: 3}
   volume: 1
   maxHealth: 3
   agent: {fileID: 1956089541}
@@ -101037,7 +101037,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
-  scaryClip: {fileID: 0}
+  scaryClip: {fileID: 8300000, guid: 4f6f88b4f7cbff24ca483bdc3fcfc3cb, type: 3}
   volume: 1
   maxHealth: 3
   agent: {fileID: 2137131270}
