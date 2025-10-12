@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 3d44416e2bd975047a6ee60280f93a3a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - scaryClip: {instanceID: 0}
+  - attackAudio: {instanceID: 0}
+  - agent: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
