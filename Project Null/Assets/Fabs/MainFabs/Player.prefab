@@ -275,7 +275,6 @@ GameObject:
   - component: {fileID: 241866680491787423}
   - component: {fileID: 660484924840386995}
   - component: {fileID: 8493019987111404854}
-  - component: {fileID: 8609340069182055240}
   - component: {fileID: 2397595152179532253}
   - component: {fileID: 2534610725154578504}
   m_Layer: 6
@@ -448,19 +447,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &8609340069182055240
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8619938192591597771}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 953d7b6b2d682d8469fb8f4b2eb68619, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TargetPrefab: {fileID: 0}
 --- !u!114 &2397595152179532253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -737,8 +723,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4283e82380a0ce6409f3f999ada3904f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cam: {fileID: 0}
   Melee: {fileID: 7540035394000300361}
+  anim: {fileID: 4734330348291990280}
+  meleeWeapon1: {fileID: 0}
+  meleeWeapon2: {fileID: 0}
+  rangedWeapon: {fileID: 0}
   AttackCooldown: 1
   IsAttacking: 0
   HitWindowDuration: 0.3
-  anim: {fileID: 4734330348291990280}
+  melee1Damage: 25
+  melee1Range: 2
+  melee1Cooldown: 0.6
+  melee2Damage: 40
+  melee2Range: 2.5
+  melee2Cooldown: 1.2
+  rangedDamage: 20
+  rangedRange: 100
+  rangedCooldown: 0.3

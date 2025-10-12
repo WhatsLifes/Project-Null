@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 3
   tags:
   - Enemy
+  - Pickable
+  - Chair
+  - Door
   layers:
   - Default
   - TransparentFX
@@ -15,7 +18,7 @@ TagManager:
   - Player
   - Ground
   - Enemy
-  - 
+  - Pickable
   - 
   - 
   - 
