@@ -25,6 +25,7 @@ public class Enemy : MonoBehaviour
     // States
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
+    public bool isChasingPlayer = false;
 
     private void Awake()
     {
@@ -50,6 +51,8 @@ public class Enemy : MonoBehaviour
 
     private void Patrolling()
     {
+        isChasingPlayer = false;
+
         if (!walkPointSet) SearchWalkPoint();
         
         if (walkPointSet)
@@ -75,6 +78,7 @@ public class Enemy : MonoBehaviour
     }
     private void ChasePlayer()
     {
+        isChasingPlayer = true;
         agent.SetDestination(player.position);
     }
 
