@@ -93434,6 +93434,11 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2, y: 70, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!20 &1009187651 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 8407432197453549539, guid: e626294de4351f04b9bab937de2c1cd6, type: 3}
+  m_PrefabInstance: {fileID: 1942495739}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1018116664 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6825f6f11fbdbc845b202f047ae90d51, type: 3}
@@ -93906,6 +93911,11 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.01, y: 0.1, z: 0.1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1259143071 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7540035394000300361, guid: e626294de4351f04b9bab937de2c1cd6, type: 3}
+  m_PrefabInstance: {fileID: 1942495739}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1262672655
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -96010,6 +96020,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1679772056192945611, guid: e626294de4351f04b9bab937de2c1cd6, type: 3}
+      propertyPath: cam
+      value: 
+      objectReference: {fileID: 1009187651}
+    - target: {fileID: 1679772056192945611, guid: e626294de4351f04b9bab937de2c1cd6, type: 3}
+      propertyPath: meleeWeapon1
+      value: 
+      objectReference: {fileID: 1259143071}
     - target: {fileID: 6100154677998941132, guid: e626294de4351f04b9bab937de2c1cd6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 15.836472

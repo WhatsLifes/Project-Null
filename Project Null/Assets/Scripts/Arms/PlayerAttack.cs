@@ -1,23 +1,13 @@
-using System.Collections;
 using UnityEngine;
 
-public class TestWeapon : MonoBehaviour
+public class PlayerCombat : MonoBehaviour
 {
-    [Header("References")]
     public Camera cam;
-    public GameObject Melee;
-    public Animator anim;
 
     [Header("Weapon Models")]
     public GameObject meleeWeapon1;
     public GameObject meleeWeapon2;
     public GameObject rangedWeapon;
-
-    [Header("Attack Settings")]
-    private bool CanAttack = true;
-    public float AttackCooldown = 1f;
-    public bool IsAttacking = false;
-    public float HitWindowDuration = 0.3f;
 
     [Header("Weapon 1 - Melee")]
     public int melee1Damage = 25;
@@ -39,13 +29,7 @@ public class TestWeapon : MonoBehaviour
 
     void Start()
     {
-        // Auto-find camera if not assigned
-        if (cam == null)
-        {
-            cam = Camera.main;
-        }
-
-        SwitchWeapon(1); // Start with weapon 1
+        SwitchWeapon(1);
     }
 
     void Update()
@@ -59,12 +43,9 @@ public class TestWeapon : MonoBehaviour
             SwitchWeapon(3);
 
         // Attack
-        if (Input.GetMouseButtonDown(0) && Time.time >= nextAttackTime)
+        if (Input.GetButtonDown("Fire1") && Time.time >= nextAttackTime)
         {
-            if (CanAttack)
-            {
-                Attack();
-            }
+            Attack();
         }
     }
 
@@ -113,41 +94,31 @@ public class TestWeapon : MonoBehaviour
 
     void MeleeAttack(int damage, float range, float cooldown, GameObject weapon)
     {
-        print("attacking");
-        IsAttacking = true;
-        CanAttack = false;
+        Debug.Log("Melee attack triggered!");
 
         // Trigger animation - animation event will handle damage
-        anim = weapon.GetComponentInChildren<Animator>();
+        Animator anim = weapon.GetComponent<Animator>();
         if (anim != null)
         {
             anim.SetTrigger("Attack");
-            Debug.Log("Animation triggered on " + weapon.name);
         }
         else
         {
-            Debug.LogWarning("No Animator found on weapon: " + weapon.name);
+            Debug.LogWarning("No Animator found on weapon!");
         }
 
-        // Set attack cooldown
         nextAttackTime = Time.time + cooldown;
-        AttackCooldown = cooldown; // Update for coroutines
-
-        StartCoroutine(ResetAttack());
-        StartCoroutine(ResetIsAttacking());
     }
 
     void RangedAttack(int damage, float range, float cooldown)
     {
         Debug.Log("Ranged attack!");
-        IsAttacking = true;
-        CanAttack = false;
 
         // Trigger animation if gun has one
-        Animator gunAnim = rangedWeapon.GetComponentInChildren<Animator>();
-        if (gunAnim != null)
+        Animator anim = rangedWeapon.GetComponent<Animator>();
+        if (anim != null)
         {
-            gunAnim.SetTrigger("Attack");
+            anim.SetTrigger("Attack");
         }
 
         // Ranged weapons deal damage immediately (no animation event needed)
@@ -163,13 +134,9 @@ public class TestWeapon : MonoBehaviour
         }
 
         nextAttackTime = Time.time + cooldown;
-        AttackCooldown = cooldown;
-
-        StartCoroutine(ResetAttack());
-        StartCoroutine(ResetIsAttacking());
     }
 
-    // Called by animation event
+    // Called by animation event (via WeaponEventForwarder on the weapon)
     public void DealDamage()
     {
         Debug.Log("DealDamage called by animation event!");
@@ -211,18 +178,5 @@ public class TestWeapon : MonoBehaviour
         {
             Debug.Log("Animation Event: Missed - no enemy in range");
         }
-    }
-
-    IEnumerator ResetAttack()
-    {
-        yield return new WaitForSeconds(AttackCooldown);
-        CanAttack = true;
-    }
-
-    IEnumerator ResetIsAttacking()
-    {
-        // IsAttacking is only true for the active duration of the swing
-        yield return new WaitForSeconds(HitWindowDuration);
-        IsAttacking = false;
     }
 }
