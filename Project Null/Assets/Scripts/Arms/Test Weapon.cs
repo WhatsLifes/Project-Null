@@ -48,10 +48,12 @@ public class TestWeapon : MonoBehaviour
 
     void Update()
     {
+        // Switch between weapons
         if (Input.GetKeyDown(KeyCode.Alpha1)) SwitchWeapon(1);
         if (Input.GetKeyDown(KeyCode.Alpha2)) SwitchWeapon(2);
         if (Input.GetKeyDown(KeyCode.Alpha3)) SwitchWeapon(3);
 
+        // Attack input
         if (Input.GetMouseButtonDown(0) && Time.time >= nextAttackTime)
         {
             if (CanAttack) Attack();
@@ -150,30 +152,46 @@ public class TestWeapon : MonoBehaviour
         }
     }
 
+    // 🔍 Enhanced version with debug info for layer and hit detection
     void PerformDamageCheck(int damage, float range)
     {
         Vector3 origin = cam.transform.position + cam.transform.forward * 0.1f;
         float sphereRadius = 0.7f;
+
         RaycastHit[] hits = Physics.SphereCastAll(origin, sphereRadius, cam.transform.forward, range, dollLayer);
 
         bool hitSomething = false;
+
         foreach (var hit in hits)
         {
+            string layerName = LayerMask.LayerToName(hit.collider.gameObject.layer);
+            Debug.Log($"[Weapon] Hit {hit.collider.name} on layer '{layerName}'");
+
             DollBehavior doll = hit.collider.GetComponentInParent<DollBehavior>();
+
             if (doll != null)
             {
+                Debug.Log($"[Weapon] Found DollBehavior on {doll.name}. Attempting to apply {damage} damage...");
                 doll.TakeDamage(damage);
-                Debug.Log($"[Weapon] Hit {doll.name} for {damage} damage!");
+                Debug.Log($"[Weapon] Damage applied successfully to {doll.name}");
                 hitSomething = true;
                 break;
+            }
+            else
+            {
+                Debug.LogWarning($"[Weapon] Hit {hit.collider.name}, but it has NO DollBehavior script in parent!");
             }
         }
 
         if (!hitSomething)
-            Debug.Log("[Weapon] No doll hit.");
+        {
+            Debug.LogWarning("[Weapon] No valid dolls hit! Check if your dolls are on the correct layer.");
+        }
 
         if (showDebugRay)
+        {
             Debug.DrawRay(origin, cam.transform.forward * range, hitSomething ? Color.green : Color.red, 1f);
+        }
     }
 
     IEnumerator ResetAttack()

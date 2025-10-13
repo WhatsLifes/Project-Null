@@ -109,11 +109,12 @@ public class DollBehavior : MonoBehaviour
         // Pop off the chair safely
         rb.AddForce(Vector3.up * 3f + transform.forward * 1.2f, ForceMode.Impulse);
 
-        // Start chasing after a delay
-        StartCoroutine(DelayedAttackStart(0.5f));
         // Decide what happens after death
         shouldBePickableAfterDeath = isCorrectEyes;
         shouldDisappearAfterDeath = !isCorrectEyes;
+
+        // Start chasing after a delay — only enter "fight mode" once chasing begins
+        StartCoroutine(DelayedAttackStart(0.5f));
     }
 
     private IEnumerator DelayedAttackStart(float delay)
@@ -123,8 +124,9 @@ public class DollBehavior : MonoBehaviour
         if (player != null && agent != null)
         {
             agent.enabled = true;
-            isAttacking = true;
             agent.SetDestination(player.position);
+            isAttacking = true; // ✅ officially enter fight mode
+            Debug.Log($"{name} has entered fight mode!");
         }
 
         if (scaryClip != null && audioSource != null)
@@ -144,20 +146,36 @@ public class DollBehavior : MonoBehaviour
         if (agent != null && player != null)
         {
             agent.enabled = true;
-            isAttacking = true;
             agent.SetDestination(player.position);
+            isAttacking = true; // ✅ start in fight mode immediately for Hostile dolls
+            Debug.Log($"{name} (Hostile) started attacking!");
         }
     }
 
     public void TakeDamage(int damage)
     {
-        if (isDown) return;
+        // Allow damage only during fight/chase mode
+        if (isDown)
+        {
+            Debug.Log($"{name} ignored hit: already down.");
+            return;
+        }
 
-        // If doll is in a chair, just pop out instead of dying
-        if (isInChair) return;
-        if (!isAttacking) return;
+        if (isInChair)
+        {
+            Debug.Log($"{name} ignored hit: still in chair.");
+            return;
+        }
 
+        if (!isAttacking)
+        {
+            Debug.Log($"{name} ignored hit: not in fight mode yet.");
+            return;
+        }
+
+        // ✅ Now valid to take damage
         health -= damage;
+        Debug.Log($"{name} took {damage} damage! Remaining: {health}");
 
         if (health <= 0)
             Down();
@@ -173,24 +191,19 @@ public class DollBehavior : MonoBehaviour
 
         rb.isKinematic = false;
         rb.useGravity = true;
-        // Add a small forward/backward force
-        // rb.AddForce(transform.forward * 1f + Vector3.up * 0.2f, ForceMode.Impulse);
 
         // Add a small random torque to make it tip naturally
         Vector3 torque = new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f));
         rb.AddTorque(torque, ForceMode.Impulse);
 
-
         // Handle death outcomes
         if (shouldBePickableAfterDeath)
         {
-            // Becomes normal doll again
             StartCoroutine(KeepAboveGround());
             ResetToPickable();
         }
         else
         {
-            // All other dolls disappear after 3 seconds
             StartCoroutine(KeepAboveGround());
             StartCoroutine(DisappearAfterDelay(3f));
         }
@@ -198,7 +211,6 @@ public class DollBehavior : MonoBehaviour
 
     private IEnumerator KeepAboveGround()
     {
-        // Apply initial flop torque once
         if (!rb.isKinematic)
         {
             rb.AddTorque(new Vector3(
@@ -211,7 +223,7 @@ public class DollBehavior : MonoBehaviour
         float timer = 0f;
         while (timer < 2f)
         {
-            if (transform.position.y < 0.5f) // height above floor
+            if (transform.position.y < 0.5f)
             {
                 Vector3 pos = transform.position;
                 pos.y = 0.5f;
@@ -219,7 +231,6 @@ public class DollBehavior : MonoBehaviour
 
                 if (!rb.isKinematic)
                 {
-                    // Zero out all horizontal movement to keep in place
                     rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
                 }
             }
@@ -228,9 +239,6 @@ public class DollBehavior : MonoBehaviour
             yield return null;
         }
     }
-
-
-
 
     private IEnumerator DisappearAfterDelay(float delay)
     {
@@ -261,4 +269,3 @@ public class DollBehavior : MonoBehaviour
         }
     }
 }
-
