@@ -1486,6 +1486,36 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   cam: {fileID: 1009187651}
+--- !u!114 &381037261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 79595523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e90ca2bce3bb1f4bbf1691efc8f870d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 5
+  mouseSensitivity: 2
+  Camera: {fileID: 1009187652}
+  crouchHeight: 1
+  standHeight: 2
+  crouchSpeed: 2.5
+  crouchTransitionSpeed: 6
+  attackRange: 3
+  damageAmount: 1
+  attackKey: 323
+  dollLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  showDebugRay: 1
+  repelLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  repelStrength: 0.05
 --- !u!1 &390746667
 GameObject:
   m_ObjectHideFlags: 0
@@ -98963,7 +98993,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chairs:
   - chairSlot: {fileID: 871156208}
-    requiredLeftEye: 
+    requiredLeftEye: x
     requiredRightEye: 
   - chairSlot: {fileID: 769353078}
     requiredLeftEye: 
@@ -102079,6 +102109,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 157692515498231779, guid: e626294de4351f04b9bab937de2c1cd6, type: 3}
+      propertyPath: m_Name
+      value: Camera main
+      objectReference: {fileID: 0}
     - target: {fileID: 1679772056192945611, guid: e626294de4351f04b9bab937de2c1cd6, type: 3}
       propertyPath: cam
       value: 
@@ -102139,7 +102173,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 660484924840386995, guid: e626294de4351f04b9bab937de2c1cd6, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2634817072784919888, guid: e626294de4351f04b9bab937de2c1cd6, type: 3}
@@ -102149,6 +102184,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8619938192591597771, guid: e626294de4351f04b9bab937de2c1cd6, type: 3}
       insertIndex: -1
       addedObject: {fileID: 381037252}
+    - targetCorrespondingSourceObject: {fileID: 8619938192591597771, guid: e626294de4351f04b9bab937de2c1cd6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 381037261}
   m_SourcePrefab: {fileID: 100100000, guid: e626294de4351f04b9bab937de2c1cd6, type: 3}
 --- !u!1 &1942508098
 GameObject:
