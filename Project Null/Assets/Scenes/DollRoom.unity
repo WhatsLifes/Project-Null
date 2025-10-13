@@ -1505,13 +1505,6 @@ MonoBehaviour:
   standHeight: 2
   crouchSpeed: 2.5
   crouchTransitionSpeed: 6
-  attackRange: 3
-  damageAmount: 1
-  attackKey: 323
-  dollLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  showDebugRay: 1
   repelLayer:
     serializedVersion: 2
     m_Bits: 0
@@ -98996,13 +98989,13 @@ MonoBehaviour:
     requiredLeftEye: x
     requiredRightEye: 
   - chairSlot: {fileID: 769353078}
-    requiredLeftEye: 
+    requiredLeftEye: x
     requiredRightEye: 
   - chairSlot: {fileID: 1796027882}
-    requiredLeftEye: 
+    requiredLeftEye: x
     requiredRightEye: 
   - chairSlot: {fileID: 1525672139}
-    requiredLeftEye: 
+    requiredLeftEye: x
     requiredRightEye: 
   door: {fileID: 2071901677}
 --- !u!4 &1554622136
@@ -102121,6 +102114,10 @@ PrefabInstance:
       propertyPath: meleeWeapon1
       value: 
       objectReference: {fileID: 1259143071}
+    - target: {fileID: 1679772056192945611, guid: e626294de4351f04b9bab937de2c1cd6, type: 3}
+      propertyPath: dollLayer.m_Bits
+      value: 512
+      objectReference: {fileID: 0}
     - target: {fileID: 6100154677998941132, guid: e626294de4351f04b9bab937de2c1cd6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 15.836472

@@ -5,7 +5,6 @@ public class TestWeapon : MonoBehaviour
 {
     [Header("References")]
     public Camera cam;
-    public GameObject Melee;
     public Animator anim;
 
     [Header("Weapon Models")]
@@ -34,63 +33,48 @@ public class TestWeapon : MonoBehaviour
     public float rangedRange = 100f;
     public float rangedCooldown = 0.3f;
 
+    [Header("Debug")]
+    public bool showDebugRay = true;
+    public LayerMask dollLayer;
+
     private int currentWeapon = 1;
     private float nextAttackTime = 0f;
 
     void Start()
     {
-        // Auto-find camera if not assigned
-        if (cam == null)
-        {
-            cam = Camera.main;
-        }
-
-        SwitchWeapon(1); // Start with weapon 1
+        if (cam == null) cam = Camera.main;
+        SwitchWeapon(1);
     }
 
     void Update()
     {
-        // Weapon switching
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-            SwitchWeapon(1);
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-            SwitchWeapon(2);
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-            SwitchWeapon(3);
+        if (Input.GetKeyDown(KeyCode.Alpha1)) SwitchWeapon(1);
+        if (Input.GetKeyDown(KeyCode.Alpha2)) SwitchWeapon(2);
+        if (Input.GetKeyDown(KeyCode.Alpha3)) SwitchWeapon(3);
 
-        // Attack
         if (Input.GetMouseButtonDown(0) && Time.time >= nextAttackTime)
         {
-            if (CanAttack)
-            {
-                Attack();
-            }
+            if (CanAttack) Attack();
         }
     }
 
     void SwitchWeapon(int weaponNumber)
     {
         currentWeapon = weaponNumber;
-
-        // Hide all weapons
         if (meleeWeapon1 != null) meleeWeapon1.SetActive(false);
         if (meleeWeapon2 != null) meleeWeapon2.SetActive(false);
         if (rangedWeapon != null) rangedWeapon.SetActive(false);
 
-        // Show selected weapon
         switch (weaponNumber)
         {
             case 1:
                 if (meleeWeapon1 != null) meleeWeapon1.SetActive(true);
-                Debug.Log("Switched to Melee Weapon 1");
                 break;
             case 2:
                 if (meleeWeapon2 != null) meleeWeapon2.SetActive(true);
-                Debug.Log("Switched to Melee Weapon 2");
                 break;
             case 3:
                 if (rangedWeapon != null) rangedWeapon.SetActive(true);
-                Debug.Log("Switched to Ranged Weapon");
                 break;
         }
     }
@@ -113,54 +97,32 @@ public class TestWeapon : MonoBehaviour
 
     void MeleeAttack(int damage, float range, float cooldown, GameObject weapon)
     {
-        print("attacking");
         IsAttacking = true;
         CanAttack = false;
 
-        // Trigger animation - animation event will handle damage
-        anim = weapon.GetComponentInChildren<Animator>();
+        // Play animation
+        anim = weapon != null ? weapon.GetComponentInChildren<Animator>() : null;
         if (anim != null)
-        {
             anim.SetTrigger("Attack");
-            Debug.Log("Animation triggered on " + weapon.name);
-        }
-        else
-        {
-            Debug.LogWarning("No Animator found on weapon: " + weapon.name);
-        }
 
-        // Set attack cooldown
         nextAttackTime = Time.time + cooldown;
-        AttackCooldown = cooldown; // Update for coroutines
+        AttackCooldown = cooldown;
 
+        // Wait for animation event instead of hitting instantly
         StartCoroutine(ResetAttack());
         StartCoroutine(ResetIsAttacking());
     }
 
     void RangedAttack(int damage, float range, float cooldown)
     {
-        Debug.Log("Ranged attack!");
         IsAttacking = true;
         CanAttack = false;
 
-        // Trigger animation if gun has one
-        Animator gunAnim = rangedWeapon.GetComponentInChildren<Animator>();
+        Animator gunAnim = rangedWeapon?.GetComponentInChildren<Animator>();
         if (gunAnim != null)
-        {
             gunAnim.SetTrigger("Attack");
-        }
 
-        // Ranged weapons deal damage immediately (no animation event needed)
-        RaycastHit hit;
-        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, range))
-        {
-            Enemy enemy = hit.transform.GetComponent<Enemy>();
-            if (enemy != null)
-            {
-                enemy.TakeDamage(damage);
-                Debug.Log($"Ranged hit for {damage} damage!");
-            }
-        }
+        PerformDamageCheck(damage, range);
 
         nextAttackTime = Time.time + cooldown;
         AttackCooldown = cooldown;
@@ -169,48 +131,49 @@ public class TestWeapon : MonoBehaviour
         StartCoroutine(ResetIsAttacking());
     }
 
-    // Called by animation event
+    // ✅ This method is called from the animation event "DealDamage"
     public void DealDamage()
     {
-        Debug.Log("DealDamage called by animation event!");
+        Debug.Log("[Weapon] Animation Event Triggered: DealDamage()");
 
-        int damage = 0;
-        float range = 0;
-
-        // Get current weapon stats
         switch (currentWeapon)
         {
             case 1:
-                damage = melee1Damage;
-                range = melee1Range;
+                PerformDamageCheck(melee1Damage, melee1Range);
                 break;
             case 2:
-                damage = melee2Damage;
-                range = melee2Range;
+                PerformDamageCheck(melee2Damage, melee2Range);
                 break;
             case 3:
-                damage = rangedDamage;
-                range = rangedRange;
+                PerformDamageCheck(rangedDamage, rangedRange);
                 break;
         }
+    }
 
-        // Perform raycast from camera
-        RaycastHit hit;
-        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, range))
+    void PerformDamageCheck(int damage, float range)
+    {
+        Vector3 origin = cam.transform.position + cam.transform.forward * 0.1f;
+        float sphereRadius = 0.7f;
+        RaycastHit[] hits = Physics.SphereCastAll(origin, sphereRadius, cam.transform.forward, range, dollLayer);
+
+        bool hitSomething = false;
+        foreach (var hit in hits)
         {
-            Debug.Log("Animation Event: Hit " + hit.transform.name);
-
-            Enemy enemy = hit.transform.GetComponent<Enemy>();
-            if (enemy != null)
+            DollBehavior doll = hit.collider.GetComponentInParent<DollBehavior>();
+            if (doll != null)
             {
-                enemy.TakeDamage(damage);
-                Debug.Log($"Animation Event: Damaged enemy for {damage}!");
+                doll.TakeDamage(damage);
+                Debug.Log($"[Weapon] Hit {doll.name} for {damage} damage!");
+                hitSomething = true;
+                break;
             }
         }
-        else
-        {
-            Debug.Log("Animation Event: Missed - no enemy in range");
-        }
+
+        if (!hitSomething)
+            Debug.Log("[Weapon] No doll hit.");
+
+        if (showDebugRay)
+            Debug.DrawRay(origin, cam.transform.forward * range, hitSomething ? Color.green : Color.red, 1f);
     }
 
     IEnumerator ResetAttack()
@@ -221,7 +184,6 @@ public class TestWeapon : MonoBehaviour
 
     IEnumerator ResetIsAttacking()
     {
-        // IsAttacking is only true for the active duration of the swing
         yield return new WaitForSeconds(HitWindowDuration);
         IsAttacking = false;
     }
