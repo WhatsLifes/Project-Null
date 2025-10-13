@@ -24,7 +24,7 @@ public class Enemy : MonoBehaviour
     private bool walkPointSet;
 
     [Header("Combat")]
-    public float timeBetweenAttacks = 3f;
+    public float timeBetweenAttacks = 5f;
     private bool alreadyAttacked;
     private Coroutine attackCooldownCoroutine;
 
