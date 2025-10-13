@@ -27,11 +27,15 @@ public class DollBehavior : MonoBehaviour
     private Rigidbody rb;
     private Collider col;
 
+    private Animator anim;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
         audioSource = GetComponent<AudioSource>();
+        anim = GetComponentInChildren<Animator>();
+
 
         if (audioSource == null)
         {
@@ -67,6 +71,8 @@ public class DollBehavior : MonoBehaviour
         {
             if (scaryClip != null && audioSource != null)
                 audioSource.PlayOneShot(scaryClip, volume);
+
+            anim.SetBool("isMoving", true);
 
             ActivateAttackBehavior();
 

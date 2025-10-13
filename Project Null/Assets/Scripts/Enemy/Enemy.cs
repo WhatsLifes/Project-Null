@@ -5,10 +5,12 @@ using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour
 {
+    private Animator anim;
+
     [Header("Stats")]
     [SerializeField] private int maxHealth = 100;
     private int health;
-    public int damage = 20;
+    public int damage = 5;
 
     [Header("References")]
     public NavMeshAgent agent;
@@ -22,14 +24,14 @@ public class Enemy : MonoBehaviour
     private bool walkPointSet;
 
     [Header("Combat")]
-    public float timeBetweenAttacks = 1f;
+    public float timeBetweenAttacks = 3f;
     private bool alreadyAttacked;
     private Coroutine attackCooldownCoroutine;
 
     [Header("Detection")]
     public float sightRange = 10f;
-    public float attackRange = 2f;
-    public float stoppingDistance = 1.5f; // ADDED: Distance to stop before player
+    public float attackRange = 1f;
+    public float stoppingDistance = 1f; // ADDED: Distance to stop before player
     public bool playerInSightRange;
     public bool playerInAttackRange;
     public bool isChasingPlayer = false;
@@ -44,6 +46,8 @@ public class Enemy : MonoBehaviour
 
     private void Awake()
     {
+        anim = GetComponentInChildren<Animator>();
+
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
@@ -85,6 +89,7 @@ public class Enemy : MonoBehaviour
         alreadyAttacked = false;
         walkPointSet = false;
         isChasingPlayer = false;
+
 
         // Enable agent safely
         if (rb != null)
@@ -135,7 +140,6 @@ public class Enemy : MonoBehaviour
         isActive = false;
         isChasingPlayer = false;
         walkPointSet = false;
-
         // Stop any ongoing attack cooldown
         if (attackCooldownCoroutine != null)
         {
@@ -200,7 +204,7 @@ public class Enemy : MonoBehaviour
         {
             ChasePlayer();
         }
-        else if (playerInAttackRange)
+        else if (playerInAttackRange )
         {
             AttackPlayer();
         }
@@ -304,6 +308,8 @@ public class Enemy : MonoBehaviour
             agent.ResetPath();
             agent.velocity = Vector3.zero; // Force stop velocity
         }
+        
+
 
         // Manual rotation
         agent.updateRotation = false;
@@ -317,16 +323,22 @@ public class Enemy : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
         }
 
+
         // Attack
-        if (!alreadyAttacked)
+        if (!alreadyAttacked && attackCooldownCoroutine == null)
         {
+            anim.SetTrigger("isAttacking");
+
             Debug.Log($"{gameObject.name} attacked the player for {damage} damage");
 
             THEMC.TakeDamage(damage);
 
             alreadyAttacked = true;
             attackCooldownCoroutine = StartCoroutine(AttackCooldown());
+            
         }
+
+
     }
 
     IEnumerator AttackCooldown()
@@ -349,6 +361,7 @@ public class Enemy : MonoBehaviour
 
         if (health <= 0)
         {
+            anim.SetBool("isMoving", false);
             Die();
         }
     }
