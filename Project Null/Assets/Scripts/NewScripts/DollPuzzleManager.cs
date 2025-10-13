@@ -5,12 +5,21 @@ public class DollPuzzleManager : MonoBehaviour
 {
     public static DollPuzzleManager Instance;
 
+    //  Added enum for eye types
+    public enum EyeType
+    {
+        X,
+        Square,
+        Circle,
+        Triangle
+    }
+
     [System.Serializable]
     public class ChairInfo
     {
         public ChairSlot chairSlot; // reference to your ChairSlotLogic
-        public string requiredLeftEye;
-        public string requiredRightEye;
+        public EyeType requiredLeftEye;  //  Changed from string to enum
+        public EyeType requiredRightEye; //  Changed from string to enum
     }
 
     public List<ChairInfo> chairs = new List<ChairInfo>();
@@ -19,7 +28,10 @@ public class DollPuzzleManager : MonoBehaviour
     [Header("Door to open when puzzle is solved")]
     public Door door; // Assign your door here in inspector
 
-    // ✅ Added field to store last puzzle result
+    [Header("Feedback")]
+    public PuzzleFeedbackLight feedbackLight; // Assign your feedback light here
+
+    //  Added field to store last puzzle result
     public bool lastPuzzleResult { get; private set; } = false;
 
     void Awake()
@@ -60,14 +72,9 @@ public class DollPuzzleManager : MonoBehaviour
                 continue;
             }
 
-            // Normalize for safer string comparison
-            string dollLeft = doll.leftEye.Trim().ToLower();
-            string dollRight = doll.rightEye.Trim().ToLower();
-            string requiredLeft = c.requiredLeftEye.Trim().ToLower();
-            string requiredRight = c.requiredRightEye.Trim().ToLower();
-
-            bool leftMatch = dollLeft == requiredLeft;
-            bool rightMatch = dollRight == requiredRight;
+            //  Direct enum comparison (no string conversion needed)
+            bool leftMatch = doll.leftEye == c.requiredLeftEye;
+            bool rightMatch = doll.rightEye == c.requiredRightEye;
 
             if (leftMatch && rightMatch)
             {
@@ -89,15 +96,27 @@ public class DollPuzzleManager : MonoBehaviour
         if (allCorrect)
         {
             Debug.Log("Puzzle solved correctly! Opening the door...");
+
+            if (feedbackLight != null)
+            {
+                Debug.Log(">>> Flashing GREEN light for success!");
+                feedbackLight.Flash(true);
+            }
+
             if (door != null)
                 door.OpenDoor();
         }
         else
         {
             Debug.Log("Puzzle not correct. Door remains closed.");
+
+            if (feedbackLight != null)
+            {
+                Debug.Log(">>> Flashing RED light for failure!");
+                feedbackLight.Flash(false);
+            }
         }
 
-        // ✅ Add this line to store the result
         lastPuzzleResult = allCorrect;
 
         Debug.Log("Puzzle check complete!");
@@ -105,14 +124,10 @@ public class DollPuzzleManager : MonoBehaviour
 
     private bool MatchesAnyChair(DollBehavior doll)
     {
-        string dollLeft = doll.leftEye.Trim().ToLower();
-        string dollRight = doll.rightEye.Trim().ToLower();
-
         foreach (var c in chairs)
         {
-            string reqLeft = c.requiredLeftEye.Trim().ToLower();
-            string reqRight = c.requiredRightEye.Trim().ToLower();
-            if (dollLeft == reqLeft && dollRight == reqRight)
+            //  Direct enum comparison
+            if (doll.leftEye == c.requiredLeftEye && doll.rightEye == c.requiredRightEye)
                 return true;
         }
         return false;

@@ -35,12 +35,26 @@ public class ChairSlot : MonoBehaviour
 
         currentDoll = doll;
 
+        //  STORE WORLD SCALE BEFORE PARENTING
+        Vector3 worldScale = doll.transform.lossyScale;
+
         // Snap doll to placement point
         if (placementPoint != null)
         {
             doll.transform.SetParent(placementPoint, false);
             doll.transform.localPosition = Vector3.zero;
             doll.transform.localRotation = Quaternion.identity;
+
+            //  RESTORE WORLD SCALE AS LOCAL SCALE
+            // Calculate what local scale gives us the desired world scale
+            if (placementPoint.lossyScale.x != 0 && placementPoint.lossyScale.y != 0 && placementPoint.lossyScale.z != 0)
+            {
+                doll.transform.localScale = new Vector3(
+                    worldScale.x / placementPoint.lossyScale.x,
+                    worldScale.y / placementPoint.lossyScale.y,
+                    worldScale.z / placementPoint.lossyScale.z
+                );
+            }
         }
 
         // Lock physics while seated
@@ -61,7 +75,7 @@ public class ChairSlot : MonoBehaviour
         // Notify manager
         DollPuzzleManager.Instance?.OnDollPlaced(this);
 
-        Debug.Log($"Placed doll '{doll.name}' on chair '{name}'.");
+        Debug.Log($"Placed doll '{doll.name}' on chair '{name}'. Scale preserved: {doll.transform.lossyScale}");
     }
 
     public void RemoveDollReference()

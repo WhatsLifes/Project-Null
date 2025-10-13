@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 public class DollEnemyAI : MonoBehaviour
@@ -34,7 +34,7 @@ public class DollEnemyAI : MonoBehaviour
         Debug.Log($"{gameObject.name} is now hostile!");
     }
 
-    void Update()
+    /* void Update()
     {
         if (!isActive || player == null || !agent.enabled)
             return;
@@ -52,7 +52,7 @@ public class DollEnemyAI : MonoBehaviour
                 lastAttackTime = Time.time;
             }
         }
-    }
+    } */
 
     void AttackPlayer()
     {

@@ -7,7 +7,7 @@ public class DollPuzzleDebugger : MonoBehaviour
     {
         Debug.Log("Running Doll Puzzle Debugger...");
 
-        //Use new Unity API (faster, no warnings)
+        // Use new Unity API (faster, no warnings)
         DollPuzzleManager manager = FindFirstObjectByType<DollPuzzleManager>();
         DollBehavior[] dolls = FindObjectsByType<DollBehavior>(FindObjectsSortMode.None);
 
@@ -29,34 +29,31 @@ public class DollPuzzleDebugger : MonoBehaviour
             return;
         }
 
-        // Create easy-to-read lookup for chairs
+        // ✅ Create easy-to-read lookup for chairs (using enum)
         List<string> validPatterns = new List<string>();
         foreach (var chair in manager.chairs)
         {
-            validPatterns.Add($"{chair.requiredLeftEye}-{chair.requiredRightEye}");
-            Debug.Log($"Chair expects: Left='{chair.requiredLeftEye}', Right='{chair.requiredRightEye}'");
+            string pattern = $"{chair.requiredLeftEye}-{chair.requiredRightEye}";
+            validPatterns.Add(pattern);
+            Debug.Log($"Chair '{chair.chairSlot?.name ?? "Unknown"}' expects: Left={chair.requiredLeftEye}, Right={chair.requiredRightEye}");
         }
 
-        // Check each doll’s pattern
+        // ✅ Check each doll's pattern (using enum)
         foreach (var doll in dolls)
         {
             string dollPattern = $"{doll.leftEye}-{doll.rightEye}";
             bool matchesAny = validPatterns.Contains(dollPattern);
 
-            if (string.IsNullOrEmpty(doll.leftEye) || string.IsNullOrEmpty(doll.rightEye))
+            if (matchesAny)
             {
-                Debug.LogWarning($"Doll '{doll.name}' has missing eye data! (Left='{doll.leftEye}', Right='{doll.rightEye}')");
-            }
-            else if (matchesAny)
-            {
-                Debug.Log($"Doll '{doll.name}' matches a valid chair pattern ({doll.leftEye}, {doll.rightEye})");
+                Debug.Log($"✓ Doll '{doll.name}' matches a valid chair pattern ({doll.leftEye}, {doll.rightEye})");
             }
             else
             {
-                Debug.LogError($"Doll '{doll.name}' does NOT match any valid chair pattern! (Left='{doll.leftEye}', Right='{doll.rightEye}')");
+                Debug.LogError($"✗ Doll '{doll.name}' does NOT match any valid chair pattern! (Left={doll.leftEye}, Right={doll.rightEye})");
             }
         }
 
-        Debug.Log("Doll Puzzle Debug complete!");
+        Debug.Log($"Doll Puzzle Debug complete! Found {dolls.Length} dolls and {manager.chairs.Count} chairs.");
     }
 }

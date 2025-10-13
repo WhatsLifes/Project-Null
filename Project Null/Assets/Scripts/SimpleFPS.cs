@@ -29,11 +29,16 @@ public class SimpleFPS : MonoBehaviour
     void Update()
     {
         // --- Movement ---
-        float h = Input.GetAxis("Horizontal"); // A/D or Left/Right arrow keys
-        float v = Input.GetAxis("Vertical");   // W/S or Up/Down arrow keys
+        float h = Input.GetAxisRaw("Horizontal"); // A/D or Left/Right arrow keys
+        float v = Input.GetAxisRaw("Vertical");   // W/S or Up/Down arrow keys
 
         // Calculate movement direction relative to where player is facing
         Vector3 move = transform.right * h + transform.forward * v;
+        if (move.magnitude > 0.1f)
+        {
+            move = move.normalized;
+        }
+
 
         // Use crouch speed if crouching, otherwise normal walking speed
         float currentSpeed = isCrouching ? crouchSpeed : speed;
@@ -42,8 +47,8 @@ public class SimpleFPS : MonoBehaviour
         controller.SimpleMove(move * currentSpeed);
 
         
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity; // Left/right look
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity; // Up/down look
+        float mouseX = Input.GetAxisRaw("Mouse X") * mouseSensitivity; // Left/right look
+        float mouseY = Input.GetAxisRaw("Mouse Y") * mouseSensitivity; // Up/down look
 
         // Rotate player left/right
         transform.Rotate(Vector3.up * mouseX);

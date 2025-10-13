@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
@@ -12,27 +12,20 @@ public class DollBehavior : MonoBehaviour
     public AudioClip scaryClip;
     [Range(0f, 1f)] public float volume = 1f;
 
-    [Header("Health")]
-    public int maxHealth = 3;
-    private int health;
+    [Header("AI Reference")]
+    public Enemy enemyScript; // Reference to Enemy script
 
-    [Header("AI")]
-    public NavMeshAgent agent;
-    private Transform player;
+    [Header("Puzzle")]
+    public DollPuzzleManager.EyeType leftEye;
+    public DollPuzzleManager.EyeType rightEye;
 
-    private bool isDown = false;
-    private bool isAttacking = false;
+    private bool isInChair = false;
     private bool shouldBePickableAfterDeath = false;
     private bool shouldDisappearAfterDeath = false;
-    private bool isInChair = false;
 
     private AudioSource audioSource;
     private Rigidbody rb;
     private Collider col;
-
-    // Puzzle Eye ID
-    public string leftEye;
-    public string rightEye;
 
     void Awake()
     {
@@ -47,17 +40,22 @@ public class DollBehavior : MonoBehaviour
             audioSource.playOnAwake = false;
         }
 
-        health = maxHealth;
+        // Get Enemy script reference
+        if (enemyScript == null)
+            enemyScript = GetComponent<Enemy>();
 
-        if (agent == null)
-            agent = GetComponent<NavMeshAgent>();
+        // Make sure Enemy starts deactivated
+        if (enemyScript != null)
+            enemyScript.Deactivate();
 
-        GameObject p = GameObject.FindGameObjectWithTag("Player");
-        if (p != null)
-            player = p.transform;
-
-        if (agent != null)
-            agent.enabled = false;
+        if (enemyScript == null)
+        {
+            Debug.LogError($"{gameObject.name} - Enemy script NOT FOUND!");
+        }
+        else
+        {
+            Debug.Log($"{gameObject.name} - Enemy script found and assigned");
+        }
     }
 
     public void OnPickedUp()
@@ -71,6 +69,9 @@ public class DollBehavior : MonoBehaviour
                 audioSource.PlayOneShot(scaryClip, volume);
 
             ActivateAttackBehavior();
+
+            shouldBePickableAfterDeath = true;
+            shouldDisappearAfterDeath = false;
         }
     }
 
@@ -80,11 +81,12 @@ public class DollBehavior : MonoBehaviour
         rb.isKinematic = true;
         rb.useGravity = false;
 
-        if (agent != null)
-            agent.enabled = false;
-
-        isDown = false;
-        isAttacking = false;
+        // Deactivate Enemy AI when placed in chair
+        if (enemyScript != null)
+        {
+            enemyScript.Deactivate();
+            enemyScript.canBeKilled = false; // Protect from damage in chair
+        }
     }
 
     public void OnCorrectPlacement()
@@ -93,11 +95,12 @@ public class DollBehavior : MonoBehaviour
         rb.isKinematic = true;
         rb.useGravity = false;
 
-        if (agent != null)
-            agent.enabled = false;
-
-        isDown = false;
-        isAttacking = false;
+        // Deactivate Enemy AI
+        if (enemyScript != null)
+        {
+            enemyScript.Deactivate();
+            enemyScript.canBeKilled = false;
+        }
     }
 
     public void OnIncorrectPlacement(bool isCorrectEyes)
@@ -106,11 +109,12 @@ public class DollBehavior : MonoBehaviour
         rb.isKinematic = false;
         rb.useGravity = true;
 
-        // Pop off the chair safely
+        // Pop off the chair
         rb.AddForce(Vector3.up * 3f + transform.forward * 1.2f, ForceMode.Impulse);
 
         // Start chasing after a delay
         StartCoroutine(DelayedAttackStart(0.5f));
+
         // Decide what happens after death
         shouldBePickableAfterDeath = isCorrectEyes;
         shouldDisappearAfterDeath = !isCorrectEyes;
@@ -119,13 +123,9 @@ public class DollBehavior : MonoBehaviour
     private IEnumerator DelayedAttackStart(float delay)
     {
         yield return new WaitForSeconds(delay);
+        yield return new WaitForSeconds(0.8f);
 
-        if (player != null && agent != null)
-        {
-            agent.enabled = true;
-            isAttacking = true;
-            agent.SetDestination(player.position);
-        }
+        ActivateAttackBehavior();
 
         if (scaryClip != null && audioSource != null)
             audioSource.PlayOneShot(scaryClip, volume);
@@ -141,56 +141,36 @@ public class DollBehavior : MonoBehaviour
             rb.useGravity = true;
         }
 
-        if (agent != null && player != null)
+        // Activate Enemy script
+        if (enemyScript != null)
         {
-            agent.enabled = true;
-            isAttacking = true;
-            agent.SetDestination(player.position);
+            enemyScript.Activate();
+            enemyScript.canBeKilled = true;
         }
     }
 
-    public void TakeDamage(int damage)
+    // Called by Enemy script when health reaches 0
+    public void Down()  //  Changed from OnEnemyDeath() to match Enemy script's call
     {
-        if (isDown) return;
+        // Make Enemy do ragdoll death
+        if (enemyScript != null)
+        {
+            enemyScript.RagdollDeath();
+        }
 
-        // If doll is in a chair, just pop out instead of dying
-        if (isInChair) return;
-        if (!isAttacking) return;
+        if (type == DollType.Hostile)
+        {
+            type = DollType.Normal;
+        }
 
-        health -= damage;
-
-        if (health <= 0)
-            Down();
-    }
-
-    void Down()
-    {
-        isDown = true;
-        isAttacking = false;
-
-        if (agent != null)
-            agent.enabled = false;
-
-        rb.isKinematic = false;
-        rb.useGravity = true;
-        // Add a small forward/backward force
-        // rb.AddForce(transform.forward * 1f + Vector3.up * 0.2f, ForceMode.Impulse);
-
-        // Add a small random torque to make it tip naturally
-        Vector3 torque = new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f));
-        rb.AddTorque(torque, ForceMode.Impulse);
-
-
-        // Handle death outcomes
+        // Handle puzzle outcomes
         if (shouldBePickableAfterDeath)
         {
-            // Becomes normal doll again
             StartCoroutine(KeepAboveGround());
             ResetToPickable();
         }
         else
         {
-            // All other dolls disappear after 3 seconds
             StartCoroutine(KeepAboveGround());
             StartCoroutine(DisappearAfterDelay(3f));
         }
@@ -198,20 +178,10 @@ public class DollBehavior : MonoBehaviour
 
     private IEnumerator KeepAboveGround()
     {
-        // Apply initial flop torque once
-        if (!rb.isKinematic)
-        {
-            rb.AddTorque(new Vector3(
-                Random.Range(-5f, 5f),
-                Random.Range(-5f, 5f),
-                Random.Range(-5f, 5f)
-            ), ForceMode.Impulse);
-        }
-
         float timer = 0f;
         while (timer < 2f)
         {
-            if (transform.position.y < 0.5f) // height above floor
+            if (transform.position.y < 0.5f)
             {
                 Vector3 pos = transform.position;
                 pos.y = 0.5f;
@@ -219,7 +189,6 @@ public class DollBehavior : MonoBehaviour
 
                 if (!rb.isKinematic)
                 {
-                    // Zero out all horizontal movement to keep in place
                     rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
                 }
             }
@@ -228,9 +197,6 @@ public class DollBehavior : MonoBehaviour
             yield return null;
         }
     }
-
-
-
 
     private IEnumerator DisappearAfterDelay(float delay)
     {
@@ -245,20 +211,10 @@ public class DollBehavior : MonoBehaviour
         col.isTrigger = false;
         transform.SetParent(null);
 
-        isDown = false;
-        isAttacking = false;
         isInChair = false;
 
-        if (agent != null)
-            agent.enabled = false;
-    }
-
-    void Update()
-    {
-        if (isAttacking && agent != null && player != null && agent.enabled)
-        {
-            agent.SetDestination(player.position);
-        }
+        // Deactivate Enemy
+        if (enemyScript != null)
+            enemyScript.Deactivate();
     }
 }
-
