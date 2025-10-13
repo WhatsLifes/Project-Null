@@ -9,6 +9,9 @@ public class PuzzleCheckButton : MonoBehaviour
     public float delayBeforeCheck = 3f;     // Seconds to wait before checking
     public Transform player;                // Assign player transform in inspector
 
+    [Header("References")]
+    public PuzzleFeedbackLight feedbackLight; // Assign the light script in Inspector
+
     private bool isChecking = false;
 
     void Start()
@@ -19,6 +22,14 @@ public class PuzzleCheckButton : MonoBehaviour
             GameObject p = GameObject.FindGameObjectWithTag("Player");
             if (p != null) player = p.transform;
             else Debug.LogError("PuzzleCheckButton: Player not assigned and not found in scene!");
+        }
+
+        // Auto-find light if not manually assigned
+        if (feedbackLight == null)
+        {
+            feedbackLight = GetComponentInChildren<PuzzleFeedbackLight>();
+            if (feedbackLight == null)
+                Debug.LogWarning("PuzzleCheckButton: No PuzzleFeedbackLight found in children!");
         }
     }
 
@@ -53,7 +64,12 @@ public class PuzzleCheckButton : MonoBehaviour
         if (DollPuzzleManager.Instance != null)
         {
             DollPuzzleManager.Instance.CheckPuzzle();
-            Debug.Log("Puzzle check complete!");
+            bool isCorrect = DollPuzzleManager.Instance.lastPuzzleResult; // ✅ read result
+
+            Debug.Log("Puzzle check complete! Result: " + (isCorrect ? "CORRECT" : "WRONG"));
+
+            if (feedbackLight != null)
+                feedbackLight.Flash(isCorrect);
         }
         else
         {

@@ -19,6 +19,9 @@ public class DollPuzzleManager : MonoBehaviour
     [Header("Door to open when puzzle is solved")]
     public Door door; // Assign your door here in inspector
 
+    // ✅ Added field to store last puzzle result
+    public bool lastPuzzleResult { get; private set; } = false;
+
     void Awake()
     {
         Instance = this;
@@ -93,6 +96,9 @@ public class DollPuzzleManager : MonoBehaviour
         {
             Debug.Log("Puzzle not correct. Door remains closed.");
         }
+
+        // ✅ Add this line to store the result
+        lastPuzzleResult = allCorrect;
 
         Debug.Log("Puzzle check complete!");
     }
