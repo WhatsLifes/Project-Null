@@ -26,7 +26,7 @@ public class MainMenuLogicScript1 : MonoBehaviour
     public void StartButtom()
     {
         MainMenu.GetComponent<Canvas>().enabled = false;
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene("Stage1");
     }
 
     public void SettingsButton()
