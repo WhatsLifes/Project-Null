@@ -186,6 +186,9 @@ public class DollBehavior : MonoBehaviour
             rb.useGravity = true;
         }
 
+        gameObject.layer = 8;
+        Debug.Log($"{gameObject.name} - Layer changed to Enemy (unpickable while hostile)");
+
         // Activate Enemy script
         if (enemyScript != null)
         {
@@ -213,6 +216,10 @@ public class DollBehavior : MonoBehaviour
             type = DollType.Normal;
         }
 
+        gameObject.layer = 9;
+        Debug.Log($"{gameObject.name} - Layer set to pickupable");
+
+
         // Handle puzzle outcomes
         if (shouldBePickableAfterDeath)
         {
@@ -222,7 +229,7 @@ public class DollBehavior : MonoBehaviour
         else
         {
             StartCoroutine(KeepAboveGround());
-            StartCoroutine(DisappearAfterDelay(3f));
+            StartCoroutine(DisappearAfterDelay(1.5f));
         }
     }
 
@@ -256,6 +263,9 @@ public class DollBehavior : MonoBehaviour
 
     public void ResetToPickable()
     {
+        gameObject.layer = 9;
+        Debug.Log($"{gameObject.name} - Layer set to pickupable");
+
         rb.isKinematic = false;
         rb.useGravity = true;
         col.isTrigger = false;
