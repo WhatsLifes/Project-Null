@@ -107,9 +107,6 @@ public class DollBehavior : MonoBehaviour
             col.isTrigger = false;
         }
 
-        // Reset layer in case pickup changed it
-        gameObject.layer = LayerMask.NameToLayer("Default"); // Or whatever your default enemy layer is
-
         // Small delay to let it fall away from player, then activate AI
         StartCoroutine(ActivateAfterForceDrop());
     }
