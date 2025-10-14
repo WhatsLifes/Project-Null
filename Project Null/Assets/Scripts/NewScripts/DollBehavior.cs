@@ -72,7 +72,6 @@ public class DollBehavior : MonoBehaviour
             if (scaryClip != null && audioSource != null)
                 audioSource.PlayOneShot(scaryClip, volume);
 
-            anim.SetBool("isMoving", true);
 
             ActivateAttackBehavior();
 
@@ -152,6 +151,11 @@ public class DollBehavior : MonoBehaviour
         {
             enemyScript.Activate();
             enemyScript.canBeKilled = true;
+        }
+
+        if (anim != null) 
+        {
+            anim.SetBool("isMoving", true);
         }
     }
 
