@@ -44,9 +44,19 @@ public class Enemy : MonoBehaviour
     private Rigidbody rb;
     private Vector3 lastValidPosition;
 
+    private AudioSource audioSource;
+    public AudioClip hitSound;
+    [Range(0f, 1f)] public float volume = 1f;
+
     private void Awake()
     {
         anim = GetComponentInChildren<Animator>();
+
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.spatialBlend = 1f;
+        }
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
@@ -355,6 +365,8 @@ public class Enemy : MonoBehaviour
             Debug.Log($"{gameObject.name} is protected from damage");
             return;
         }
+
+        audioSource.PlayOneShot(hitSound, volume);
 
         Debug.Log($"{gameObject.name} took {damageAmount} damage. Health: {health} -> {health - damageAmount}");
         health -= damageAmount;
