@@ -50,7 +50,10 @@ public class DollBehavior : MonoBehaviour
 
         // Make sure Enemy starts deactivated
         if (enemyScript != null)
+        {
             enemyScript.Deactivate();
+            enemyScript.canBeKilled = false;
+        }
 
         if (enemyScript == null)
         {
