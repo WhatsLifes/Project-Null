@@ -206,6 +206,14 @@ public class TestWeapon : MonoBehaviour
                 enemy.TakeDamage(damage);
                 Debug.Log($"Animation Event: Damaged enemy for {damage}!");
             }
+            // Check if we hit a vent
+            VentBreak vent = hit.transform.GetComponent<VentBreak>();
+            if (vent != null)
+            {
+                vent.TakeDamage(damage);
+                Debug.Log($"Animation Event: Hit vent for {damage} damage!");
+            }
+        
         }
         else
         {
