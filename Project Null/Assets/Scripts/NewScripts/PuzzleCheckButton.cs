@@ -13,6 +13,7 @@ public class PuzzleCheckButton : MonoBehaviour
     public PuzzleFeedbackLight feedbackLight; // Assign the light script in Inspector
     public AudioSource buttonAudioSource;     // AudioSource component to play sound
     public AudioClip buttonClickSound;        // Sound clip for button press
+    [Range(0f, 1f)] public float volume = 1f;
 
     private bool isChecking = false;
 
@@ -55,7 +56,7 @@ public class PuzzleCheckButton : MonoBehaviour
         {
             // ✅ Play sound every time button is clicked
             if (buttonClickSound != null && buttonAudioSource != null)
-                buttonAudioSource.PlayOneShot(buttonClickSound);
+                buttonAudioSource.PlayOneShot(buttonClickSound, volume);
 
             // Ensure all chairs are filled before allowing check
             if (DollPuzzleManager.Instance != null && DollPuzzleManager.Instance.AreAllChairsFilled())

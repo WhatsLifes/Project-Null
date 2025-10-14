@@ -10,6 +10,7 @@ public class VentBreak : MonoBehaviour
     public float destroyDelay = 2f;                  // Delay before removing the broken vent
 
     private bool isBroken = false;
+    [Range(0f, 1f)] public float volume = 1f;
 
     // Called when the vent takes damage
     public void TakeDamage(int damage)
@@ -23,7 +24,7 @@ public class VentBreak : MonoBehaviour
             // Play hit sound
             if (hitSound != null)
             {
-                AudioSource.PlayClipAtPoint(hitSound, transform.position);
+                AudioSource.PlayClipAtPoint(hitSound, transform.position, volume);
             }
         }
         else
@@ -39,7 +40,7 @@ public class VentBreak : MonoBehaviour
         // Play break sound
         if (breakSound != null)
         {
-            AudioSource.PlayClipAtPoint(breakSound, transform.position);
+            AudioSource.PlayClipAtPoint(breakSound, transform.position, volume);
         }
 
         // Spawn broken version (optional)
