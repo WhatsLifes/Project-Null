@@ -89,6 +89,8 @@ public class Enemy : MonoBehaviour
 
     public void Activate()
     {
+        this.enabled = true;
+
         if (isActive || agent == null) return;
 
         // Reset all state
