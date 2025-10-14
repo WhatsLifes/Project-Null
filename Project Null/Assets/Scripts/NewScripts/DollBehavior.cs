@@ -67,6 +67,8 @@ public class DollBehavior : MonoBehaviour
 
     public void OnPickedUp()
     {
+        Debug.Log($"{gameObject.name} - OnPickedUp called, type: {type}");
+
         if (type == DollType.Audio && scaryClip != null && audioSource != null)
             audioSource.PlayOneShot(scaryClip, volume);
 
@@ -75,12 +77,50 @@ public class DollBehavior : MonoBehaviour
             if (scaryClip != null && audioSource != null)
                 audioSource.PlayOneShot(scaryClip, volume);
 
-
-            ActivateAttackBehavior();
+            // IMMEDIATELY force drop from player's hands and activate
+            ForceDropAndActivate();
 
             shouldBePickableAfterDeath = true;
             shouldDisappearAfterDeath = false;
         }
+    }
+
+    private void ForceDropAndActivate()
+    {
+        Debug.Log($"{gameObject.name} - Forcing drop and activating hostile behavior");
+
+        // Unparent from player immediately (in case pickup system parents it)
+        transform.SetParent(null);
+
+        // Enable physics immediately
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.useGravity = true;
+            rb.linearVelocity = Vector3.zero; // Reset any weird velocity
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        // Make collider solid (not trigger)
+        if (col != null)
+        {
+            col.isTrigger = false;
+        }
+
+        // Reset layer in case pickup changed it
+        gameObject.layer = LayerMask.NameToLayer("Default"); // Or whatever your default enemy layer is
+
+        // Small delay to let it fall away from player, then activate AI
+        StartCoroutine(ActivateAfterForceDrop());
+    }
+
+    private IEnumerator ActivateAfterForceDrop()
+    {
+        // Wait a tiny bit for physics to move it away from player
+        yield return new WaitForSeconds(0.2f);
+
+        Debug.Log($"{gameObject.name} - Activating attack behavior after force drop");
+        ActivateAttackBehavior();
     }
 
     public void OnPlaced()
