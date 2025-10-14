@@ -68,8 +68,8 @@ public class PuzzleCheckButton : MonoBehaviour
 
             Debug.Log("Puzzle check complete! Result: " + (isCorrect ? "CORRECT" : "WRONG"));
 
-            //if (feedbackLight != null)
-              //  feedbackLight.Flash(isCorrect);
+            if (feedbackLight != null)
+                feedbackLight.Flash(isCorrect);
         }
         else
         {
