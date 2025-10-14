@@ -68,7 +68,19 @@ public class UniversalPickup : MonoBehaviour
 
             if (hit.collider.CompareTag("Pickable"))
             {
-                heldObject = hit.collider.gameObject;
+                GameObject targetObject = hit.collider.gameObject;
+
+                // CHECK IF HOSTILE DOLL FIRST - before any pickup logic
+                var doll = targetObject.GetComponent<DollBehavior>();
+                if (doll != null && doll.type == DollBehavior.DollType.Hostile)
+                {
+                    Debug.Log("Hostile doll detected - triggering activation without pickup");
+                    doll.OnPickedUp(); // This will handle everything via ForceDropAndActivate()
+                    return; // DON'T continue with pickup logic
+                }
+
+                // NORMAL PICKUP LOGIC (for non-hostile dolls)
+                heldObject = targetObject;
                 heldRb = heldObject.GetComponent<Rigidbody>();
                 heldCollider = heldObject.GetComponent<Collider>();
 
@@ -134,7 +146,7 @@ public class UniversalPickup : MonoBehaviour
                 heldObject.transform.rotation = holdPosition.rotation;
                 Debug.Log($"Position after set: {heldObject.transform.position}");
 
-                var doll = heldObject.GetComponent<DollBehavior>();
+                // Notify doll it was picked up (for Audio dolls)
                 if (doll != null)
                 {
                     Debug.Log($"DollBehavior found - Type: {doll.type}");
@@ -142,13 +154,6 @@ public class UniversalPickup : MonoBehaviour
                 }
 
                 Debug.Log($"=== PICKUP COMPLETE ===");
-
-                // Optional: Hostile dolls immediately drop and chase
-                if (doll != null && doll.type == DollBehavior.DollType.Hostile)
-                {
-                    Debug.Log("Hostile doll - dropping immediately");
-                    Drop();
-                }
             }
         }
         else
