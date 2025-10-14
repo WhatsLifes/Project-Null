@@ -11,6 +11,8 @@ public class PuzzleCheckButton : MonoBehaviour
 
     [Header("References")]
     public PuzzleFeedbackLight feedbackLight; // Assign the light script in Inspector
+    public AudioSource buttonAudioSource;     // AudioSource component to play sound
+    public AudioClip buttonClickSound;        // Sound clip for button press
 
     private bool isChecking = false;
 
@@ -31,6 +33,17 @@ public class PuzzleCheckButton : MonoBehaviour
             if (feedbackLight == null)
                 Debug.LogWarning("PuzzleCheckButton: No PuzzleFeedbackLight found in children!");
         }
+
+        // Auto-assign AudioSource if missing
+        if (buttonAudioSource == null)
+        {
+            buttonAudioSource = GetComponent<AudioSource>();
+            if (buttonAudioSource == null)
+            {
+                buttonAudioSource = gameObject.AddComponent<AudioSource>();
+                buttonAudioSource.playOnAwake = false;
+            }
+        }
     }
 
     void Update()
@@ -40,6 +53,10 @@ public class PuzzleCheckButton : MonoBehaviour
         float distance = Vector3.Distance(player.position, transform.position);
         if (distance <= interactRange && Input.GetKeyDown(interactKey))
         {
+            // ✅ Play sound every time button is clicked
+            if (buttonClickSound != null && buttonAudioSource != null)
+                buttonAudioSource.PlayOneShot(buttonClickSound);
+
             // Ensure all chairs are filled before allowing check
             if (DollPuzzleManager.Instance != null && DollPuzzleManager.Instance.AreAllChairsFilled())
             {
@@ -57,7 +74,6 @@ public class PuzzleCheckButton : MonoBehaviour
         isChecking = true;
         Debug.Log("Button pressed! Waiting " + delayBeforeCheck + " seconds before checking...");
 
-        // Optional: play button press animation or sound here
         yield return new WaitForSeconds(delayBeforeCheck);
 
         // Trigger the puzzle check
