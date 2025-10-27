@@ -5,11 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1df8d1c2-9c55-4490-9770-8175c563cebb" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/IneractableObject.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/IneractableObject.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/InteractableItemData.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/InteractableItemData.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/LookAtCamera.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/LookAtCamera.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/temp folder.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/temp folder/Camera.controller" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/temp folder/Camera.controller.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/temp folder/player_death.anim" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/temp folder/player_death.anim.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Project Null/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Project Null/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Stage1.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Stage1.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Arms/Melee.controller" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Arms/Melee.controller" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/PuzzleCheckButton.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/PuzzleCheckButton.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/UniversalPickupScript.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/UniversalPickupScript.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/Packages/com.unity.probuilder/Settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/Packages/com.unity.probuilder/Settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,6 +39,7 @@
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/ClickToMove.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/CollisionDetection.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/NewScripts/PuzzleCheckButton.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/LookAtCamera.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Player.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/ScreenFader.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.render-pipelines.universal@ba18377e2205/Shaders/Lit.shader" root0="SKIP_HIGHLIGHTING" />
@@ -130,7 +145,8 @@
       <workItem from="1760923458648" duration="9986000" />
       <workItem from="1760996836212" duration="13010000" />
       <workItem from="1761081672522" duration="311000" />
-      <workItem from="1761169495029" duration="4196000" />
+      <workItem from="1761169495029" duration="10756000" />
+      <workItem from="1761518612979" duration="833000" />
     </task>
     <servers />
   </component>

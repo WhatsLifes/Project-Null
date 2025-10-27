@@ -67,6 +67,7 @@ public class PuzzleCheckButton : MonoBehaviour
                 if (DollPuzzleManager.Instance != null && DollPuzzleManager.Instance.AreAllChairsFilled())
                 {
                     StartCoroutine(DoPuzzleCheck());
+                    InteractUI.SetActive(false);
                 }
                 else
                 {

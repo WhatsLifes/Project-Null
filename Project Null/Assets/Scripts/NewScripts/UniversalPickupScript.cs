@@ -60,8 +60,14 @@ public class UniversalPickup : MonoBehaviour
             }
             // This and the setActive(false) below were needed to not keep chair text
             else
+            {
                 InteractUI_Chair.SetActive(false);
-            
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    Drop();
+                }
+            }
+
         }
         else
         {
