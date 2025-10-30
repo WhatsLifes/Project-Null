@@ -2,6 +2,10 @@
 
 public class FlashlightToggle : MonoBehaviour
 {
+    [Header("Pickup Settings")]
+    [Tooltip("Whether the flashlight has been picked up")]
+    public bool isPickedUp = false;
+
     [Header("Flashlight Settings")]
     public Light flashlight;  // Assign in Inspector
     public KeyCode toggleKey = KeyCode.F;
@@ -49,6 +53,9 @@ public class FlashlightToggle : MonoBehaviour
 
     void Update()
     {
+        // Only allow flashlight usage if picked up
+        if (!isPickedUp) return;
+
         HandleToggle();
         HandleBattery();
         HandleFlicker();
@@ -139,9 +146,21 @@ public class FlashlightToggle : MonoBehaviour
         }
     }
 
+    // Public method to be called by the pickup script
+    public void Pickup()
+    {
+        isPickedUp = true;
+    }
+
     // Optional: Display battery level in Inspector during play mode
     void OnGUI()
     {
+        if (!isPickedUp)
+        {
+            GUI.Label(new Rect(10, 10, 200, 20), "Find the flashlight...");
+            return;
+        }
+
         GUI.Label(new Rect(10, 10, 200, 20), $"Battery: {currentBattery:F1} / {maxBattery:F1}");
         if (currentBattery < flickerThreshold && isOn)
         {
