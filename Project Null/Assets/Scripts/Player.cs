@@ -1,19 +1,29 @@
+using System; //  add this
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    //  HUD subscribers will listen to this
+    public event Action<int, int> OnHealthChanged; // (current, max)
+
     [Header("Player Settings")]
+    public int MaxHealth = 100;        
     public int Health = 100;
 
     [Header("UI References")]
     public Image bloodyScreenImage;  // Assign your bloody PNG Image here (in Canvas)
 
     private bool isShowingBlood = false;
+    private Coroutine bloodCR; // prevent overlapping fades
 
     private void Start()
     {
+        // Clamp & sync starting values
+        Health = Mathf.Clamp(Health, 0, MaxHealth);
+        OnHealthChanged?.Invoke(Health, MaxHealth); //  notify HUD at start
+
         // Ensure the bloody screen starts invisible
         if (bloodyScreenImage != null)
         {
@@ -26,80 +36,80 @@ public class Player : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (Health <= 0)
-            return;
+        if (Health <= 0) return;
 
-        // Subtract health
-        Health -= damage;
+        // Subtract & clamp
+        Health = Mathf.Clamp(Health - Mathf.Max(0, damage), 0, MaxHealth);
         Debug.Log($"Player took {damage} damage. Remaining Health: {Health}");
 
-        // Trigger bloody screen effect
-        StartCoroutine(BloodyScreenEffect());
+        //  notify HUD
+        OnHealthChanged?.Invoke(Health, MaxHealth);
 
-        // If health reaches zero
+        // Trigger bloody screen effect (cancel previous if still running)
+        if (bloodCR != null) StopCoroutine(bloodCR);
+        bloodCR = StartCoroutine(BloodyScreenEffect());
+
         if (Health <= 0)
             PlayerDeath();
     }
 
+    // Optional: healing support
+    public void Heal(int amount)
+    {
+        if (Health <= 0) return;
+        Health = Mathf.Clamp(Health + Mathf.Max(0, amount), 0, MaxHealth);
+        OnHealthChanged?.Invoke(Health, MaxHealth); // 
+    }
+
     private void PlayerDeath()
     {
-        // Disable player movement (if you have a movement script)
         var fps = GetComponent<SimpleFPS>();
-        if (fps != null)
-            fps.enabled = false;
-
+        if (fps != null) fps.enabled = false;
         Debug.Log("Player died");
     }
 
     private IEnumerator BloodyScreenEffect()
     {
-        if (bloodyScreenImage == null)
-            yield break;
+        if (bloodyScreenImage == null) yield break;
 
         isShowingBlood = true;
         bloodyScreenImage.enabled = true;
 
-        // Fade in quickly to full alpha (show blood)
+        // Fade in
         float fadeInTime = 0.1f;
         float elapsed = 0f;
-
         while (elapsed < fadeInTime)
         {
             float alpha = Mathf.Lerp(0f, 1f, elapsed / fadeInTime);
-            Color color = bloodyScreenImage.color;
-            color.a = alpha;
-            bloodyScreenImage.color = color;
+            var c = bloodyScreenImage.color; c.a = alpha; bloodyScreenImage.color = c;
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        // Hold briefly before fading out
         yield return new WaitForSeconds(0.3f);
 
-        // Fade out smoothly
+        // Fade out
         float fadeOutTime = 1.5f;
         elapsed = 0f;
-
         while (elapsed < fadeOutTime)
         {
             float alpha = Mathf.Lerp(1f, 0f, elapsed / fadeOutTime);
-            Color color = bloodyScreenImage.color;
-            color.a = alpha;
-            bloodyScreenImage.color = color;
+            var c = bloodyScreenImage.color; c.a = alpha; bloodyScreenImage.color = c;
             elapsed += Time.deltaTime;
             yield return null;
         }
 
         bloodyScreenImage.enabled = false;
         isShowingBlood = false;
+        bloodCR = null;
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Enemy"))
         {
-            // Apply damage from enemy
-            TakeDamage(other.gameObject.GetComponent<TestEnemy>().damage);
+            var enemy = other.gameObject.GetComponent<TestEnemy>();
+            if (enemy != null) TakeDamage(enemy.damage);
         }
     }
 }
