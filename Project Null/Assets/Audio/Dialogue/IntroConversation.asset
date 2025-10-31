@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ac8fbc885c7d704baad501dfad8b7ea, type: 3}
+  m_Name: IntroConversation
+  m_EditorClassIdentifier: 
+  sequenceName: IntroConversation
+  lines:
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: 49df3d7a2b2226c43b4f38f4ff360361, type: 3}
+    playerText: 
+    delayBeforeNext: 1
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: Where am I .... Who are you?
+    delayBeforeNext: 1
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: a99c821ec177a3e41875da9c243414d1, type: 3}
+    playerText: 
+    delayBeforeNext: 1
