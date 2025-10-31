@@ -68,7 +68,7 @@ ModelImporter:
       name: Arm_Idle_Down
       takeName: Arm_Idle_Down
       internalID: 4314161160434187403
-      firstFrame: 0
+      firstFrame: 57
       lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
