@@ -66,7 +66,11 @@ public class ArmPickupScript : MonoBehaviour
                 anim.SetBool("PickedUp", true);
             }
         }
-
+        DialogueTrigger dialogue = GetComponent<DialogueTrigger>();
+         if (dialogue != null)
+        {
+            dialogue.TriggerNow();
+        }
         // Hide this object in the world
         gameObject.SetActive(false);
 

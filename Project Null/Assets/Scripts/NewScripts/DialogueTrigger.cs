@@ -10,7 +10,7 @@ public class DialogueTrigger : MonoBehaviour
     [Header("Trigger Options")]
     public bool playOnStart = false;      // play automatically when scene starts
     [Tooltip("Seconds to wait before auto-triggering when playOnStart is true")]
-    public float startDelay = 2f;
+    public float startDelay = 6f;
 
     public bool playOnce = true;         // only allow triggering once
     public bool destroyAfterTrigger = false;

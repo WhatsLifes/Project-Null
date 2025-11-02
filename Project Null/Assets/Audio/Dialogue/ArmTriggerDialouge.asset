@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ac8fbc885c7d704baad501dfad8b7ea, type: 3}
+  m_Name: ArmTriggerDialouge
+  m_EditorClassIdentifier: 
+  sequenceName: ArmTrigger
+  lines:
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: 864465bf8b36ab843aa9a9c26fd48c01, type: 3}
+    playerText: 
+    delayBeforeNext: 1
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: ....What did you do to me?
+    delayBeforeNext: 1
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: 8ca3ebc17b207ef4ab579656637c4980, type: 3}
+    playerText: 
+    delayBeforeNext: 0

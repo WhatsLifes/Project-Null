@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ac8fbc885c7d704baad501dfad8b7ea, type: 3}
+  m_Name: DollRoomDailogue
+  m_EditorClassIdentifier: 
+  sequenceName: DollRoom
+  lines:
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: e46012b05e011ff429da89ac44138099, type: 3}
+    playerText: 
+    delayBeforeNext: 1
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: 'Puzzles... '
+    delayBeforeNext: 1
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: 5402484b5a577664b9383463fc2992d9, type: 3}
+    playerText: 
+    delayBeforeNext: 1
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: Why are you telling me this?
+    delayBeforeNext: 1
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: 3201690b82ef1ac4d88b17125d66256a, type: 3}
+    playerText: 
+    delayBeforeNext: 1
