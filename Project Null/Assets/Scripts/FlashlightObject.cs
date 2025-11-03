@@ -60,6 +60,8 @@ public class FlashlightPickup : MonoBehaviour
         if (flashlightToggleScript != null)
         {
             flashlightToggleScript.Pickup();
+            StartingRoomPickupManager.Instance?.ItemPickedUp(gameObject);
+
         }
 
         // Make this object disappear

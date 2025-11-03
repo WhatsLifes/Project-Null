@@ -1,49 +1,67 @@
 using UnityEngine;
 using System.Collections;
 
-public class Door : MonoBehaviour
+public class DoorController : MonoBehaviour
 {
     [Header("Door Settings")]
-    public Transform doorObject;              // The actual moving part of the door
-    public float openHeight = 3f;             // How far up the door moves when opening
-    public float openSpeed = 2f;              // How fast it moves
-    public bool isOpen = false;
+    public float closedAngle = 0f;  // relative rotation for closed state
+    public float openAngle = 90f;   // relative rotation for open state
+    public float openSpeed = 2f;
+    public bool startsOpen = true;   // does door start open?
 
-    private Vector3 closedPos;
-    private Vector3 openPos;
+    private Quaternion closedRot;
+    private Quaternion openRot;
+    private bool isOpen = false;
     private bool isAnimating = false;
 
     void Start()
     {
-        if (doorObject == null)
-            doorObject = transform;
+        // Record the current rotation as the "closed" rotation
+        closedRot = transform.rotation * Quaternion.Euler(0f, closedAngle, 0f);
+        openRot = transform.rotation * Quaternion.Euler(0f, openAngle, 0f);
 
-        closedPos = doorObject.localPosition;
-        openPos = closedPos + Vector3.up * openHeight;
+        // Set starting rotation
+        if (startsOpen)
+        {
+            transform.rotation = openRot;
+            isOpen = true;
+        }
+        else
+        {
+            transform.rotation = closedRot;
+            isOpen = false;
+        }
     }
 
     public void OpenDoor()
     {
         if (isOpen || isAnimating) return;
         isOpen = true;
-        StartCoroutine(OpenAnimation());
+        StartCoroutine(RotateDoor(openRot));
     }
 
-    private IEnumerator OpenAnimation()
+    public void CloseDoor()
+    {
+        if (!isOpen || isAnimating) return;
+        isOpen = false;
+        StartCoroutine(RotateDoor(closedRot));
+    }
+
+    private IEnumerator RotateDoor(Quaternion targetRot)
     {
         isAnimating = true;
         float t = 0f;
-        Vector3 startPos = doorObject.localPosition;
+        Quaternion startRot = transform.rotation;
 
         while (t < 1f)
         {
             t += Time.deltaTime * openSpeed;
-            doorObject.localPosition = Vector3.Lerp(startPos, openPos, t);
+            transform.rotation = Quaternion.Slerp(startRot, targetRot, t);
             yield return null;
         }
 
-        doorObject.localPosition = openPos;
+        transform.rotation = targetRot;
         isAnimating = false;
-        Debug.Log("Door opened upward!");
+        Debug.Log(isOpen ? "Door opened!" : "Door closed!");
     }
 }

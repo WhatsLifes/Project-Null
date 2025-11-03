@@ -20,17 +20,5 @@ MonoBehaviour:
     delayBeforeNext: 1
   - isDoctor: 0
     voiceClip: {fileID: 0}
-    playerText: 'Puzzles... '
-    delayBeforeNext: 1
-  - isDoctor: 1
-    voiceClip: {fileID: 8300000, guid: 5402484b5a577664b9383463fc2992d9, type: 3}
-    playerText: 
-    delayBeforeNext: 1
-  - isDoctor: 0
-    voiceClip: {fileID: 0}
-    playerText: Why are you telling me this?
-    delayBeforeNext: 1
-  - isDoctor: 1
-    voiceClip: {fileID: 8300000, guid: 3201690b82ef1ac4d88b17125d66256a, type: 3}
-    playerText: 
+    playerText: Puzzles... ?
     delayBeforeNext: 1

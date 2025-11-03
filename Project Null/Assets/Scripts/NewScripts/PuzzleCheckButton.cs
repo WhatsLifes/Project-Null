@@ -59,7 +59,7 @@ public class PuzzleCheckButton : MonoBehaviour
             InteractUI.SetActive(true);
             if (Input.GetKeyDown(interactKey))
             {
-                // ✅ Play sound every time button is clicked
+                //  Play sound every time button is clicked
                 if (buttonClickSound != null && buttonAudioSource != null)
                     buttonAudioSource.PlayOneShot(buttonClickSound, volume);
 
