@@ -5,25 +5,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1df8d1c2-9c55-4490-9770-8175c563cebb" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Assets/Scenes/interaction testing.unity" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scenes/interaction testing.unity.meta" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/IneractableObject.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/IneractableObject.cs.meta" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/InteractableItemData.cs" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/InteractableItemData.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/InteractableObject.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/InteractableObject.cs.meta" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/LookAtCamera.cs" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/LookAtCamera.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/temp folder.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/temp folder/Camera.controller" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/temp folder/Camera.controller.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/temp folder/player_death.anim" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/temp folder/player_death.anim.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/PlayerInteraction.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/PlayerInteraction.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/TriggerCollider.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/TriggerCollider.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/Interactor.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/Interactor.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/test_interact.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/test_interact.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/test_interact2.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/test_interact2.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/cube.asset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/cube.asset.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/cylinder.asset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/cylinder.asset.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/sphere.asset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/sphere.asset.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Project Null/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Project Null/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Stage1.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Stage1.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Arms/Melee.controller" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Arms/Melee.controller" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/PuzzleCheckButton.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/PuzzleCheckButton.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/UniversalPickupScript.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/UniversalPickupScript.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Player.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Player.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/Packages/com.unity.probuilder/Settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/Packages/com.unity.probuilder/Settings.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +50,10 @@
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/CollisionDetection.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/NewScripts/PuzzleCheckButton.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/LookAtCamera.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/PlayerInteraction.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/TriggerCollider.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/Interactor.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/test_interact.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Player.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/ScreenFader.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.render-pipelines.universal@ba18377e2205/Shaders/Lit.shader" root0="SKIP_HIGHLIGHTING" />
@@ -63,7 +77,7 @@
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;bryans-work&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -147,6 +161,10 @@
       <workItem from="1761081672522" duration="311000" />
       <workItem from="1761169495029" duration="10756000" />
       <workItem from="1761518612979" duration="833000" />
+      <workItem from="1761591638953" duration="9982000" />
+      <workItem from="1761615067289" duration="5729000" />
+      <workItem from="1762131442730" duration="13490000" />
+      <workItem from="1762201626244" duration="7814000" />
     </task>
     <servers />
   </component>
