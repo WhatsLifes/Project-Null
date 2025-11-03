@@ -5,7 +5,6 @@ public class DollPuzzleManager : MonoBehaviour
 {
     public static DollPuzzleManager Instance;
 
-    //  Added enum for eye types
     public enum EyeType
     {
         X,
@@ -17,21 +16,17 @@ public class DollPuzzleManager : MonoBehaviour
     [System.Serializable]
     public class ChairInfo
     {
-        public ChairSlot chairSlot; // reference to your ChairSlotLogic
-        public EyeType requiredLeftEye;  //  Changed from string to enum
-        public EyeType requiredRightEye; //  Changed from string to enum
+        public ChairSlot chairSlot;
+        public EyeType requiredLeftEye;
+        public EyeType requiredRightEye;
     }
 
     public List<ChairInfo> chairs = new List<ChairInfo>();
     private List<DollBehavior> activeDolls = new List<DollBehavior>();
 
-    [Header("Door to open when puzzle is solved")]
-    public Door door; // Assign your door here in inspector
-
     [Header("Feedback")]
-    public PuzzleFeedbackLight feedbackLight; // Assign your feedback light here
+    public PuzzleFeedbackLight feedbackLight;
 
-    //  Added field to store last puzzle result
     public bool lastPuzzleResult { get; private set; } = false;
 
     void Awake()
@@ -72,7 +67,6 @@ public class DollPuzzleManager : MonoBehaviour
                 continue;
             }
 
-            //  Direct enum comparison (no string conversion needed)
             bool leftMatch = doll.leftEye == c.requiredLeftEye;
             bool rightMatch = doll.rightEye == c.requiredRightEye;
 
@@ -103,8 +97,13 @@ public class DollPuzzleManager : MonoBehaviour
                 feedbackLight.Flash(true);
             }
 
-            if (door != null)
-                door.OpenDoor();
+            // ✅ NEW: mark puzzle as solved in global progress
+            if (GameProgressManager.Instance != null)
+            {
+                GameProgressManager.Instance.puzzleCompleted = true;
+                Debug.Log("✅ Puzzle progress marked true!");
+            }
+
         }
         else
         {
@@ -118,7 +117,6 @@ public class DollPuzzleManager : MonoBehaviour
         }
 
         lastPuzzleResult = allCorrect;
-
         Debug.Log("Puzzle check complete!");
     }
 
@@ -126,7 +124,6 @@ public class DollPuzzleManager : MonoBehaviour
     {
         foreach (var c in chairs)
         {
-            //  Direct enum comparison
             if (doll.leftEye == c.requiredLeftEye && doll.rightEye == c.requiredRightEye)
                 return true;
         }
