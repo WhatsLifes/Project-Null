@@ -20,5 +20,5 @@ MonoBehaviour:
     delayBeforeNext: 1
   - isDoctor: 0
     voiceClip: {fileID: 0}
-    playerText: 'Puzzles... '
+    playerText: Puzzles... ?
     delayBeforeNext: 1

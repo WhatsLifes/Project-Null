@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sequenceName: 
   lines:
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: Whats that noise?
+    delayBeforeNext: 1
   - isDoctor: 1
     voiceClip: {fileID: 8300000, guid: 78187ad7baa1b704d9879e3eac043e94, type: 3}
     playerText: 
@@ -21,8 +25,4 @@ MonoBehaviour:
   - isDoctor: 0
     voiceClip: {fileID: 0}
     playerText: ..no I can't remember anything
-    delayBeforeNext: 1
-  - isDoctor: 0
-    voiceClip: {fileID: 0}
-    playerText: Whats that noise?
     delayBeforeNext: 1

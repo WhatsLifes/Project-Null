@@ -20,8 +20,12 @@ MonoBehaviour:
     delayBeforeNext: 1
   - isDoctor: 0
     voiceClip: {fileID: 0}
-    playerText: Where am I .... Who are you?
+    playerText: Where am I .... ?
     delayBeforeNext: 1
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: Who are you?
+    delayBeforeNext: 0
   - isDoctor: 1
     voiceClip: {fileID: 8300000, guid: 410cc6a2a8fe6df4c89b5db1e0d95099, type: 3}
     playerText: 
