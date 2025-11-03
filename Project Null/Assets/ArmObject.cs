@@ -52,6 +52,8 @@ public class ArmPickupScript : MonoBehaviour
         if (isPlayerNear && Input.GetKeyDown(pickupKey))
         {
             Pickup();
+            StartingRoomPickupManager.Instance?.ItemPickedUp(gameObject);
+
         }
     }
 
