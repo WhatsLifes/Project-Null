@@ -11,6 +11,7 @@ public class Sanity : MonoBehaviour
     [Header("Effects")]
     public Camera playerCamera;
     public AudioSource ringingAudio;
+    public AudioSource[] randomSanitySounds;
     public Light[] lightsToFlicker;
 
     [Header("Flashlight Reference")]
@@ -19,6 +20,7 @@ public class Sanity : MonoBehaviour
     private float passiveDrainTimer = 0f;
     private float[] flickerTimers;
     private bool[] lightStates;
+    private float randomSoundTimer = 0f;
 
     private void Start()
     {
@@ -49,6 +51,7 @@ public class Sanity : MonoBehaviour
 
         ApplySanityEffects();
         HandleLightFlicker();
+        HandleRandomSanitySounds();
     }
 
     public void TakeSanityDamage(float amount)
@@ -71,10 +74,34 @@ public class Sanity : MonoBehaviour
             playerCamera.fieldOfView = Mathf.Lerp(40f, 60f, sanityPercent);
 
         if (ringingAudio != null)
-            ringingAudio.volume = 1f - sanityPercent;
+        {
+            ringingAudio.volume = Mathf.Lerp(0f, 1f, 1f - sanityPercent);
+            if (!ringingAudio.isPlaying)
+                ringingAudio.Play();
+        }
+            
 
         if (sanityPercent <= 0.5f && Random.value < 0.01f)
             Debug.Log("You hear footsteps around you...");
+    }
+
+    private void HandleRandomSanitySounds()
+    {
+        float sanityPercent = currentSanity / maxSanity;
+        if (sanityPercent > 0.5f || randomSanitySounds.Length == 0)
+            return;
+
+        randomSoundTimer -= Time.deltaTime;
+        if (randomSoundTimer <= 0f)
+        {
+            int index = Random.Range(0, randomSanitySounds.Length);
+            AudioSource chosen = randomSanitySounds[index];
+
+            if (!chosen.isPlaying)
+                chosen.Play();
+
+            randomSoundTimer = Random.Range(5f, Mathf.Lerp(20f, 5f, 1f - sanityPercent));
+        }
     }
 
     private void HandleLightFlicker()
