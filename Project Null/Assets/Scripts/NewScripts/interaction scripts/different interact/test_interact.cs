@@ -1,0 +1,10 @@
+using UnityEngine;
+
+public class test_interact : MonoBehaviour, InteractableScript
+{
+    public void InteractScript()
+    {
+        Debug.Log("sphere deleted");
+        Destroy(gameObject);
+    }
+}
