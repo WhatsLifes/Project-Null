@@ -17,27 +17,29 @@ public class ElevatorButtonFixed : MonoBehaviour
 
     [Header("Interaction")]
     public float interactRange = 3f;
-    public GameObject interactUI; // optional prompt
+    public GameObject interactUI; // Optional interaction prompt
 
     [Header("Condition")]
     public bool useManagerCondition = false;
-    public bool conditionMet = false;
+    public bool conditionMet = false; // Local fallback if manager not used
 
     [Range(0f, 1f)] public float volume = 1f;
 
     private bool isChecking = false;
-    private bool hasBeenUsed = false; // 🔒 Prevent spam
+    private bool hasPlayedWrongLine = false;  // ensures wrong line only once
+    private bool hasPlayedCorrectLine = false; // ensures correct line only once
+    private bool elevatorOpened = false;      // stops interaction after success
 
     void Start()
     {
-        // Find player automatically if not assigned
+        // Auto-find player if not assigned
         if (player == null)
         {
-            var p = GameObject.FindGameObjectWithTag("Player");
+            GameObject p = GameObject.FindGameObjectWithTag("Player");
             if (p != null) player = p.transform;
         }
 
-        // Ensure we have an AudioSource
+        // Make sure we have an AudioSource
         if (audioSource == null)
         {
             audioSource = GetComponent<AudioSource>();
@@ -54,14 +56,15 @@ public class ElevatorButtonFixed : MonoBehaviour
 
     void Update()
     {
-        if (player == null || isChecking || hasBeenUsed) return; // 🧱 ignore if already used
+        if (player == null || isChecking || elevatorOpened) return;
 
         float distance = Vector3.Distance(player.position, transform.position);
 
-        // toggle interaction UI
+        // Toggle UI prompt
         if (interactUI != null)
             interactUI.SetActive(distance <= interactRange);
 
+        // Interact when in range
         if (distance <= interactRange && Input.GetKeyDown(interactKey))
             StartCoroutine(HandleButtonPress());
     }
@@ -69,37 +72,56 @@ public class ElevatorButtonFixed : MonoBehaviour
     private IEnumerator HandleButtonPress()
     {
         isChecking = true;
-        hasBeenUsed = true; // ✅ lock interaction immediately
 
         bool resolvedCondition = conditionMet;
-        if (useManagerCondition && DollPuzzleManager.Instance != null)
-            resolvedCondition = DollPuzzleManager.Instance.lastPuzzleResult;
 
-        Debug.Log("[ElevatorButtonFixed] Player pressed button. Condition = " + resolvedCondition);
+        // ✅ Use GameProgressManager instead of DollPuzzleManager
+        if (useManagerCondition && GameProgressManager.Instance != null)
+        {
+            resolvedCondition = GameProgressManager.Instance.CanOpenFinalDoor();
+            Debug.Log("[ElevatorButtonFixed] Checking GameProgressManager: " +
+                      "buttonPressed=" + GameProgressManager.Instance.buttonPressed +
+                      ", puzzleCompleted=" + GameProgressManager.Instance.puzzleCompleted +
+                      " → CanOpenFinalDoor=" + resolvedCondition);
+        }
 
+        // 🔊 Handle audio and logic
         if (!resolvedCondition)
         {
-            if (wrongLine != null)
+            // Only play wrong line the first time it happens
+            if (!hasPlayedWrongLine && wrongLine != null)
+            {
                 audioSource.PlayOneShot(wrongLine, volume);
+                hasPlayedWrongLine = true;
+            }
             else
-                Debug.LogWarning("No wrongLine assigned!");
+            {
+                Debug.Log("[ElevatorButtonFixed] Condition not met — no repeat audio.");
+            }
         }
         else
         {
-            if (correctLine != null)
+            // Only play correct line once and open doors
+            if (!hasPlayedCorrectLine && correctLine != null)
+            {
                 audioSource.PlayOneShot(correctLine, volume);
+                hasPlayedCorrectLine = true;
+            }
 
-            Debug.Log("[ElevatorButtonFixed] Waiting " + waitBeforeOpen + " seconds before opening doors...");
-            yield return new WaitForSeconds(waitBeforeOpen);
+            if (!elevatorOpened)
+            {
+                Debug.Log("[ElevatorButtonFixed] Condition met. Opening doors after " + waitBeforeOpen + " seconds...");
+                yield return new WaitForSeconds(waitBeforeOpen);
 
-            // Open both doors
-            if (leftDoor != null)
-                leftDoor.SendMessage("OpenDoor", SendMessageOptions.DontRequireReceiver);
-            if (rightDoor != null)
-                rightDoor.SendMessage("OpenDoor", SendMessageOptions.DontRequireReceiver);
+                if (leftDoor != null)
+                    leftDoor.SendMessage("OpenDoor", SendMessageOptions.DontRequireReceiver);
+                if (rightDoor != null)
+                    rightDoor.SendMessage("OpenDoor", SendMessageOptions.DontRequireReceiver);
+
+                elevatorOpened = true; // ✅ locks out further presses after success
+            }
         }
 
-        // Hide interact prompt permanently after use
         if (interactUI != null)
             interactUI.SetActive(false);
 
