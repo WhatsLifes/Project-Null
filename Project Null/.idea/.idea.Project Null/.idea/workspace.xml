@@ -5,35 +5,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1df8d1c2-9c55-4490-9770-8175c563cebb" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Assets/Scenes/interaction testing.unity" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scenes/interaction testing.unity.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/InteractableItemData.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/InteractableItemData.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/InteractableObject.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/InteractableObject.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/LookAtCamera.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/LookAtCamera.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/PlayerInteraction.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/PlayerInteraction.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/TriggerCollider.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/TriggerCollider.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/Interactor.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/Interactor.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/test_interact.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/test_interact.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/test_interact2.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/test_interact2.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/cube.asset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/cube.asset.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/cylinder.asset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/cylinder.asset.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/sphere.asset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/sphere.asset.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Project Null/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Project Null/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ArmObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ArmObject.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Stage1.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Stage1.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/interaction testing.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/interaction testing.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/FlashlightObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/FlashlightObject.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/PuzzleCheckButton.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/PuzzleCheckButton.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/InteractableItemData.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/InteractableItemData.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/InteractableObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/InteractableObject.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/PlayerInteraction.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/PlayerInteraction.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/TriggerCollider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/TriggerCollider.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/Interactor.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/Interactor.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/test_interact.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/test_interact.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/test_interact2.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/different interact/test_interact2.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/cube.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/cube.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/cylinder.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/cylinder.asset.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/sphere.asset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NewScripts/interaction scripts/items/sphere.asset.meta" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectSettings/Packages/com.unity.probuilder/Settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/Packages/com.unity.probuilder/Settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

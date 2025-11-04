@@ -1,11 +1,9 @@
 using System.Collections;
 using UnityEngine;
 
-public class PuzzleCheckButton : MonoBehaviour
+public class PuzzleCheckButton : MonoBehaviour, InteractableScript
 {
     [Header("Settings")]
-    public float interactRange = 2f;        // Distance player must be to interact
-    public KeyCode interactKey = KeyCode.E;
     public float delayBeforeCheck = 3f;     // Seconds to wait before checking
     public Transform player;                // Assign player transform in inspector
 
@@ -13,14 +11,12 @@ public class PuzzleCheckButton : MonoBehaviour
     public PuzzleFeedbackLight feedbackLight; // Assign the light script in Inspector
     public AudioSource buttonAudioSource;     // AudioSource component to play sound
     public AudioClip buttonClickSound;        // Sound clip for button press
-    public GameObject InteractUI;
     [Range(0f, 1f)] public float volume = 1f;
 
     private bool isChecking = false;
 
     void Start()
     {
-        InteractUI.SetActive(false);
         // Auto-find player if not assigned
         if (player == null)
         {
@@ -49,38 +45,20 @@ public class PuzzleCheckButton : MonoBehaviour
         }
     }
 
-    void Update()
+    public void InteractScript()
     {
         if (player == null || isChecking) return;
-
-        float distance = Vector3.Distance(player.position, transform.position);
-        if (distance <= interactRange)
-        {
-            InteractUI.SetActive(true);
-            if (Input.GetKeyDown(interactKey))
-            {
-                //  Play sound every time button is clicked
-                if (buttonClickSound != null && buttonAudioSource != null)
-                    buttonAudioSource.PlayOneShot(buttonClickSound, volume);
-
-                // Ensure all chairs are filled before allowing check
-                if (DollPuzzleManager.Instance != null && DollPuzzleManager.Instance.AreAllChairsFilled())
-                {
-                    StartCoroutine(DoPuzzleCheck());
-                    InteractUI.SetActive(false);
-                }
-                else
-                {
-                    Debug.Log("Cannot check puzzle yet: all chairs must have dolls.");
-                }
-            }
-        }
+        //  Play sound every time button is clicked
+        if (buttonClickSound != null && buttonAudioSource != null)
+            buttonAudioSource.PlayOneShot(buttonClickSound, volume);
+        // Ensure all chairs are filled before allowing check
+        if (DollPuzzleManager.Instance != null && DollPuzzleManager.Instance.AreAllChairsFilled())
+            StartCoroutine(DoPuzzleCheck());
         else
-        {
-            InteractUI.SetActive(false);
-        }
+            Debug.Log("Cannot check puzzle yet: all chairs must have dolls.");
+        
     }
-
+    
     IEnumerator DoPuzzleCheck()
     {
         isChecking = true;

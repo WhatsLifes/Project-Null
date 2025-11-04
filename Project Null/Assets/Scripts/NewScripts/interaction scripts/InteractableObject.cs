@@ -1,15 +1,14 @@
 using TMPro;
 using UnityEngine;
 
+// think of this like a struct, but anything with this must implement whats in here
 interface InteractableScript
 {
    public void InteractScript();
 }
+
 public class InteractableObject : MonoBehaviour
 {
-   [Header("Item Data")]
-   [SerializeField] private InteractableItemData itemData;
-
    [Header("UI Elements")] 
    [SerializeField] private Canvas whiteDotCanvas;  
    [SerializeField] private Canvas promptCanvas;  
@@ -18,7 +17,7 @@ public class InteractableObject : MonoBehaviour
    
    public bool IsPLayerNearby => isPLayerNearby;
 
-  
+  // turns off the prompts 
    private void Start()
    {
       SetCanvasState(whiteDotCanvas, false);
@@ -27,11 +26,13 @@ public class InteractableObject : MonoBehaviour
 
    public void InteractItem()
    {
+      // gets the object we are trying to interact with
       InteractableScript TheInteractScript = gameObject.GetComponent<InteractableScript>();
-      PlayerInteraction.instance.RemoveNearbyObject(this);
-      HidePrompt();
-      HideWhiteDot();
+      PlayerInteraction.instance.RemoveNearbyObject(this);  // take the object out of the nearby interact list
+      HidePrompt();  // hide prompt
+      HideWhiteDot();  // hide dot
 
+      // call the interact script 
       TheInteractScript.InteractScript();
    }
 
@@ -39,9 +40,6 @@ public class InteractableObject : MonoBehaviour
    {
       HideWhiteDot();
       SetCanvasState(promptCanvas, true);
-      
-      //itemNameText.text = itemData.itemName;
-      //actionText.text = itemData.interactionPrompt;
    }
 
    public void HidePrompt()
@@ -67,16 +65,12 @@ public class InteractableObject : MonoBehaviour
    public void ShowWhiteDot()
    {
       if (isPLayerNearby)
-      {
          SetCanvasState(whiteDotCanvas, true);     
-      }
    }
    void SetCanvasState(Canvas canvas, bool state)
    {
       if (canvas != null && canvas.gameObject.activeSelf != state)
-      {
          canvas.gameObject.SetActive(state);
-      }
    }
 
 }

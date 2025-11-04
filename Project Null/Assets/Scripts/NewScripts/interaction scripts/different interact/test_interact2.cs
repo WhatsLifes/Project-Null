@@ -4,7 +4,7 @@ public class test_interact2 : MonoBehaviour, InteractableScript
 {
     public void InteractScript()
     {
-        Debug.Log("suck my dick");
+        Debug.Log("cylinder deleted");
         Destroy(gameObject);
     }
 }
