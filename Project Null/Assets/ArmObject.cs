@@ -1,16 +1,30 @@
 using UnityEngine;
 
-public class ArmPickupScript : MonoBehaviour, InteractableScript
+public class ArmPickupScript : MonoBehaviour
 {
     [Header("Pickup Settings")]
     [Tooltip("Reference to the player camera version of this object (used to play animation)")]
     public GameObject playerCameraObject;
+
+    [Tooltip("Key to press for pickup")]
+    public KeyCode pickupKey = KeyCode.E;
 
     [Tooltip("Maximum distance player can be to pick up")]
     public float pickupDistance = 3f;
 
     [Tooltip("Tag used to identify the player")]
     public string playerTag = "Player";
+
+    [Header("Animation Settings")]
+    [Tooltip("Name of the bool parameter in the Animator to trigger pickup animation")]
+    public string pickupBoolName = "PickedUp";
+
+    [Header("UI Settings")]
+    [Tooltip("Show pickup prompt when near")]
+    public bool showPickupPrompt = true;
+
+    [Tooltip("Text displayed when player is in range")]
+    public string pickupPromptText = "Press E to attach arm";
 
     private Transform player;
     private bool isPlayerNear = false;
@@ -28,10 +42,19 @@ public class ArmPickupScript : MonoBehaviour, InteractableScript
         }
     }
 
-    public void InteractScript()
+    void Update()
     {
-        Pickup();
-        StartingRoomPickupManager.Instance?.ItemPickedUp(gameObject);
+        if (player == null) return;
+
+        float distance = Vector3.Distance(transform.position, player.position);
+        isPlayerNear = distance <= pickupDistance;
+
+        if (isPlayerNear && Input.GetKeyDown(pickupKey))
+        {
+            Pickup();
+            StartingRoomPickupManager.Instance?.ItemPickedUp(gameObject);
+
+        }
     }
 
     void Pickup()
@@ -54,6 +77,19 @@ public class ArmPickupScript : MonoBehaviour, InteractableScript
         gameObject.SetActive(false);
 
         Debug.Log($"{gameObject.name} picked up!");
+    }
+
+    void OnGUI()
+    {
+        if (showPickupPrompt && isPlayerNear)
+        {
+            float width = 300f;
+            float height = 30f;
+            float x = (Screen.width - width) / 2f;
+            float y = Screen.height - 100f;
+
+            GUI.Label(new Rect(x, y, width, height), pickupPromptText);
+        }
     }
 
     void OnDrawGizmosSelected()
