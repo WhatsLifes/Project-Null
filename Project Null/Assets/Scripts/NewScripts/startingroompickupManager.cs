@@ -13,6 +13,7 @@ public class StartingRoomPickupManager : MonoBehaviour
 
     private HashSet<GameObject> collectedItems = new HashSet<GameObject>();
     private bool doorOpened = false; // Ensures door only opens once
+    [SerializeField] private HUD hud;
 
     private void Awake()
     {
@@ -58,6 +59,7 @@ public class StartingRoomPickupManager : MonoBehaviour
         {
             door.OpenDoor();
             doorOpened = true;
+            hud.ShowObjective2();
             Debug.Log("All starting room items collected! Door opening!");
         }
         else

@@ -81,6 +81,7 @@ public class WakeUpSequence : MonoBehaviour
     private bool phase1Logged = false;
     private bool phase2Logged = false;
     private bool phase3Logged = false;
+    [SerializeField] private HUD hud;
 
     void Start()
     {
@@ -485,6 +486,9 @@ public class WakeUpSequence : MonoBehaviour
             if (bottomEyelid != null) bottomEyelid.gameObject.SetActive(false);
         }
         if (fadeImage != null) fadeImage.gameObject.SetActive(false);
+
+        hud.ShowHealthBar();
+        hud.ShowObjective1();
     }
 
     float EaseInCubic(float t)
