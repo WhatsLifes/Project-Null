@@ -89,8 +89,7 @@ public class MannequinEnemy : Enemy
 
             SetState(EnemyState.Chasing);
 
-            // Attack while chasing if in range and cooldown ready
-            // No vision cone check needed - if we're close enough, attack!
+            // Attack while chasing if in range and cooldown is over
             if (distance <= attackRange + attackRangeBuffer && Time.time >= lastAttackTime + attackCooldown)
             {
                 AttackPlayer();
@@ -98,7 +97,7 @@ public class MannequinEnemy : Enemy
         }
         else
         {
-            // Out of range → patrol
+            // Out of range -> patrol
             isAttacking = false;
             Patrolling();
             SetState(EnemyState.Patrolling);
@@ -131,8 +130,7 @@ public class MannequinEnemy : Enemy
         if (!agent.isOnNavMesh || player == null || THEMC == null)
             return;
 
-        // Keep moving while attacking
-        // Face the player while moving
+        // Face the player while moving + keep moving while attacking
         Vector3 dir = (player.position - transform.position).normalized;
         dir.y = 0;
 
