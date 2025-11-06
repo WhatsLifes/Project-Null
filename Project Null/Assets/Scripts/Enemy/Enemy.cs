@@ -25,8 +25,8 @@ public class Enemy : MonoBehaviour
 
     [Header("Combat")]
     public float timeBetweenAttacks = 5f;
-    private bool alreadyAttacked;
-    private Coroutine attackCooldownCoroutine;
+    protected bool alreadyAttacked;
+    protected Coroutine attackCooldownCoroutine;
 
     [Header("Detection")]
     public float sightRange = 10f;
@@ -37,7 +37,7 @@ public class Enemy : MonoBehaviour
     public bool isChasingPlayer = false;
 
     [Header("Activation")]
-    private bool isActive = false;
+    protected bool isActive = false;
     public bool canBeKilled = true;
     private bool isDead = false;
 
@@ -48,7 +48,7 @@ public class Enemy : MonoBehaviour
     public AudioClip hitSound;
     [Range(0f, 1f)] public float volume = 1f;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         anim = GetComponentInChildren<Animator>();
 
@@ -222,7 +222,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void Patrolling()
+    protected void Patrolling()
     {
         if (!agent.isOnNavMesh) return;
 
@@ -281,7 +281,7 @@ public class Enemy : MonoBehaviour
         walkPointSet = false;
     }
 
-    private void ChasePlayer()
+    protected virtual void ChasePlayer()
     {
         if (!agent.isOnNavMesh || player == null) return;
 
@@ -309,7 +309,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void AttackPlayer()
+    public virtual void AttackPlayer()
     {
         if (!agent.isOnNavMesh || player == null || THEMC == null) return;
 
@@ -353,7 +353,7 @@ public class Enemy : MonoBehaviour
 
     }
 
-    IEnumerator AttackCooldown()
+    protected IEnumerator AttackCooldown()
     {
         yield return new WaitForSeconds(timeBetweenAttacks);
         alreadyAttacked = false;
