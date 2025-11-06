@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class ElevatorButtonFixed : MonoBehaviour
+public class ElevatorButtonFixed : MonoBehaviour, InteractableScript
 {
     [Header("Button Settings")]
     public float waitBeforeOpen = 15f;
@@ -54,19 +54,11 @@ public class ElevatorButtonFixed : MonoBehaviour
             interactUI.SetActive(false);
     }
 
-    void Update()
+    public void InteractScript()
     {
         if (player == null || isChecking || elevatorOpened) return;
-
-        float distance = Vector3.Distance(player.position, transform.position);
-
-        // Toggle UI prompt
-        if (interactUI != null)
-            interactUI.SetActive(distance <= interactRange);
-
-        // Interact when in range
-        if (distance <= interactRange && Input.GetKeyDown(interactKey))
-            StartCoroutine(HandleButtonPress());
+        
+        StartCoroutine(HandleButtonPress());
     }
 
     private IEnumerator HandleButtonPress()

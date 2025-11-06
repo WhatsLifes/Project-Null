@@ -152,19 +152,6 @@ public class FlashlightToggle : MonoBehaviour
         isPickedUp = true;
     }
 
-    // Optional: Display battery level in Inspector during play mode
-    void OnGUI()
-    {
-        if (!isPickedUp)
-        {
-            GUI.Label(new Rect(10, 10, 200, 20), "Find the flashlight...");
-            return;
-        }
 
-        GUI.Label(new Rect(10, 10, 200, 20), $"Battery: {currentBattery:F1} / {maxBattery:F1}");
-        if (currentBattery < flickerThreshold && isOn)
-        {
-            GUI.Label(new Rect(10, 30, 200, 20), "⚠ Low Battery - Flickering");
-        }
-    }
-}
+} // Optional: Display battery level in Inspector during play mode
+   

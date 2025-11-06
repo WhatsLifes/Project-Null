@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class StartingRoomPickupManager : MonoBehaviour
@@ -14,6 +15,9 @@ public class StartingRoomPickupManager : MonoBehaviour
     private HashSet<GameObject> collectedItems = new HashSet<GameObject>();
     private bool doorOpened = false; // Ensures door only opens once
     [SerializeField] private HUD hud;
+
+    [Header("Door Delay Settings")]
+    public float doorOpenDelay = 5f; // Seconds to wait before opening after last item
 
     private void Awake()
     {
@@ -49,8 +53,16 @@ public class StartingRoomPickupManager : MonoBehaviour
         // Check if all required items are collected
         if (collectedItems.Count >= pickups.Count)
         {
-            OpenDoor();
+            StartCoroutine(OpenDoorAfterDelay());
         }
+    }
+
+    private IEnumerator OpenDoorAfterDelay()
+    {
+        Debug.Log($"All starting room items collected! Waiting {doorOpenDelay} seconds before opening the door...");
+        yield return new WaitForSeconds(doorOpenDelay);
+
+        OpenDoor();
     }
 
     private void OpenDoor()

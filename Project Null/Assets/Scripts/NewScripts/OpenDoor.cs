@@ -1,13 +1,18 @@
 using UnityEngine;
+using System.Collections; // Needed for IEnumerator and WaitForSeconds
 
-public class DoorButton : MonoBehaviour
+public class DoorButton : MonoBehaviour, InteractableScript
 {
     [Header("Reference to Door Pivot")]
     public DoorController door; // Drag DoorPivot here
+    public DoorController door2;
 
     [Header("Interaction Settings")]
     public float interactDistance = 3f; // Player must be this close
     public KeyCode interactKey = KeyCode.E;
+
+    [Header("Delay Settings")]
+    public float openDelay = 1.5f; // Time in seconds before the doors open
 
     private Transform player;
 
@@ -16,18 +21,25 @@ public class DoorButton : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
     }
 
-    void Update()
+    public void InteractScript()
     {
         if (player == null || door == null) return;
 
-        float distance = Vector3.Distance(player.position, transform.position);
+        // Start the delayed opening
+        StartCoroutine(OpenDoorsWithDelay());
+    }
 
-        if (distance <= interactDistance && Input.GetKeyDown(interactKey))
-        {
-            door.OpenDoor(); // Rotate to 180°
-            Debug.Log("Button pressed - door opening!");
-            GameProgressManager.Instance.buttonPressed = true;
-            Debug.Log("Progress updated: buttonPressed = true");
-        }
+    private IEnumerator OpenDoorsWithDelay()
+    {
+        Debug.Log("Button pressed - waiting before opening doors...");
+        yield return new WaitForSeconds(openDelay); // Wait the set amount of time
+
+        // Open both doors
+        door.OpenDoor();
+        door2.OpenDoor();
+        Debug.Log("Doors are now opening!");
+
+        GameProgressManager.Instance.buttonPressed = true;
+        Debug.Log("Progress updated: buttonPressed = true");
     }
 }

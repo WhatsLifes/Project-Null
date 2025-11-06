@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Drawing;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,9 +12,14 @@ public class HUD : MonoBehaviour
     [SerializeField] private CanvasGroup healthGroup;
 
     [Header("Objectives Display")]
-    [SerializeField] private TMP_Text objectiveLabel;  // NEW: The "OBJECTIVE:" text
-    [SerializeField] private TMP_Text objectiveText;   // The actual objective
+    [SerializeField] private TMP_Text objectiveLabel;
+    [SerializeField] private TMP_Text objectiveText;
     [SerializeField] private CanvasGroup objectiveGroup;
+
+    [Header("Battery Display")]
+    [SerializeField] private TMP_Text batteryText;
+    [SerializeField] private CanvasGroup batteryGroup;
+    [SerializeField] private FlashlightToggle flashlightToggle;
 
     [Header("Animation Settings")]
     [SerializeField] private float fadeInDuration = 0.5f;
@@ -46,6 +50,17 @@ public class HUD : MonoBehaviour
             objectiveGroup.alpha = 0f;
             objectiveGroup.gameObject.SetActive(false);
         }
+
+        if (batteryGroup != null)
+        {
+            batteryGroup.alpha = 0f;
+            batteryGroup.gameObject.SetActive(false);
+        }
+    }
+
+    private void Update()
+    {
+        HandleBatteryDisplay();
     }
 
     private void UpdateHealthDisplay(int current, int max)
@@ -74,37 +89,14 @@ public class HUD : MonoBehaviour
             StartCoroutine(FadeOutCanvasGroup(healthGroup));
     }
 
-    /// <summary>
-    /// Call this from your cutscene script to show the first objective
-    /// </summary>
-    public void ShowObjective1()
-    {
-        ShowObjective("Look around the room");  // CHANGED: No "Objective:" prefix
-    }
+    public void ShowObjective1() => ShowObjective("Look around the room");
+    public void ShowObjective2() => ShowObjective("Explore the laboratory");
+    public void ShowObjective3() => ShowObjective("Investigate the Doll Room");
 
-    /// <summary>
-    /// Call this when the player triggers the second objective
-    /// </summary>
-    public void ShowObjective2()
-    {
-        ShowObjective("Explore the laboratory");  // CHANGED: No "Objective:" prefix
-    }
-
-    /// <summary>
-    /// Call this when the player triggers the third objective
-    /// </summary>
-    public void ShowObjective3()
-    {
-        ShowObjective("Investigate the Doll Room");  // CHANGED: No "Objective:" prefix
-    }
-
-    /// <summary>
-    /// Generic function to show any objective text
-    /// </summary>
     public void ShowObjective(string objectiveMessage)
     {
         if (objectiveText != null)
-            objectiveText.text = objectiveMessage;  // Just the objective, no "Objective:" prefix
+            objectiveText.text = objectiveMessage;
 
         if (objectiveGroup != null)
         {
@@ -113,22 +105,44 @@ public class HUD : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Call this to hide the objective display
-    /// </summary>
     public void HideObjective()
     {
         if (objectiveGroup != null)
             StartCoroutine(FadeOutCanvasGroup(objectiveGroup));
     }
 
-    /// <summary>
-    /// Call this to update the objective text without fading
-    /// </summary>
     public void UpdateObjective(string objectiveMessage)
     {
         if (objectiveText != null)
             objectiveText.text = objectiveMessage;
+    }
+
+    // ===== BATTERY DISPLAY HANDLING =====
+
+    private void HandleBatteryDisplay()
+    {
+        if (flashlightToggle == null || batteryText == null || batteryGroup == null)
+            return;
+
+        // Only show battery display if flashlight is picked up
+        if (flashlightToggle.isPickedUp)
+        {
+            if (!batteryGroup.gameObject.activeSelf)
+            {
+                batteryGroup.gameObject.SetActive(true);
+                StartCoroutine(FadeInCanvasGroup(batteryGroup));
+            }
+
+            // Update the text to show current battery percentage
+            float percent = Mathf.Clamp01(flashlightToggle.currentBattery / flashlightToggle.maxBattery) * 100f;
+            batteryText.text = $"Battery: {percent:F0}%";
+        }
+        else
+        {
+            // Hide the battery display if flashlight not yet picked up
+            if (batteryGroup.gameObject.activeSelf)
+                StartCoroutine(FadeOutCanvasGroup(batteryGroup));
+        }
     }
 
     // ===== HELPER FUNCTIONS =====
