@@ -10,17 +10,18 @@ public class Sanity : MonoBehaviour
 
     [Header("Effects")]
     public Camera playerCamera;
-    public AudioSource ringingAudio;
-    public AudioSource[] randomSanitySounds;
+    public AudioClip ringingClip;
+    public AudioClip[] randomSanityClips;
     public Light[] lightsToFlicker;
 
-    [Header("Flashlight Reference")]
-    public FlashlightToggle flashlightToggle;
 
     private float passiveDrainTimer = 0f;
     private float[] flickerTimers;
     private bool[] lightStates;
     private float randomSoundTimer = 0f;
+    private float ringingTimer = 0f;
+    private AudioSource ringingAudio;
+    private AudioSource sanityAudioSource;
 
     private void Start()
     {
@@ -29,14 +30,25 @@ public class Sanity : MonoBehaviour
         flickerTimers = new float[lightsToFlicker.Length];
         lightStates = new bool[lightsToFlicker.Length];
 
-        if (flashlightToggle == null)
-            flashlightToggle = FindObjectOfType<FlashlightToggle>();
-
         for(int i = 0; i < lightsToFlicker.Length; i++)
         {
             flickerTimers[i] = Random.Range(0.1f, 1f);
             lightStates[i] = true;
         }
+
+        ringingAudio = gameObject.AddComponent<AudioSource>();
+        ringingAudio.spatialBlend = 0f;
+        ringingAudio.loop = false;
+        ringingAudio.playOnAwake = false;
+        ringingAudio.volume = 0.2f;
+
+        if (ringingClip != null)
+            ringingAudio.clip = ringingClip;
+
+        sanityAudioSource = gameObject.AddComponent<AudioSource>();
+        sanityAudioSource.playOnAwake = false;
+        sanityAudioSource.spatialBlend = 0f;
+        sanityAudioSource.loop = false;
 
     }
 
@@ -73,32 +85,47 @@ public class Sanity : MonoBehaviour
         if (playerCamera != null)
             playerCamera.fieldOfView = Mathf.Lerp(40f, 60f, sanityPercent);
 
-        if (ringingAudio != null)
+        if (ringingAudio != null && ringingClip != null)
         {
-            ringingAudio.volume = Mathf.Lerp(0f, 1f, 1f - sanityPercent);
-            if (!ringingAudio.isPlaying)
-                ringingAudio.Play();
-        }
-            
+            ringingTimer -= Time.deltaTime;
+            if (sanityPercent < 0.5f && !ringingAudio.isPlaying && ringingTimer <= 0f)
+            {
+                float volume = Mathf.Lerp(0.1f, 0.8f, 1f - sanityPercent);
+                ringingAudio.volume = volume;
+                ringingAudio.panStereo = Random.Range(-0.5f, 0.5f);
 
-        if (sanityPercent <= 0.5f && Random.value < 0.01f)
-            Debug.Log("You hear footsteps around you...");
+                ringingAudio.Play();
+
+                ringingTimer = Random.Range(
+                    Mathf.Lerp(30f, 8f, 1f - sanityPercent),
+                    Mathf.Lerp(60f, 15f, 1f - sanityPercent)
+                );
+            }
+        }
     }
 
     private void HandleRandomSanitySounds()
     {
         float sanityPercent = currentSanity / maxSanity;
-        if (sanityPercent > 0.5f || randomSanitySounds.Length == 0)
+        if (sanityPercent > 0.5f || randomSanityClips == null || randomSanityClips.Length == 0)
             return;
 
         randomSoundTimer -= Time.deltaTime;
         if (randomSoundTimer <= 0f)
         {
-            int index = Random.Range(0, randomSanitySounds.Length);
-            AudioSource chosen = randomSanitySounds[index];
+            int index = Random.Range(0, randomSanityClips.Length);
+            AudioClip chosenClip = randomSanityClips[index];
 
-            if (!chosen.isPlaying)
-                chosen.Play();
+            if (chosenClip == null || sanityAudioSource == null)
+                return;
+
+            if (!sanityAudioSource.isPlaying)
+            {
+                sanityAudioSource.clip = chosenClip;
+                sanityAudioSource.volume = Mathf.Lerp(0.2f, 0.6f, 1f - sanityPercent);
+                sanityAudioSource.panStereo = Random.Range(-1f, 1f);
+                sanityAudioSource.Play();
+            }
 
             randomSoundTimer = Random.Range(5f, Mathf.Lerp(20f, 5f, 1f - sanityPercent));
         }
@@ -108,20 +135,15 @@ public class Sanity : MonoBehaviour
     {
         float sanityPercent = currentSanity / maxSanity;
 
-        if (sanityPercent > 0.5f)
+        if(sanityPercent > 0.5f)
         {
-            foreach (Light light in lightsToFlicker)
+            foreach(Light light in lightsToFlicker)
             {
                 if (light == null) continue;
-
-                if (flashlightToggle != null && light == flashlightToggle.flashlight)
-                    continue;
-
-                light.enabled = true;
+                light.intensity = 1f;
             }
             return;
         }
-
         float minInterval = Mathf.Lerp(1.5f, 0.05f, 1f - sanityPercent);
         float maxInterval = Mathf.Lerp(3f, 0.3f, 1f - sanityPercent);
 
@@ -130,17 +152,11 @@ public class Sanity : MonoBehaviour
             Light light = lightsToFlicker[i];
             if (light == null) continue;
 
-            if (flashlightToggle != null && light == flashlightToggle.flashlight)
+            flickerTimers[i] -= Time.deltaTime;
+            if (flickerTimers[i] <= 0f)
             {
-                if (!flashlightToggle.flashlight.enabled)
-                    continue;
-
-                flickerTimers[i] -= Time.deltaTime;
-                if (flickerTimers[i] <= 0f)
-                {
-                    light.intensity = Random.Range(0.1f, 1f);
-                    flickerTimers[i] = Random.Range(minInterval, maxInterval);
-                }
+                light.intensity = Random.Range(0.01f, 1f);
+                flickerTimers[i] = Random.Range(minInterval, maxInterval);
             }
         }
     }
