@@ -29,6 +29,7 @@ public class ElevatorButtonFixed : MonoBehaviour, InteractableScript
     private bool hasPlayedWrongLine = false;  // ensures wrong line only once
     private bool hasPlayedCorrectLine = false; // ensures correct line only once
     private bool elevatorOpened = false;      // stops interaction after success
+    public bool ElevatorOpened => elevatorOpened;
 
     void Start()
     {
