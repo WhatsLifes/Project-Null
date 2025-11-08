@@ -7,6 +7,7 @@ public class GameProgressManager : MonoBehaviour
     [Header("Global Conditions")]
     public bool buttonPressed = false;
     public bool puzzleCompleted = false;
+    public bool dadPiecePickedUp = false;
 
     void Awake()
     {
