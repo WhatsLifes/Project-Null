@@ -7,6 +7,13 @@ public class DoorButton : MonoBehaviour, InteractableScript
     public DoorController door; // Drag DoorPivot here
     public DoorController door2;
 
+    [Header("Light Settings")]
+    public Light[] lightsToTurnOff; // Drag all lights you want to turn off here
+
+    [Header("Mannequin Settings")]
+    public GameObject[] mannequinsToDestroy; // Drag mannequin GameObjects here
+    public float mannequinDestroyDelay = 0.2f; // Time after lights turn off before mannequins disappear
+
     [Header("Interaction Settings")]
     public float interactDistance = 3f; // Player must be this close
     public KeyCode interactKey = KeyCode.E;
@@ -32,7 +39,16 @@ public class DoorButton : MonoBehaviour, InteractableScript
     private IEnumerator OpenDoorsWithDelay()
     {
         Debug.Log("Button pressed - waiting before opening doors...");
-        yield return new WaitForSeconds(openDelay); // Wait the set amount of time
+
+        // Turn off all lights
+        TurnOffLights();
+
+        // Wait a brief moment in darkness, then destroy mannequins
+        yield return new WaitForSeconds(mannequinDestroyDelay);
+        DestroyMannequins();
+
+        // Continue with the rest of the delay
+        yield return new WaitForSeconds(openDelay - mannequinDestroyDelay);
 
         // Open both doors
         door.OpenDoor();
@@ -41,5 +57,55 @@ public class DoorButton : MonoBehaviour, InteractableScript
 
         GameProgressManager.Instance.buttonPressed = true;
         Debug.Log("Progress updated: buttonPressed = true");
+
+        // Wait for doors to finish opening (get the duration from door controller if available)
+        // Assuming doors take some time to open - adjust this value based on your door animation
+        float doorOpenDuration = 0f; // Change this to match your door's opening time
+        yield return new WaitForSeconds(doorOpenDuration);
+
+        // Turn lights back on
+        TurnOnLights();
+        Debug.Log("Lights turned back on!");
+    }
+
+    private void TurnOffLights()
+    {
+        if (lightsToTurnOff == null || lightsToTurnOff.Length == 0) return;
+
+        foreach (Light light in lightsToTurnOff)
+        {
+            if (light != null)
+            {
+                light.enabled = false;
+            }
+        }
+        Debug.Log($"Turned off {lightsToTurnOff.Length} lights");
+    }
+
+    private void TurnOnLights()
+    {
+        if (lightsToTurnOff == null || lightsToTurnOff.Length == 0) return;
+
+        foreach (Light light in lightsToTurnOff)
+        {
+            if (light != null)
+            {
+                light.enabled = true;
+            }
+        }
+    }
+
+    private void DestroyMannequins()
+    {
+        if (mannequinsToDestroy == null || mannequinsToDestroy.Length == 0) return;
+
+        foreach (GameObject mannequin in mannequinsToDestroy)
+        {
+            if (mannequin != null)
+            {
+                Destroy(mannequin);
+            }
+        }
+        Debug.Log($"Destroyed {mannequinsToDestroy.Length} mannequins in the darkness!");
     }
 }
