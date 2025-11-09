@@ -26,6 +26,7 @@ public class PickupPicture : MonoBehaviour, InteractableScript
     {
         // Set the bool to true
         dadPiecePickedUp = true;
+        StartingRoomPickupManager.Instance?.ItemPickedUp(gameObject);
         Debug.Log("Dad picture piece picked up! Bool set to true");
 
         // Show the picture on screen

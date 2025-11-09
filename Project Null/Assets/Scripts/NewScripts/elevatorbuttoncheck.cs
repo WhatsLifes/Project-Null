@@ -69,13 +69,11 @@ public class ElevatorButtonFixed : MonoBehaviour, InteractableScript
         bool resolvedCondition = conditionMet;
 
         // ✅ Use GameProgressManager instead of DollPuzzleManager
-        if (useManagerCondition && GameProgressManager.Instance != null)
+        if (useManagerCondition)
         {
-            resolvedCondition = GameProgressManager.Instance.CanOpenFinalDoor();
-            Debug.Log("[ElevatorButtonFixed] Checking GameProgressManager: " +
-                      "buttonPressed=" + GameProgressManager.Instance.buttonPressed +
-                      ", puzzleCompleted=" + GameProgressManager.Instance.puzzleCompleted +
-                      " → CanOpenFinalDoor=" + resolvedCondition);
+            resolvedCondition = PickupDaughterPicture.daughterPiecePickedUp;
+            Debug.Log("[ElevatorButtonFixed] Checking daughter piece: " +
+                      "daughterPiecePickedUp=" + PickupDaughterPicture.daughterPiecePickedUp);
         }
 
         // 🔊 Handle audio and logic

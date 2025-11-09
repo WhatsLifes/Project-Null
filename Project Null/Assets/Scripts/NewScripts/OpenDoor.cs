@@ -4,8 +4,8 @@ using System.Collections; // Needed for IEnumerator and WaitForSeconds
 public class DoorButton : MonoBehaviour, InteractableScript
 {
     [Header("Reference to Door Pivot")]
-    public DoorController door; // Drag DoorPivot here
-    public DoorController door2;
+    public DoorController mannequinObsDoor; // Drag DoorPivot here
+    public DoorController mannequinDoor;
 
     [Header("Light Settings")]
     public Light[] lightsToTurnOff; // Drag all lights you want to turn off here
@@ -30,7 +30,7 @@ public class DoorButton : MonoBehaviour, InteractableScript
 
     public void InteractScript()
     {
-        if (player == null || door == null) return;
+        if (player == null || mannequinObsDoor == null) return;
 
         // Start the delayed opening
         StartCoroutine(OpenDoorsWithDelay());
@@ -46,13 +46,13 @@ public class DoorButton : MonoBehaviour, InteractableScript
         // Wait a brief moment in darkness, then destroy mannequins
         yield return new WaitForSeconds(mannequinDestroyDelay);
         DestroyMannequins();
+        mannequinDoor.OpenDoor();
 
         // Continue with the rest of the delay
         yield return new WaitForSeconds(openDelay - mannequinDestroyDelay);
 
         // Open both doors
-        door.OpenDoor();
-        door2.OpenDoor();
+        mannequinObsDoor.OpenDoor();
         Debug.Log("Doors are now opening!");
 
         GameProgressManager.Instance.buttonPressed = true;
