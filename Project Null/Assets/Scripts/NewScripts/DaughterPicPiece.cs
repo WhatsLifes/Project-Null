@@ -10,6 +10,9 @@ public class PickupDaughterPicture : MonoBehaviour, InteractableScript
     [Header("Game State")]
     public static bool daughterPiecePickedUp = false;
 
+    [Header("ElevatorButton")]
+    [SerializeField] private ElevatorButtonFixed elevatorButton;
+
     private Image pictureImage;
     private bool isDisplaying = false;
 
@@ -41,6 +44,7 @@ public class PickupDaughterPicture : MonoBehaviour, InteractableScript
     {
         // Set the bool to true
         daughterPiecePickedUp = true;
+        elevatorButton.conditionMet = true;
         Debug.Log("Daughter picture piece picked up! Bool set to true");
 
         // Show the picture on screen
