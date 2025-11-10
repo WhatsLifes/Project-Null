@@ -7,6 +7,7 @@ public class MannequinEnemy : Enemy
     [Header("Vision Settings")]
     public float attackConeAngle = 90f;
     public float sightRayDistance = 12f;
+    public float eyeHeight = 1.5f; // ADDED: Adjustable raycast height
     public bool showDebugGizmos = true;
 
     [Header("Combat Settings")]
@@ -73,39 +74,42 @@ public class MannequinEnemy : Enemy
 
         float distance = Vector3.Distance(transform.position, player.position);
 
-        // If not hostile yet, just patrol and check for player
+        // If not hostile yet, patrol and check for player in vision cone
         if (!isActive)
         {
             Patrolling();
 
-            // Check if player enters vision cone
-            if (CanSeePlayer())
+            // Use cone vision - player must be in cone AND within sight range
+            if (distance <= sightRange && CanSeePlayer())
             {
+                Debug.Log($"[{gameObject.name}] Player spotted in vision cone - ACTIVATING!");
                 ActivateMannequin();
             }
             return;
         }
 
-        // Check if player is within sight using cone detection
-        if (CanSeePlayer() && distance <= sightRange)
+        // Hostile - use cone vision for tracking
+        bool canSeePlayer = CanSeePlayer() && distance <= sightRange;
+
+        if (canSeePlayer)
         {
-            // Player spotted in cone - chase them
+            // Player visible in cone
             if (distance <= attackRange + attackDistanceBuffer)
             {
-                // Stop and attack
+                // Attack
                 SetState(EnemyState.Attacking);
                 AttackPlayer();
             }
             else
             {
-                // Chase player
+                // Chase
                 SetState(EnemyState.Chasing);
                 ChasePlayer();
             }
         }
         else
         {
-            // Player not in sight - patrol
+            // Lost sight of player - return to patrol
             isAttacking = false;
             SetState(EnemyState.Patrolling);
             Patrolling();
@@ -187,19 +191,45 @@ public class MannequinEnemy : Enemy
         Vector3 dirToPlayer = (player.position - transform.position).normalized;
         float angle = Vector3.Angle(transform.forward, dirToPlayer);
 
-        // Check if player is within the 90-degree cone
-        if (angle > attackConeAngle / 2f) return false;
-
-        // Raycast to check line of sight
-        Vector3 eyePos = transform.position + Vector3.up * (1.0f * transform.lossyScale.y);
-        if (Physics.Raycast(eyePos, dirToPlayer, out RaycastHit hit, sightRayDistance))
+        // Check if player is within the cone angle
+        if (angle > attackConeAngle / 2f)
         {
-#if UNITY_EDITOR
-            Debug.DrawRay(eyePos, dirToPlayer * sightRayDistance, hit.collider.CompareTag("Player") ? Color.green : Color.red);
-#endif
-            return hit.collider.CompareTag("Player");
+            return false;
         }
 
+        // FIXED RAYCAST - Use adjustable eyeHeight
+        Vector3 eyePos = transform.position + Vector3.up * eyeHeight; // UPDATED
+        Vector3 targetPos = player.position + Vector3.up * 1.0f; // Aim at player's center, not feet
+
+        Vector3 directionToTarget = (targetPos - eyePos).normalized;
+        float distanceToPlayer = Vector3.Distance(eyePos, targetPos);
+
+        // Use layerMask to ignore the Enemy layer
+        int layerMask = ~LayerMask.GetMask("Enemy");
+
+        // Raycast from eye position to player
+        if (Physics.Raycast(eyePos, directionToTarget, out RaycastHit hit, sightRayDistance, layerMask))
+        {
+#if UNITY_EDITOR
+            // Visual debug - green if hit player, red if hit something else
+            Debug.DrawRay(eyePos, directionToTarget * hit.distance,
+                hit.collider.CompareTag("Player") ? Color.green : Color.red, 0.1f);
+#endif
+
+            // Check if we hit the player
+            if (hit.collider.CompareTag("Player"))
+            {
+                return true;
+            }
+            else
+            {
+                // Hit something else (wall, obstacle) - player is hidden
+                Debug.DrawRay(eyePos, directionToTarget * hit.distance, Color.yellow, 0.1f);
+                return false;
+            }
+        }
+
+        // Raycast didn't hit anything
         return false;
     }
 
@@ -336,23 +366,25 @@ public class MannequinEnemy : Enemy
         }
     }
 
-    /*private void OnDrawGizmosSelected()
+    private void OnDrawGizmosSelected()
     {
         if (!showDebugGizmos) return;
 
-        // Forward direction
+        // Forward direction - UPDATED to use eyeHeight
         Gizmos.color = Color.cyan;
-        Gizmos.DrawLine(transform.position, transform.position + transform.forward * sightRayDistance);
+        Gizmos.DrawLine(transform.position + Vector3.up * eyeHeight,
+                        transform.position + Vector3.up * eyeHeight + transform.forward * sightRayDistance);
 
-        // Vision cone (90 degrees)
+        // Vision cone - UPDATED to use eyeHeight
         Gizmos.color = Color.yellow;
+        Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
         Vector3 right = Quaternion.Euler(0, attackConeAngle / 2f, 0) * transform.forward;
         Vector3 left = Quaternion.Euler(0, -attackConeAngle / 2f, 0) * transform.forward;
-        Gizmos.DrawLine(transform.position, transform.position + right * sightRayDistance);
-        Gizmos.DrawLine(transform.position, transform.position + left * sightRayDistance);
+        Gizmos.DrawLine(eyePos, eyePos + right * sightRayDistance);
+        Gizmos.DrawLine(eyePos, eyePos + left * sightRayDistance);
 
         // Attack range
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange + attackDistanceBuffer);
-    } */
+    }
 }
