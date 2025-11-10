@@ -12,6 +12,7 @@ public class DoorButton : MonoBehaviour, InteractableScript
 
     [Header("Mannequin Settings")]
     public GameObject[] mannequinsToDestroy; // Drag mannequin GameObjects here
+    public GameObject[] mannequinsToAppear; // Drag mannequins that will appear after lights go out
     public float mannequinDestroyDelay = 0.2f; // Time after lights turn off before mannequins disappear
 
     [Header("Interaction Settings")]
@@ -26,6 +27,9 @@ public class DoorButton : MonoBehaviour, InteractableScript
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        // Hide all mannequins that will appear later
+        HideMannequinsToAppear();
     }
 
     public void InteractScript()
@@ -43,9 +47,10 @@ public class DoorButton : MonoBehaviour, InteractableScript
         // Turn off all lights
         TurnOffLights();
 
-        // Wait a brief moment in darkness, then destroy mannequins
+        // Wait a brief moment in darkness, then swap mannequins
         yield return new WaitForSeconds(mannequinDestroyDelay);
         DestroyMannequins();
+        ShowMannequinsToAppear(); // Make new mannequins appear
         mannequinDoor.OpenDoor();
 
         // Continue with the rest of the delay
@@ -107,5 +112,33 @@ public class DoorButton : MonoBehaviour, InteractableScript
             }
         }
         Debug.Log($"Destroyed {mannequinsToDestroy.Length} mannequins in the darkness!");
+    }
+
+    private void HideMannequinsToAppear()
+    {
+        if (mannequinsToAppear == null || mannequinsToAppear.Length == 0) return;
+
+        foreach (GameObject mannequin in mannequinsToAppear)
+        {
+            if (mannequin != null)
+            {
+                mannequin.SetActive(false);
+            }
+        }
+        Debug.Log($"Hid {mannequinsToAppear.Length} mannequins at start");
+    }
+
+    private void ShowMannequinsToAppear()
+    {
+        if (mannequinsToAppear == null || mannequinsToAppear.Length == 0) return;
+
+        foreach (GameObject mannequin in mannequinsToAppear)
+        {
+            if (mannequin != null)
+            {
+                mannequin.SetActive(true);
+            }
+        }
+        Debug.Log($"Showed {mannequinsToAppear.Length} new mannequins - they moved in the darkness!");
     }
 }
