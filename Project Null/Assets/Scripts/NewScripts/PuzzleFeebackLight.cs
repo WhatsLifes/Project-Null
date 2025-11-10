@@ -10,11 +10,11 @@ public class PuzzleFeedbackLight : MonoBehaviour
     [Tooltip("How bright the light gets during each flash")]
     public float maxIntensity = 3f;
 
-    [Tooltip("How fast the light fades in/out (higher = faster)")]
-    public float fadeSpeed = 25f;
+    [Tooltip("Duration of fade in/out in seconds")]
+    public float fadeDuration = 0.2f;
 
     [Tooltip("Small delay between each blink")]
-    public float offDelay = 0.05f;
+    public float offDelay = 0.1f;
 
     [Tooltip("Color when puzzle is correct")]
     public Color correctColor = Color.green;
@@ -23,7 +23,7 @@ public class PuzzleFeedbackLight : MonoBehaviour
     public Color incorrectColor = Color.red;
 
     [Header("Optional Sound")]
-    public AudioSource audioSource;        // Optional: assign a source in Inspector
+    public AudioSource audioSource;
     public AudioClip correctSound;
     public AudioClip incorrectSound;
 
@@ -39,7 +39,7 @@ public class PuzzleFeedbackLight : MonoBehaviour
         }
         else
         {
-            _light.enabled = false;
+            _light.intensity = 0f;
         }
     }
 
@@ -55,6 +55,8 @@ public class PuzzleFeedbackLight : MonoBehaviour
 
     private IEnumerator FlashRoutine(bool correct)
     {
+        Debug.Log($"Starting flash - Correct: {correct}, Color: {(correct ? "Green" : "Red")}");
+
         _light.color = correct ? correctColor : incorrectColor;
 
         // Optional audio feedback
@@ -67,24 +69,36 @@ public class PuzzleFeedbackLight : MonoBehaviour
 
         for (int i = 0; i < blinkCount; i++)
         {
-            _light.enabled = true;
+            Debug.Log($"Blink {i + 1}/{blinkCount}");
 
             // Fade in
-            for (float t = 0; t < 1f; t += Time.deltaTime * fadeSpeed)
+            float elapsed = 0f;
+            while (elapsed < fadeDuration)
             {
+                elapsed += Time.deltaTime;
+                float t = elapsed / fadeDuration;
                 _light.intensity = Mathf.Lerp(0f, maxIntensity, t);
                 yield return null;
             }
+            _light.intensity = maxIntensity; // Ensure we hit max
+            Debug.Log($"Fade in complete - Intensity: {_light.intensity}");
 
             // Fade out
-            for (float t = 0; t < 1f; t += Time.deltaTime * fadeSpeed)
+            elapsed = 0f;
+            while (elapsed < fadeDuration)
             {
+                elapsed += Time.deltaTime;
+                float t = elapsed / fadeDuration;
                 _light.intensity = Mathf.Lerp(maxIntensity, 0f, t);
                 yield return null;
             }
+            _light.intensity = 0f; // Ensure we hit 0
+            Debug.Log($"Fade out complete - Intensity: {_light.intensity}");
 
-            _light.enabled = false;
-            yield return new WaitForSeconds(offDelay);
+            if (i < blinkCount - 1)
+                yield return new WaitForSeconds(offDelay);
         }
+
+        Debug.Log("Flash routine complete");
     }
 }

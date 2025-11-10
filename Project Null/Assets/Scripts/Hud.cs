@@ -20,7 +20,12 @@ public class HUD : MonoBehaviour
     [SerializeField] private TMP_Text batteryText;
     [SerializeField] private CanvasGroup batteryGroup;
     [SerializeField] private FlashlightToggle flashlightToggle;
-
+    
+    [Header("Inventory Display")]
+    [SerializeField] private Image syringeImage;
+    [SerializeField] private CanvasGroup inventoryGroup;
+    [SerializeField] private Inventory inventory;
+    
     [Header("Animation Settings")]
     [SerializeField] private float fadeInDuration = 0.5f;
 
@@ -56,11 +61,18 @@ public class HUD : MonoBehaviour
             batteryGroup.alpha = 0f;
             batteryGroup.gameObject.SetActive(false);
         }
+        
+        if (inventoryGroup != null)
+        {
+            inventoryGroup.alpha = 0f;
+            inventoryGroup.gameObject.SetActive(false);
+        }
     }
 
     private void Update()
     {
         HandleBatteryDisplay();
+        HandleInventoryDisplay();
     }
 
     private void UpdateHealthDisplay(int current, int max)
@@ -145,6 +157,27 @@ public class HUD : MonoBehaviour
         }
     }
 
+    // =====    INVENTORY DISPLAY      =====
+    //       basically syringe for now
+    private void HandleInventoryDisplay()
+    {
+        if (inventory == null || inventoryGroup == null || syringeImage == null) return;
+
+        if (inventory.holdingSyringe)
+        {
+            if (!inventoryGroup.gameObject.activeSelf)
+            {
+                inventoryGroup.gameObject.SetActive(true);
+                StartCoroutine(FadeInCanvasGroup(inventoryGroup));
+            }
+        }
+        else
+        {
+            if (inventoryGroup.gameObject.activeSelf) 
+                StartCoroutine(FadeOutCanvasGroup(inventoryGroup));
+        }
+    }
+    
     // ===== HELPER FUNCTIONS =====
 
     private IEnumerator FadeInCanvasGroup(CanvasGroup group)

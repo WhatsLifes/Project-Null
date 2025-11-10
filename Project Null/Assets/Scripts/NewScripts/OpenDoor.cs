@@ -4,8 +4,16 @@ using System.Collections; // Needed for IEnumerator and WaitForSeconds
 public class DoorButton : MonoBehaviour, InteractableScript
 {
     [Header("Reference to Door Pivot")]
-    public DoorController door; // Drag DoorPivot here
-    public DoorController door2;
+    public DoorController mannequinObsDoor; // Drag DoorPivot here
+    public DoorController mannequinDoor;
+
+    [Header("Light Settings")]
+    public Light[] lightsToTurnOff; // Drag all lights you want to turn off here
+
+    [Header("Mannequin Settings")]
+    public GameObject[] mannequinsToDestroy; // Drag mannequin GameObjects here
+    public GameObject[] mannequinsToAppear; // Drag mannequins that will appear after lights go out
+    public float mannequinDestroyDelay = 0.2f; // Time after lights turn off before mannequins disappear
 
     [Header("Interaction Settings")]
     public float interactDistance = 3f; // Player must be this close
@@ -19,11 +27,14 @@ public class DoorButton : MonoBehaviour, InteractableScript
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        // Hide all mannequins that will appear later
+        HideMannequinsToAppear();
     }
 
     public void InteractScript()
     {
-        if (player == null || door == null) return;
+        if (player == null || mannequinObsDoor == null) return;
 
         // Start the delayed opening
         StartCoroutine(OpenDoorsWithDelay());
@@ -32,14 +43,102 @@ public class DoorButton : MonoBehaviour, InteractableScript
     private IEnumerator OpenDoorsWithDelay()
     {
         Debug.Log("Button pressed - waiting before opening doors...");
-        yield return new WaitForSeconds(openDelay); // Wait the set amount of time
+
+        // Turn off all lights
+        TurnOffLights();
+
+        // Wait a brief moment in darkness, then swap mannequins
+        yield return new WaitForSeconds(mannequinDestroyDelay);
+        DestroyMannequins();
+        ShowMannequinsToAppear(); // Make new mannequins appear
+        mannequinDoor.OpenDoor();
+
+        // Continue with the rest of the delay
+        yield return new WaitForSeconds(openDelay - mannequinDestroyDelay);
 
         // Open both doors
-        door.OpenDoor();
-        door2.OpenDoor();
+        mannequinObsDoor.OpenDoor();
         Debug.Log("Doors are now opening!");
 
         GameProgressManager.Instance.buttonPressed = true;
         Debug.Log("Progress updated: buttonPressed = true");
+
+        // Wait for doors to finish opening (get the duration from door controller if available)
+        // Assuming doors take some time to open - adjust this value based on your door animation
+        float doorOpenDuration = 0f; // Change this to match your door's opening time
+        yield return new WaitForSeconds(doorOpenDuration);
+
+        // Turn lights back on
+        TurnOnLights();
+        Debug.Log("Lights turned back on!");
+    }
+
+    private void TurnOffLights()
+    {
+        if (lightsToTurnOff == null || lightsToTurnOff.Length == 0) return;
+
+        foreach (Light light in lightsToTurnOff)
+        {
+            if (light != null)
+            {
+                light.enabled = false;
+            }
+        }
+        Debug.Log($"Turned off {lightsToTurnOff.Length} lights");
+    }
+
+    private void TurnOnLights()
+    {
+        if (lightsToTurnOff == null || lightsToTurnOff.Length == 0) return;
+
+        foreach (Light light in lightsToTurnOff)
+        {
+            if (light != null)
+            {
+                light.enabled = true;
+            }
+        }
+    }
+
+    private void DestroyMannequins()
+    {
+        if (mannequinsToDestroy == null || mannequinsToDestroy.Length == 0) return;
+
+        foreach (GameObject mannequin in mannequinsToDestroy)
+        {
+            if (mannequin != null)
+            {
+                Destroy(mannequin);
+            }
+        }
+        Debug.Log($"Destroyed {mannequinsToDestroy.Length} mannequins in the darkness!");
+    }
+
+    private void HideMannequinsToAppear()
+    {
+        if (mannequinsToAppear == null || mannequinsToAppear.Length == 0) return;
+
+        foreach (GameObject mannequin in mannequinsToAppear)
+        {
+            if (mannequin != null)
+            {
+                mannequin.SetActive(false);
+            }
+        }
+        Debug.Log($"Hid {mannequinsToAppear.Length} mannequins at start");
+    }
+
+    private void ShowMannequinsToAppear()
+    {
+        if (mannequinsToAppear == null || mannequinsToAppear.Length == 0) return;
+
+        foreach (GameObject mannequin in mannequinsToAppear)
+        {
+            if (mannequin != null)
+            {
+                mannequin.SetActive(true);
+            }
+        }
+        Debug.Log($"Showed {mannequinsToAppear.Length} new mannequins - they moved in the darkness!");
     }
 }

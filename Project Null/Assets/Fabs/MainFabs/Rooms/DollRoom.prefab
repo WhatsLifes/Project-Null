@@ -10376,11 +10376,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3a2784157a29b346ba9335e870c8215, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactRange: 2
-  interactKey: 101
   delayBeforeCheck: 3
   player: {fileID: 7175657067888325836}
   feedbackLight: {fileID: 0}
+  buttonAudioSource: {fileID: 0}
+  buttonClickSound: {fileID: 0}
+  volume: 1
 --- !u!1 &4891238866404244106
 GameObject:
   m_ObjectHideFlags: 0
@@ -12174,10 +12175,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e88adedb767243c4d9fb00f8ad5e984b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  doorObject: {fileID: 9033208500364663026}
-  openHeight: 2
+  closedAngle: 0
+  openAngle: 90
   openSpeed: 0.8
-  isOpen: 0
+  startsOpen: 1
 --- !u!1 &5688056400105193367
 GameObject:
   m_ObjectHideFlags: 0
@@ -13205,8 +13206,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1847aba0de4dc0547bba6c275287fd00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isPickedUp: 0
   flashlight: {fileID: 4996145590966810347}
   toggleKey: 102
+  maxBattery: 100
+  currentBattery: 100
+  drainRate: 10
+  rechargeRate: 5
+  minimumBatteryToTurnOn: 5
+  flickerThreshold: 50
+  minFlickerInterval: 0.3
+  maxFlickerInterval: 2
+  flickerDuration: 0.08
+  flickerIntensityMultiplier: 0.3
 --- !u!114 &5185522841777461136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13219,8 +13231,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63da8d60ea68239458a9caa4344efde3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MaxHealth: 100
   Health: 100
-  bloodyScreen: {fileID: 0}
+  bloodyScreenImage: {fileID: 0}
 --- !u!114 &8412255293352382063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13238,7 +13251,12 @@ MonoBehaviour:
   pickableLayer:
     serializedVersion: 2
     m_Bits: 512
+  ChairLayer:
+    serializedVersion: 2
+    m_Bits: 0
   cam: {fileID: 3220196766229595146}
+  InteractUI_Doll: {fileID: 0}
+  InteractUI_Chair: {fileID: 0}
 --- !u!1 &5981765302317557494
 GameObject:
   m_ObjectHideFlags: 0
@@ -16810,7 +16828,6 @@ MonoBehaviour:
   - chairSlot: {fileID: 4993528240123106975}
     requiredLeftEye: 1
     requiredRightEye: 2
-  door: {fileID: 6740142865599386346}
   feedbackLight: {fileID: 0}
 --- !u!1 &7541466917812418884
 GameObject:
