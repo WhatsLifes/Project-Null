@@ -41,7 +41,7 @@ public class MannequinEnemy : Enemy
 
     private void Start()
     {
-        // Start patrolling but not hostile
+        // Start patrolling (not hostile yet)
         StartCoroutine(StartPatrolling());
     }
 
@@ -86,7 +86,6 @@ public class MannequinEnemy : Enemy
             return;
         }
 
-        // Hostile - chase and attack
         // Check if player is within sight using cone detection
         if (CanSeePlayer() && distance <= sightRange)
         {
@@ -230,7 +229,7 @@ public class MannequinEnemy : Enemy
         }
         else
         {
-            // Close enough, stop and prepare to attack
+            // In attack range, stop and attack
             agent.isStopped = true;
             agent.ResetPath();
         }
