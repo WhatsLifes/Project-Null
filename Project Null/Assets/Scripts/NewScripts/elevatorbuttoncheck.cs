@@ -23,24 +23,24 @@ public class ElevatorButtonFixed : MonoBehaviour, InteractableScript
     public bool useManagerCondition = false;
     public bool conditionMet = false; // Local fallback if manager not used
 
+    [Header("Audio Settings")]
     [Range(0f, 1f)] public float volume = 1f;
+    public float wrongLineCooldown = 3f; // how long before wrongLine can play again
 
     private bool isChecking = false;
-    private bool hasPlayedWrongLine = false;  // ensures wrong line only once
     private bool hasPlayedCorrectLine = false; // ensures correct line only once
-    private bool elevatorOpened = false;      // stops interaction after success
+    private bool elevatorOpened = false;       // stops interaction after success
+    private bool canPlayWrongLine = true;      // prevents spamming wrong line
     public bool ElevatorOpened => elevatorOpened;
 
     void Start()
     {
-        // Auto-find player if not assigned
         if (player == null)
         {
             GameObject p = GameObject.FindGameObjectWithTag("Player");
             if (p != null) player = p.transform;
         }
 
-        // Make sure we have an AudioSource
         if (audioSource == null)
         {
             audioSource = GetComponent<AudioSource>();
@@ -58,7 +58,6 @@ public class ElevatorButtonFixed : MonoBehaviour, InteractableScript
     public void InteractScript()
     {
         if (player == null || isChecking || elevatorOpened) return;
-        
         StartCoroutine(HandleButtonPress());
     }
 
@@ -81,20 +80,20 @@ public class ElevatorButtonFixed : MonoBehaviour, InteractableScript
         // 🔊 Handle audio and logic
         if (!resolvedCondition)
         {
-            // Only play wrong line the first time it happens
-            if (!hasPlayedWrongLine && wrongLine != null)
+            if (wrongLine != null && canPlayWrongLine)
             {
                 audioSource.PlayOneShot(wrongLine, volume);
-                hasPlayedWrongLine = true;
+                canPlayWrongLine = false;
+                StartCoroutine(ResetWrongLineCooldown());
             }
             else
             {
-                Debug.Log("[ElevatorButtonFixed] Condition not met — no repeat audio.");
+                Debug.Log("[ElevatorButtonFixed] Wrong line cooling down or missing.");
             }
         }
         else
         {
-            // Only play correct line once and open doors
+            // ✅ Play correct line only once and open doors
             if (!hasPlayedCorrectLine && correctLine != null)
             {
                 audioSource.PlayOneShot(correctLine, volume);
@@ -111,7 +110,7 @@ public class ElevatorButtonFixed : MonoBehaviour, InteractableScript
                 if (rightDoor != null)
                     rightDoor.SendMessage("OpenDoor", SendMessageOptions.DontRequireReceiver);
 
-                elevatorOpened = true; // ✅ locks out further presses after success
+                elevatorOpened = true;
             }
         }
 
@@ -119,5 +118,11 @@ public class ElevatorButtonFixed : MonoBehaviour, InteractableScript
             interactUI.SetActive(false);
 
         isChecking = false;
+    }
+
+    private IEnumerator ResetWrongLineCooldown()
+    {
+        yield return new WaitForSeconds(wrongLineCooldown);
+        canPlayWrongLine = true;
     }
 }
