@@ -7,12 +7,16 @@ public class MannequinEnemy : Enemy
     [Header("Vision Settings")]
     public float attackConeAngle = 90f;
     public float sightRayDistance = 12f;
-    public float eyeHeight = 1.5f; // ADDED: Adjustable raycast height
+    public float eyeHeight = 1.5f;
     public bool showDebugGizmos = true;
 
     [Header("Combat Settings")]
     public float attackCooldown = 1.2f;
-    public float attackDistanceBuffer = 1.5f; // Distance to maintain from player when attacking
+    public float attackDistanceBuffer = 1.5f;
+
+    [Header("Flashlight Freeze Settings")]
+    [Tooltip("How long the mannequin stays frozen after flashlight moves away (0 = instant unfreeze)")]
+    public float freezeDuration = 2f;
 
     private enum EnemyState { Idle, Patrolling, Chasing, Attacking }
     private EnemyState currentState = EnemyState.Idle;
@@ -21,6 +25,8 @@ public class MannequinEnemy : Enemy
     private float defaultSpeed;
     private bool isAttacking = false;
     private bool isFrozenByFlashlight = false;
+    private float freezeEndTime = 0f;
+    private Animator animator;
 
     protected override void Awake()
     {
@@ -30,6 +36,12 @@ public class MannequinEnemy : Enemy
         {
             agent = GetComponent<NavMeshAgent>();
             Debug.LogWarning($"{gameObject.name}: Agent was not assigned, found and assigned automatically.");
+        }
+
+        animator = GetComponent<Animator>();
+        if (animator == null)
+        {
+            animator = GetComponentInChildren<Animator>();
         }
 
         if (agent != null)
@@ -68,7 +80,25 @@ public class MannequinEnemy : Enemy
         if (agent == null || player == null || !agent.enabled || !agent.isOnNavMesh)
             return;
 
-        // If frozen by flashlight, do nothing
+        // Check if freeze duration has expired
+        if (isFrozenByFlashlight && Time.time >= freezeEndTime)
+        {
+            // Unfreeze now
+            isFrozenByFlashlight = false;
+
+            if (agent != null && agent.isOnNavMesh)
+            {
+                agent.isStopped = false;
+            }
+            if (animator != null)
+            {
+                animator.speed = 1f; // Resume animation at normal speed
+            }
+
+        Debug.Log($"{gameObject.name} unfrozen - freeze duration expired");
+        }
+
+        // If still frozen, do nothing
         if (isFrozenByFlashlight)
             return;
 
@@ -146,18 +176,24 @@ public class MannequinEnemy : Enemy
         {
             agent.ResetPath();
             agent.isStopped = false;
-            agent.stoppingDistance = 0f; // Reset to patrol stopping distance
+            agent.stoppingDistance = 0f;
         }
 
         Debug.Log($"{gameObject.name} deactivated - back to passive patrol");
     }
 
-    // Freezes the mannequin completely when flashlight is on it. Stops all movement and behavior.
+    // Freezes the mannequin completely when flashlight is on it
     public void FlashlightFreeze()
     {
-        if (isFrozenByFlashlight) return;
+        if (isFrozenByFlashlight)
+        {
+            // Already frozen - just extend the freeze duration
+            freezeEndTime = Time.time + freezeDuration;
+            return;
+        }
 
         isFrozenByFlashlight = true;
+        freezeEndTime = Time.time + freezeDuration;
 
         if (agent != null && agent.isOnNavMesh)
         {
@@ -166,22 +202,25 @@ public class MannequinEnemy : Enemy
             agent.velocity = Vector3.zero;
         }
 
-        Debug.Log($"{gameObject.name} frozen by flashlight");
-    }
-
-    // Unfreezes the mannequin when flashlight is turned off. Resumes previous behavior.
-    public void FlashlightUnfreeze()
-    {
-        if (!isFrozenByFlashlight) return;
-
-        isFrozenByFlashlight = false;
-
-        if (agent != null && agent.isOnNavMesh)
+        // NEW: Pause the animator
+        if (animator != null)
         {
-            agent.isStopped = false;
+            animator.speed = 0f; // Freeze animation
         }
 
-        Debug.Log($"{gameObject.name} unfrozen - resuming behavior");
+        Debug.Log($"{gameObject.name} frozen by flashlight for {freezeDuration} seconds");
+    }
+
+    // Called when flashlight moves away (mannequin stays frozen for duration)
+    public void FlashlightUnfreeze()
+    {
+        // Don't actually unfreeze yet - just log
+        // The Update() method will handle unfreezing after the duration
+        if (isFrozenByFlashlight)
+        {
+            float remainingTime = freezeEndTime - Time.time;
+            Debug.Log($"{gameObject.name} flashlight moved away - will unfreeze in {remainingTime:F1}s");
+        }
     }
 
     private bool CanSeePlayer()
@@ -199,7 +238,6 @@ public class MannequinEnemy : Enemy
 
         Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
 
-        // ===== ADD THIS CODE HERE =====
         CharacterController playerCC = player.GetComponent<CharacterController>();
         Vector3 targetPos;
 
@@ -213,7 +251,6 @@ public class MannequinEnemy : Enemy
         {
             targetPos = player.position + Vector3.up * 1.0f;
         }
-        // ===== END OF NEW CODE =====
 
         Vector3 directionToTarget = (targetPos - eyePos).normalized;
 
@@ -332,7 +369,7 @@ public class MannequinEnemy : Enemy
         // Stop when colliding with player
         if (collision.gameObject.CompareTag("Player"))
         {
-            if (isActive) // Only stop if hostile
+            if (isActive)
             {
                 agent.isStopped = true;
                 agent.ResetPath();
@@ -342,9 +379,8 @@ public class MannequinEnemy : Enemy
         // Handle collisions with other enemies
         else if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
-            // Push away from other enemies slightly
             Vector3 pushDirection = (transform.position - collision.transform.position).normalized;
-            pushDirection.y = 0; // Keep on horizontal plane
+            pushDirection.y = 0;
 
             if (pushDirection.sqrMagnitude > 0.01f)
             {
@@ -379,12 +415,12 @@ public class MannequinEnemy : Enemy
     {
         if (!showDebugGizmos) return;
 
-        // Forward direction - UPDATED to use eyeHeight
+        // Forward direction
         Gizmos.color = Color.cyan;
         Gizmos.DrawLine(transform.position + Vector3.up * eyeHeight,
                         transform.position + Vector3.up * eyeHeight + transform.forward * sightRayDistance);
 
-        // Vision cone - UPDATED to use eyeHeight
+        // Vision cone
         Gizmos.color = Color.yellow;
         Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
         Vector3 right = Quaternion.Euler(0, attackConeAngle / 2f, 0) * transform.forward;
