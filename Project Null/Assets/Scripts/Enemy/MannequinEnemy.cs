@@ -197,12 +197,25 @@ public class MannequinEnemy : Enemy
             return false;
         }
 
-        // FIXED RAYCAST - Use adjustable eyeHeight
-        Vector3 eyePos = transform.position + Vector3.up * eyeHeight; // UPDATED
-        Vector3 targetPos = player.position + Vector3.up * 1.0f; // Aim at player's center, not feet
+        Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
+
+        // ===== ADD THIS CODE HERE =====
+        CharacterController playerCC = player.GetComponent<CharacterController>();
+        Vector3 targetPos;
+
+        if (playerCC != null)
+        {
+            // Aim at the center - accounts for scale automatically
+            float actualHeight = playerCC.height * player.lossyScale.y;
+            targetPos = player.position + Vector3.up * (actualHeight / 2f);
+        }
+        else
+        {
+            targetPos = player.position + Vector3.up * 1.0f;
+        }
+        // ===== END OF NEW CODE =====
 
         Vector3 directionToTarget = (targetPos - eyePos).normalized;
-        float distanceToPlayer = Vector3.Distance(eyePos, targetPos);
 
         // Use layerMask to ignore the Enemy layer
         int layerMask = ~LayerMask.GetMask("Enemy");
@@ -211,25 +224,21 @@ public class MannequinEnemy : Enemy
         if (Physics.Raycast(eyePos, directionToTarget, out RaycastHit hit, sightRayDistance, layerMask))
         {
 #if UNITY_EDITOR
-            // Visual debug - green if hit player, red if hit something else
             Debug.DrawRay(eyePos, directionToTarget * hit.distance,
                 hit.collider.CompareTag("Player") ? Color.green : Color.red, 0.1f);
 #endif
 
-            // Check if we hit the player
             if (hit.collider.CompareTag("Player"))
             {
                 return true;
             }
             else
             {
-                // Hit something else (wall, obstacle) - player is hidden
                 Debug.DrawRay(eyePos, directionToTarget * hit.distance, Color.yellow, 0.1f);
                 return false;
             }
         }
 
-        // Raycast didn't hit anything
         return false;
     }
 
