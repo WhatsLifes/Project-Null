@@ -5,27 +5,27 @@ using UnityEngine.UI;
 public class JumpscareController : MonoBehaviour
 {
     [Header("Scare Settings")]
-    public float lookSpeed = 6f;
-    public float freezeDuration = 2f;
+    public float lookSpeed = 10f;
+    public float freezeDuration = 4.5f;
     public float despawnDelay = 0.5f;
     public AudioClip scareSound;
     public AudioSource audioSource;
 
     [Header("Visual Effect (optional)")]
     public Image visualEffect;
-    public float visualFadeIn = 0.25f;
-    public float visualFadeOut = 0.5f;
-    [Range(0f, 1f)] public float visualMaxAlpha = 0.8f;
+    public float visualFadeIn = 0.2f;
+    public float visualFadeOut = 0.2f;
+    [Range(0f, 1f)] public float visualMaxAlpha = 0.5f;
 
     [Header("Camera Zoom Effect")]
-    public float zoomedFOV = 35f;      // how zoomed in it gets
-    public float zoomInSpeed = 3f;     // how fast it zooms in
-    public float zoomOutSpeed = 2f;    // how fast it zooms out
-
+    public float zoomedFOV = 35f;       // How zoomed in it gets
+    public float zoomInDuration = 2.5f; // How long it takes to zoom in (seconds)
+    public float zoomOutDuration = 2.5f;// How long it takes to zoom out (seconds)
     public float lookTargetHeight = 1.5f;
 
     private Renderer[] renderers;
     private bool isScaring = false;
+    private bool fovLocked = false;
 
     void Awake()
     {
@@ -57,11 +57,8 @@ public class JumpscareController : MonoBehaviour
             audioSource.PlayOneShot(scareSound);
 
         Transform playerT = playerObj.transform;
-
-        // 🔹 Get the player camera safely (even if it’s not tagged)
         Camera cam = playerObj.GetComponentInChildren<Camera>();
-        if (cam == null)
-            cam = Camera.main;
+        if (cam == null) cam = Camera.main;
 
         SimpleFPS fps = playerObj.GetComponent<SimpleFPS>();
         MonoBehaviour otherMove = null;
@@ -69,65 +66,47 @@ public class JumpscareController : MonoBehaviour
         if (fps == null)
             otherMove = playerObj.GetComponent<MonoBehaviour>();
 
-        // Force player to look at prefab
+        // 🔹 Disable player movement
         if (fps != null)
-            fps.ForceLookAt(transform.position + Vector3.up * lookTargetHeight);
-        else
         {
-            if (otherMove != null) otherMove.enabled = false;
-
-            if (cam != null)
-            {
-                Quaternion startRot = cam.transform.rotation;
-                Vector3 lookPos = transform.position + Vector3.up * lookTargetHeight;
-                Quaternion targetRot = Quaternion.LookRotation(lookPos - cam.transform.position);
-
-                float elapsed = 0f;
-                float duration = 1f;
-                while (elapsed < duration)
-                {
-                    elapsed += Time.deltaTime * lookSpeed;
-                    cam.transform.rotation = Quaternion.Slerp(startRot, targetRot, elapsed / duration);
-                    yield return null;
-                }
-                cam.transform.rotation = targetRot;
-            }
+            fps.enabled = false;
+            fps.ForceLookAt(transform.position + Vector3.up * lookTargetHeight);
         }
+        else if (otherMove != null)
+            otherMove.enabled = false;
 
-        // 🔹 Begin visual overlay
+        // 🔹 Fade in overlay
         if (visualEffect != null)
             yield return StartCoroutine(FadeOverlay(0f, visualMaxAlpha, visualFadeIn));
 
-        // 🔹 Start FOV zoom (this now ALWAYS works)
-        if (cam != null)
-            yield return StartCoroutine(CameraZoom(cam, cam.fieldOfView, zoomedFOV, zoomInSpeed));
+        // 🔹 Lock FOV
+        fovLocked = true;
+        float originalFOV = cam.fieldOfView;
 
+        // 🔹 Smooth single zoom-in
+        yield return StartCoroutine(CameraZoom(cam, originalFOV, zoomedFOV, zoomInDuration));
+
+        // 🔹 Hold zoomed in
         yield return new WaitForSeconds(freezeDuration);
 
         // 🔹 Fade out overlay
         if (visualEffect != null)
             yield return StartCoroutine(FadeOverlay(visualMaxAlpha, 0f, visualFadeOut));
 
-        // 🔹 Zoom back out
-        if (cam != null)
-            yield return StartCoroutine(CameraZoom(cam, cam.fieldOfView, 60f, zoomOutSpeed));
+        // 🔹 Smooth zoom-out (cinematic and slow)
+        yield return StartCoroutine(CameraZoom(cam, cam.fieldOfView, originalFOV, zoomOutDuration));
 
-        // Release control
+        // 🔹 Unlock FOV
+        fovLocked = false;
+
+        // 🔹 Restore controls
         if (fps != null)
-            fps.ReleaseLook();
-        else
         {
-            if (cam != null && otherMove != null)
-            {
-                Vector3 camForward = cam.transform.forward;
-                camForward.y = 0f;
-                if (camForward.sqrMagnitude > 0.001f)
-                    playerT.rotation = Quaternion.LookRotation(camForward);
-            }
-
-            if (otherMove != null)
-                otherMove.enabled = true;
+            fps.ReleaseLook();
+            fps.enabled = true;
         }
+        else if (otherMove != null)
+            otherMove.enabled = true;
 
         SetVisible(false);
         Destroy(gameObject, despawnDelay);
@@ -142,6 +121,7 @@ public class JumpscareController : MonoBehaviour
         visualEffect.gameObject.SetActive(true);
         Color c = visualEffect.color;
         float t = 0f;
+
         while (t < time)
         {
             t += Time.deltaTime;
@@ -150,6 +130,7 @@ public class JumpscareController : MonoBehaviour
             visualEffect.color = c;
             yield return null;
         }
+
         c.a = to;
         visualEffect.color = c;
 
@@ -157,15 +138,18 @@ public class JumpscareController : MonoBehaviour
             visualEffect.gameObject.SetActive(false);
     }
 
-    private IEnumerator CameraZoom(Camera cam, float from, float to, float speed)
+    private IEnumerator CameraZoom(Camera cam, float from, float to, float duration)
     {
-        float t = 0f;
-        while (t < 1f)
+        float elapsed = 0f;
+
+        while (elapsed < duration)
         {
-            t += Time.deltaTime * speed;
-            cam.fieldOfView = Mathf.Lerp(from, to, Mathf.SmoothStep(0f, 1f, t));
+            elapsed += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, elapsed / duration);
+            cam.fieldOfView = Mathf.Lerp(from, to, t);
             yield return null;
         }
+
         cam.fieldOfView = to;
     }
 
