@@ -17,12 +17,23 @@ public class PlayerInteraction : MonoBehaviour
     
     public static PlayerInteraction instance;
     
+    [SerializeField] private PlayerHold playerHold;
+    
     // WAKE UP
     public void Awake()
     {
         instance = this;
     }
 
+    private void Start()
+    {
+        if (playerHold == null)
+            playerHold = GetComponent<PlayerHold>();
+        
+        if (playerHold == null)
+            Debug.LogError("PlayerInteraction could not find PlayerHold script!");
+    }
+    
     // add nearby objects to the nearby object list
     public void AddNearbyObject(InteractableObject obj)
     {
@@ -45,54 +56,95 @@ public class PlayerInteraction : MonoBehaviour
     {
         UpdateInteractions();
 
-        // if we hit E, run the interact script on the object we are looking at
-        if (Input.GetKeyDown(KeyCode.E) && currentTarget != null)
+        // if we hit E...
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            currentTarget.InteractItem();
-            currentTarget = null;
+            if (currentTarget != null)
+            {
+                // Interact with the object we are looking at
+                currentTarget.InteractItem();
+            }
+            // call drop if we are holding a doll
+            else if (playerHold != null && playerHold.IsHoldingObject())
+            {
+                Debug.Log("Dropping item");
+                playerHold.Drop();
+            }
         }
     }
 
     private void UpdateInteractions()
     {
+        bool foundTarget = false;
         
-        bool foundTarget = false; // local variable for looking at objects
+        if (playerHold == null) return; 
+
+        InteractableObject directHitTarget = null;
         
-        // loops through all the objects in the nearby objects list
-        foreach (var obj in nearbyObjects) 
+        // find what we are directly looking at
+        foreach (var obj in nearbyObjects)
         {
-            // get the angle for looking at the object
-            Vector3 directionToObj = obj.transform.position - cameraTransform.position;
-            float angleCheck = Vector3.Dot(cameraTransform.forward, directionToObj.normalized);
-
-            // see if we are looking at it
-            if (angleCheck > generalDirectionAngle)
+            if (isLookingDirectlyAt(obj))
             {
-                bool isLookingDirectly = isLookingDirectlyAt(obj);
+                directHitTarget = obj;
+                break;
+            }
+        }
+        
+        // now find that object
+        foreach (var obj in nearbyObjects)
+        {
+            if (obj == directHitTarget)
+            {
+                obj.HideWhiteDot();
+                foundTarget = true; 
+                
+                // special stuff for dealing with the chair and dolls
+                bool shouldShow = true;
+                if (obj.TryGetComponent<InteractableDoll>(out _))
+                {
+                    if (playerHold.IsHoldingObject()) shouldShow = false;
+                }
+                else if (obj.TryGetComponent<InteractableChair>(out var chair))
+                {
+                    if (!playerHold.IsHoldingObject() || chair.IsSlotFilled()) shouldShow = false;
+                }
 
-                // if we are looking at it
-                if (isLookingDirectly)
+                if (shouldShow)
                 {
                     if (currentTarget != obj)
                     {
-                        currentTarget?.HidePrompt(); // null check
-                        currentTarget = obj; // set the object as our target
-                        currentTarget.ShowPrompt(); // show the correct prompt for that object
+                        currentTarget?.HidePrompt();
+                        currentTarget = obj;
                     }
-                    
-                    // hide dot and sets found true
-                    obj.HideWhiteDot();
-                    foundTarget = true;
+                    currentTarget.ShowPrompt();
                 }
-                // if we arent looking directly, just how dot
                 else
-                    obj.ShowWhiteDot();
-                
+                {
+                    // show its interactable but not right now
+                    obj.ShowWhiteDot(); 
+                    if (currentTarget == obj) 
+                        ClearCurrentTarget();
+                }
             }
-            // hide dot if we arent vaugly looking there
             else
-                obj.HideWhiteDot();
+            {
+                // not looking at
+                obj.HidePrompt();
+                
+                Vector3 directionToObj = obj.transform.position - cameraTransform.position;
+                float angleCheck = Vector3.Dot(cameraTransform.forward, directionToObj.normalized);
+                if (angleCheck > generalDirectionAngle)
+                {
+                    obj.ShowWhiteDot();
+                }
+                else
+                {
+                    obj.HideWhiteDot();
+                }
+            }
         }
+
         if (!foundTarget)
             ClearCurrentTarget();
     }
