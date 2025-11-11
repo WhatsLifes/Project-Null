@@ -7,13 +7,11 @@ public class Sanity : MonoBehaviour
     public float currentSanity = 0f;
     public float passiveDrainPerMinute = 5f;
 
-
     [Header("Effects")]
     public Camera playerCamera;
     public AudioClip ringingClip;
     public AudioClip[] randomSanityClips;
     public Light[] lightsToFlicker;
-
 
     private float passiveDrainTimer = 0f;
     private float[] flickerTimers;
@@ -22,6 +20,8 @@ public class Sanity : MonoBehaviour
     private float ringingTimer = 0f;
     private AudioSource ringingAudio;
     private AudioSource sanityAudioSource;
+
+    public event System.Action<float, float> OnSanityChanged; // (current, max)
 
     private void Start()
     {
@@ -48,7 +48,6 @@ public class Sanity : MonoBehaviour
         sanityAudioSource.playOnAwake = false;
         sanityAudioSource.spatialBlend = 0f;
         sanityAudioSource.loop = false;
-
     }
 
     private void Update()
@@ -69,12 +68,18 @@ public class Sanity : MonoBehaviour
     {
         currentSanity -= amount;
         currentSanity = Mathf.Clamp(currentSanity, 0f, maxSanity);
+        
+        // Invoke the event
+        OnSanityChanged?.Invoke(currentSanity, maxSanity);
     }
 
     public void RestoreSanity(float amount)
     {
         currentSanity += amount;
         currentSanity = Mathf.Clamp(currentSanity, 0f, maxSanity);
+        
+        // Invoke the event
+        OnSanityChanged?.Invoke(currentSanity, maxSanity);
     }
 
     private void ApplySanityEffects()

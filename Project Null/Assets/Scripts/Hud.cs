@@ -25,6 +25,11 @@ public class HUD : MonoBehaviour
     [SerializeField] private Image syringeImage;
     [SerializeField] private CanvasGroup inventoryGroup;
     [SerializeField] private Inventory inventory;
+
+    [Header("Sanity Display")]
+    [SerializeField] private Sanity sanity;
+    [SerializeField] private Slider sanityBar;
+    [SerializeField] private CanvasGroup sanityGroup;
     
     [Header("Animation Settings")]
     [SerializeField] private float fadeInDuration = 0.5f;
@@ -33,13 +38,21 @@ public class HUD : MonoBehaviour
     {
         if (player != null)
             player.OnHealthChanged += UpdateHealthDisplay;
+
+        if (sanity != null)
+            sanity.OnSanityChanged += UpdateSanityDisplay;
     }
 
     private void OnDisable()
     {
         if (player != null)
             player.OnHealthChanged -= UpdateHealthDisplay;
+
+        if (sanity != null)
+            sanity.OnSanityChanged -= UpdateSanityDisplay;
     }
+
+
 
     private void Start()
     {
@@ -67,6 +80,12 @@ public class HUD : MonoBehaviour
             inventoryGroup.alpha = 0f;
             inventoryGroup.gameObject.SetActive(false);
         }
+
+        if (sanityGroup != null)
+        {
+            sanityGroup.alpha = 0f;
+            sanityGroup.gameObject.SetActive(false);
+        }
     }
 
     private void Update()
@@ -79,6 +98,11 @@ public class HUD : MonoBehaviour
     {
         if (healthBar != null) healthBar.value = (max > 0) ? (float)current / max : 0f;
         if (healthText != null) healthText.text = $"{current} / {max}";
+    }
+
+    private void UpdateSanityDisplay(float current, float max)
+    {
+        if (sanityBar != null) sanityBar.value = (max > 0f) ? current / max : 0f;
     }
 
     // ===== PUBLIC FUNCTIONS TO CALL FROM OTHER SCRIPTS =====
@@ -95,18 +119,37 @@ public class HUD : MonoBehaviour
         }
     }
 
+    public void ShowSanityBar() 
+    {
+        if (sanityGroup != null)
+        {
+            sanityGroup.gameObject.SetActive(true);
+            StartCoroutine(FadeInCanvasGroup(sanityGroup));
+            if (player != null) 
+                UpdateSanityDisplay(sanity.currentSanity, sanity.maxSanity);
+        }
+    }
+
     public void HideHealthBar()
     {
         if (healthGroup != null)
             StartCoroutine(FadeOutCanvasGroup(healthGroup));
     }
 
+    public void HideSanityBar()
+    {
+        if (sanityGroup != null)
+            StartCoroutine(FadeOutCanvasGroup(sanityGroup));
+    }
+
     public void ShowObjective1() => ShowObjective("Look around the room");
     public void ShowObjective2() => ShowObjective("Explore the laboratory");
     public void ShowObjective3() => ShowObjective("Investigate the Doll Room");
     public void ShowObjective4() => ShowObjective("Solve her puzzle");
-    public void ShowObjective5() => ShowObjective("Find a way to the Second Floor");
-
+    public void ShowObjective5() => ShowObjective("Find a way to the second floor");
+    public void ShowObjective6() => ShowObjective("Figure out who the voice is");
+    public void ShowObjective7() => ShowObjective("Explore the Carnival Room");
+    public void ShowObjective8() => ShowObjective("Locate the next picture piece");
 
     public void ShowObjective(string objectiveMessage)
     {
@@ -134,7 +177,7 @@ public class HUD : MonoBehaviour
 
     // ===== BATTERY DISPLAY HANDLING =====
 
-    private void HandleBatteryDisplay()
+    public void HandleBatteryDisplay()
     {
         if (flashlightToggle == null || batteryText == null || batteryGroup == null)
             return;
@@ -162,7 +205,7 @@ public class HUD : MonoBehaviour
 
     // =====    INVENTORY DISPLAY      =====
     //       basically syringe for now
-    private void HandleInventoryDisplay()
+    public void HandleInventoryDisplay()
     {
         if (inventory == null || inventoryGroup == null || syringeImage == null) return;
 
