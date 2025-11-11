@@ -104,6 +104,9 @@ public class HUD : MonoBehaviour
     public void ShowObjective1() => ShowObjective("Look around the room");
     public void ShowObjective2() => ShowObjective("Explore the laboratory");
     public void ShowObjective3() => ShowObjective("Investigate the Doll Room");
+    public void ShowObjective4() => ShowObjective("Solve her puzzle");
+    public void ShowObjective5() => ShowObjective("Find a way to the Second Floor");
+
 
     public void ShowObjective(string objectiveMessage)
     {

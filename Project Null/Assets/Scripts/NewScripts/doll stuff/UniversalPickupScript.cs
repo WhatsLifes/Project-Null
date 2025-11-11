@@ -15,6 +15,9 @@ public class UniversalPickup : MonoBehaviour
     private GameObject heldObject;
     private Rigidbody heldRb;
     private Collider heldCollider;
+    private bool obj4Shown = false;
+
+    [SerializeField] private HUD hud;
 
     void Awake()
     {
@@ -123,6 +126,12 @@ public class UniversalPickup : MonoBehaviour
             heldObject = targetObject;
             heldRb = heldObject.GetComponent<Rigidbody>();
             heldCollider = heldObject.GetComponent<Collider>();
+            if (!obj4Shown)
+            {
+                obj4Shown = true;
+                hud.ShowObjective4();
+            }
+
 
             Debug.Log($"=== PICKING UP {heldObject.name} ===");
             Debug.Log($"Has Rigidbody: {heldRb != null}");

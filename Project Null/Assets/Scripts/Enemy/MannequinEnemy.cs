@@ -10,6 +10,12 @@ public class MannequinEnemy : Enemy
     public float eyeHeight = 1.5f;
     public bool showDebugGizmos = true;
 
+    [Header("Movement Settings")]
+    [Tooltip("Movement speed while patrolling")]
+    public float patrolSpeed = 2f;
+    [Tooltip("Movement speed while chasing player")]
+    public float chaseSpeed = 5f;
+
     [Header("Combat Settings")]
     public float attackCooldown = 1.2f;
     public float attackDistanceBuffer = 1.5f;
@@ -47,6 +53,8 @@ public class MannequinEnemy : Enemy
         if (agent != null)
         {
             defaultSpeed = agent.speed;
+            // Set initial patrol speed
+            patrolSpeed = defaultSpeed;
         }
 
         SetState(EnemyState.Idle);
@@ -65,7 +73,7 @@ public class MannequinEnemy : Enemy
         if (agent != null)
         {
             agent.enabled = true;
-            agent.speed = defaultSpeed;
+            agent.speed = patrolSpeed; // Use patrol speed
             agent.stoppingDistance = 0f;
             agent.updatePosition = true;
             agent.updateRotation = true;
@@ -95,7 +103,7 @@ public class MannequinEnemy : Enemy
                 animator.speed = 1f; // Resume animation at normal speed
             }
 
-        Debug.Log($"{gameObject.name} unfrozen - freeze duration expired");
+            Debug.Log($"{gameObject.name} unfrozen - freeze duration expired");
         }
 
         // If still frozen, do nothing
@@ -155,7 +163,7 @@ public class MannequinEnemy : Enemy
         if (agent != null)
         {
             agent.enabled = true;
-            agent.speed = defaultSpeed;
+            agent.speed = chaseSpeed; // Use chase speed when activated
             agent.stoppingDistance = attackDistanceBuffer;
             agent.updatePosition = true;
             agent.updateRotation = true;
@@ -176,6 +184,7 @@ public class MannequinEnemy : Enemy
         {
             agent.ResetPath();
             agent.isStopped = false;
+            agent.speed = patrolSpeed; // Back to patrol speed
             agent.stoppingDistance = 0f;
         }
 
@@ -202,7 +211,7 @@ public class MannequinEnemy : Enemy
             agent.velocity = Vector3.zero;
         }
 
-        // NEW: Pause the animator
+        // Pause the animator
         if (animator != null)
         {
             animator.speed = 0f; // Freeze animation
@@ -286,6 +295,7 @@ public class MannequinEnemy : Enemy
 
         agent.isStopped = false;
         agent.updateRotation = true;
+        agent.speed = chaseSpeed; // Set chase speed
         agent.stoppingDistance = attackDistanceBuffer;
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
@@ -358,6 +368,20 @@ public class MannequinEnemy : Enemy
         if (currentState != newState)
         {
             currentState = newState;
+
+            // Adjust speed based on state
+            if (agent != null && agent.isOnNavMesh)
+            {
+                if (newState == EnemyState.Patrolling)
+                {
+                    agent.speed = patrolSpeed;
+                }
+                else if (newState == EnemyState.Chasing || newState == EnemyState.Attacking)
+                {
+                    agent.speed = chaseSpeed;
+                }
+            }
+
             Debug.Log($"[{gameObject.name}] switched to {newState} state.");
         }
     }

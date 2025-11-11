@@ -27,6 +27,8 @@ public class DollPuzzleManager : MonoBehaviour
     [Header("Feedback")]
     public PuzzleFeedbackLight feedbackLight;
 
+    [SerializeField] private HUD hud;
+
     public bool lastPuzzleResult { get; private set; } = false;
 
     void Awake()
@@ -96,6 +98,8 @@ public class DollPuzzleManager : MonoBehaviour
                 Debug.Log(">>> Flashing GREEN light for success!");
                 feedbackLight.Flash(true);
             }
+
+            hud.ShowObjective5();
 
             // ✅ NEW: mark puzzle as solved in global progress
             if (GameProgressManager.Instance != null)
