@@ -324,7 +324,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 48481345558233973}
-  - component: {fileID: 913949338987807706}
   m_Layer: 0
   m_Name: JumpScareController
   m_TagString: Untagged
@@ -348,31 +347,6 @@ Transform:
   - {fileID: 3530088551955559257}
   m_Father: {fileID: 1724119183518697663}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &913949338987807706
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8656494375257212533}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9cab478636af9bc4bbabb73554934a5b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lookSpeed: 10
-  freezeDuration: 1.8
-  despawnDelay: 1
-  scareSound: {fileID: 0}
-  audioSource: {fileID: 0}
-  visualEffect: {fileID: 2909797232069103151}
-  visualFadeIn: 0.2
-  visualFadeOut: 0.2
-  visualMaxAlpha: 0.534
-  zoomedFOV: 35
-  zoomInDuration: 1.5
-  zoomOutDuration: 1
-  lookTargetHeight: 2
 --- !u!1 &9075291054726065118
 GameObject:
   m_ObjectHideFlags: 0

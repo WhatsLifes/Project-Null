@@ -6,7 +6,7 @@ public class JumpscareController : MonoBehaviour
 {
     [Header("Scare Settings")]
     public float lookSpeed = 10f;
-    public float freezeDuration = 4.5f;
+    public float freezeDuration = 0.5f;
     public float despawnDelay = 0.5f;
     public AudioClip scareSound;
     public AudioSource audioSource;
@@ -18,9 +18,9 @@ public class JumpscareController : MonoBehaviour
     [Range(0f, 1f)] public float visualMaxAlpha = 0.5f;
 
     [Header("Camera Zoom Effect")]
-    public float zoomedFOV = 35f;       // How zoomed in it gets
-    public float zoomInDuration = 2.5f; // How long it takes to zoom in (seconds)
-    public float zoomOutDuration = 2.5f;// How long it takes to zoom out (seconds)
+    public float zoomedFOV = 35f;
+    public float zoomInDuration = 1f;
+    public float zoomOutDuration = 1f;
     public float lookTargetHeight = 1.5f;
 
     private Renderer[] renderers;
@@ -62,18 +62,34 @@ public class JumpscareController : MonoBehaviour
 
         SimpleFPS fps = playerObj.GetComponent<SimpleFPS>();
         MonoBehaviour otherMove = null;
-
         if (fps == null)
             otherMove = playerObj.GetComponent<MonoBehaviour>();
 
-        // 🔹 Disable player movement
+        // 🔹 Disable movement
         if (fps != null)
-        {
             fps.enabled = false;
-            fps.ForceLookAt(transform.position + Vector3.up * lookTargetHeight);
-        }
         else if (otherMove != null)
             otherMove.enabled = false;
+
+        // 🔹 Smoothly rotate camera toward prefab
+        Quaternion finalLookRot = cam.transform.rotation;
+        if (cam != null)
+        {
+            Vector3 lookPos = transform.position + Vector3.up * lookTargetHeight;
+            Quaternion startRot = cam.transform.rotation;
+            Quaternion targetRot = Quaternion.LookRotation(lookPos - cam.transform.position);
+
+            float t = 0f;
+            while (t < 1f)
+            {
+                t += Time.deltaTime * (lookSpeed * 0.5f);
+                cam.transform.rotation = Quaternion.Slerp(startRot, targetRot, Mathf.SmoothStep(0f, 1f, t));
+                yield return null;
+            }
+
+            cam.transform.rotation = targetRot;
+            finalLookRot = targetRot; // save this to apply later
+        }
 
         // 🔹 Fade in overlay
         if (visualEffect != null)
@@ -83,7 +99,7 @@ public class JumpscareController : MonoBehaviour
         fovLocked = true;
         float originalFOV = cam.fieldOfView;
 
-        // 🔹 Smooth single zoom-in
+        // 🔹 Smooth zoom-in
         yield return StartCoroutine(CameraZoom(cam, originalFOV, zoomedFOV, zoomInDuration));
 
         // 🔹 Hold zoomed in
@@ -93,18 +109,20 @@ public class JumpscareController : MonoBehaviour
         if (visualEffect != null)
             yield return StartCoroutine(FadeOverlay(visualMaxAlpha, 0f, visualFadeOut));
 
-        // 🔹 Smooth zoom-out (cinematic and slow)
+        // 🔹 Smooth zoom-out
         yield return StartCoroutine(CameraZoom(cam, cam.fieldOfView, originalFOV, zoomOutDuration));
 
-        // 🔹 Unlock FOV
         fovLocked = false;
+
+        // ✅ Keep the player facing the same direction as the camera
+        Vector3 flatForward = cam.transform.forward;
+        flatForward.y = 0f;
+        if (flatForward.sqrMagnitude > 0.001f)
+            playerT.rotation = Quaternion.LookRotation(flatForward);
 
         // 🔹 Restore controls
         if (fps != null)
-        {
-            fps.ReleaseLook();
             fps.enabled = true;
-        }
         else if (otherMove != null)
             otherMove.enabled = true;
 
