@@ -322,6 +322,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1699061614814630811, guid: d7faf21b135307f419d5df11675183d5, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 3443bb3fc046548448c37c663667ad2f, type: 3}
     - target: {fileID: 2464055508971195377, guid: d7faf21b135307f419d5df11675183d5, type: 3}
       propertyPath: m_Name
       value: DollRoom
