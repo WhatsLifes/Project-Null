@@ -26,6 +26,10 @@ public class ElevatorButtonFixed : MonoBehaviour, InteractableScript
     [Header("Audio Settings")]
     [Range(0f, 1f)] public float volume = 1f;
     public float wrongLineCooldown = 3f; // how long before wrongLine can play again
+    [Header("Success Audio Player")]
+    public AudioClip successMusic;     // Drop your .mp3 or .wav file here
+    public bool playFullTrack = false; // optional toggle if you want long audio
+
 
     private bool isChecking = false;
     private bool hasPlayedCorrectLine = false; // ensures correct line only once
@@ -91,10 +95,20 @@ public class ElevatorButtonFixed : MonoBehaviour, InteractableScript
         }
         else
         {
-            // ✅ Play correct line only once and open doors
-            if (!hasPlayedCorrectLine && correctLine != null)
+            if (!hasPlayedCorrectLine)
             {
-                audioSource.PlayOneShot(correctLine, volume);
+                if (correctLine != null)
+                    audioSource.PlayOneShot(correctLine, volume);
+
+                // 🎵 If you want to play a full MP3 track (ambient or victory music)
+                if (successMusic != null)
+                {
+                    audioSource.clip = successMusic;
+                    audioSource.volume = volume;
+                    audioSource.loop = playFullTrack; // loop it if needed
+                    audioSource.Play();
+                }
+
                 hasPlayedCorrectLine = true;
             }
 

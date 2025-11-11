@@ -25,7 +25,6 @@ public class Sanity : MonoBehaviour
 
     private void Start()
     {
-        currentSanity = 100f;
         DontDestroyOnLoad(gameObject);
         flickerTimers = new float[lightsToFlicker.Length];
         lightStates = new bool[lightsToFlicker.Length];

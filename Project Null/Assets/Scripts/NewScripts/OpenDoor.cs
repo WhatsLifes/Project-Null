@@ -22,11 +22,27 @@ public class DoorButton : MonoBehaviour, InteractableScript
     [Header("Delay Settings")]
     public float openDelay = 1.5f; // Time in seconds before the doors open
 
+    [Header("Audio Settings")]
+    public AudioSource audioSource;      // Optional: drag an AudioSource here or leave blank to auto-create
+    public AudioClip buttonPressSound;   // 🎵 Drag your .mp3, .wav, or .ogg file here
+    [Range(0f, 1f)] public float volume = 1f;
+
     private Transform player;
 
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        // Auto-setup audio if not already assigned
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+                audioSource.playOnAwake = false;
+            }
+        }
 
         // Hide all mannequins that will appear later
         HideMannequinsToAppear();
@@ -35,6 +51,12 @@ public class DoorButton : MonoBehaviour, InteractableScript
     public void InteractScript()
     {
         if (player == null || mannequinObsDoor == null) return;
+
+        // 🔊 Play button press sound
+        if (buttonPressSound != null)
+        {
+            audioSource.PlayOneShot(buttonPressSound, volume);
+        }
 
         // Start the delayed opening
         StartCoroutine(OpenDoorsWithDelay());
@@ -63,9 +85,8 @@ public class DoorButton : MonoBehaviour, InteractableScript
         GameProgressManager.Instance.buttonPressed = true;
         Debug.Log("Progress updated: buttonPressed = true");
 
-        // Wait for doors to finish opening (get the duration from door controller if available)
-        // Assuming doors take some time to open - adjust this value based on your door animation
-        float doorOpenDuration = 0f; // Change this to match your door's opening time
+        // Optional: wait for doors to finish opening
+        float doorOpenDuration = 0f; // adjust if needed
         yield return new WaitForSeconds(doorOpenDuration);
 
         // Turn lights back on
@@ -80,9 +101,7 @@ public class DoorButton : MonoBehaviour, InteractableScript
         foreach (Light light in lightsToTurnOff)
         {
             if (light != null)
-            {
                 light.enabled = false;
-            }
         }
         Debug.Log($"Turned off {lightsToTurnOff.Length} lights");
     }
@@ -94,9 +113,7 @@ public class DoorButton : MonoBehaviour, InteractableScript
         foreach (Light light in lightsToTurnOff)
         {
             if (light != null)
-            {
                 light.enabled = true;
-            }
         }
     }
 
@@ -107,9 +124,7 @@ public class DoorButton : MonoBehaviour, InteractableScript
         foreach (GameObject mannequin in mannequinsToDestroy)
         {
             if (mannequin != null)
-            {
                 Destroy(mannequin);
-            }
         }
         Debug.Log($"Destroyed {mannequinsToDestroy.Length} mannequins in the darkness!");
     }
@@ -121,9 +136,7 @@ public class DoorButton : MonoBehaviour, InteractableScript
         foreach (GameObject mannequin in mannequinsToAppear)
         {
             if (mannequin != null)
-            {
                 mannequin.SetActive(false);
-            }
         }
         Debug.Log($"Hid {mannequinsToAppear.Length} mannequins at start");
     }
@@ -135,9 +148,7 @@ public class DoorButton : MonoBehaviour, InteractableScript
         foreach (GameObject mannequin in mannequinsToAppear)
         {
             if (mannequin != null)
-            {
                 mannequin.SetActive(true);
-            }
         }
         Debug.Log($"Showed {mannequinsToAppear.Length} new mannequins - they moved in the darkness!");
     }
