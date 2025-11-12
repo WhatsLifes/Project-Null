@@ -10,8 +10,10 @@ public class UniversalPickup : MonoBehaviour
     public LayerMask pickableLayer;
     public LayerMask ChairLayer;
     public Camera cam;
+    
     public GameObject InteractUI_Doll;
     public GameObject InteractUI_Chair;
+    
     private GameObject heldObject;
     private Rigidbody heldRb;
     private Collider heldCollider;
