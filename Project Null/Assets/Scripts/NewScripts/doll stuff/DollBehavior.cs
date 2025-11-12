@@ -263,7 +263,7 @@ public class DollBehavior : MonoBehaviour
 
     public void ResetToPickable()
     {
-        gameObject.layer = 9;
+        gameObject.layer = 11;
         Debug.Log($"{gameObject.name} - Layer set to pickupable");
 
         rb.isKinematic = false;

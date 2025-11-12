@@ -18,6 +18,8 @@ public class PlayerInteraction : MonoBehaviour
     public static PlayerInteraction instance;
     
     [SerializeField] private PlayerHold playerHold;
+    [SerializeField] private HUD hud;
+    private bool obj4Shown = false;
     
     // WAKE UP
     public void Awake()
@@ -104,6 +106,11 @@ public class PlayerInteraction : MonoBehaviour
                 if (obj.TryGetComponent<InteractableDoll>(out _))
                 {
                     if (playerHold.IsHoldingObject()) shouldShow = false;
+                    if (!obj4Shown)
+                    {
+                        obj4Shown = true;
+                        hud.ShowObjective4();
+                    }
                 }
                 else if (obj.TryGetComponent<InteractableChair>(out var chair))
                 {
@@ -153,7 +160,7 @@ public class PlayerInteraction : MonoBehaviour
     {
         Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
         //Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.red, 2f);
-        if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance, interactionLayer))
+        if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance, interactionLayer, QueryTriggerInteraction.Collide))
         {
             //Debug.Log(hit.collider.gameObject);
             return hit.collider.gameObject == obj.gameObject;
