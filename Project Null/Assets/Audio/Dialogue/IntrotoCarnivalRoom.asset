@@ -12,5 +12,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ac8fbc885c7d704baad501dfad8b7ea, type: 3}
   m_Name: IntrotoCarnivalRoom
   m_EditorClassIdentifier: 
-  sequenceName: 
-  lines: []
+  sequenceName: IntrotoCarnivalRoom
+  lines:
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: 09cbf13ebf18b36499f8cdb9992373e2, type: 3}
+    playerText: 
+    delayBeforeNext: 0
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: Me?.. Why me?
+    delayBeforeNext: 0
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: How do you know it was me who did all of this?
+    delayBeforeNext: 0
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: 6376f22546fa89148ab5ec7ddaf44ffe, type: 3}
+    playerText: 
+    delayBeforeNext: 1
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: It cant be.
+    delayBeforeNext: 0
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: the... Note  .... my note
+    delayBeforeNext: 0
