@@ -1,7 +1,11 @@
 using UnityEngine;
+using UnityEngine.Rendering; //Temporary
+using UnityEngine.Rendering.Universal; //Temporary
 
 public class Sanity : MonoBehaviour
 {
+    public static Sanity Instance;
+
     [Header("Sanity Settings")]
     public float maxSanity = 100f;
     public float currentSanity = 0f;
@@ -21,11 +25,17 @@ public class Sanity : MonoBehaviour
     private AudioSource ringingAudio;
     private AudioSource sanityAudioSource;
 
+    [Header("Post Processing")] //Temporary
+    public Volume postProcessVolume;
+
+    private ChromaticAberration chromaticAberration; //temporary
+    private LensDistortion lensDistortion; //temporary
+    private MotionBlur motionBlur; //Temporary
+
     public event System.Action<float, float> OnSanityChanged; // (current, max)
 
     private void Start()
     {
-        DontDestroyOnLoad(gameObject);
         flickerTimers = new float[lightsToFlicker.Length];
         lightStates = new bool[lightsToFlicker.Length];
 
@@ -48,6 +58,14 @@ public class Sanity : MonoBehaviour
         sanityAudioSource.playOnAwake = false;
         sanityAudioSource.spatialBlend = 0f;
         sanityAudioSource.loop = false;
+
+        //Temporary
+        if (postProcessVolume != null && postProcessVolume.profile != null)
+        {
+            postProcessVolume.profile.TryGet(out chromaticAberration);
+            postProcessVolume.profile.TryGet(out lensDistortion);
+            postProcessVolume.profile.TryGet(out motionBlur);
+        }
     }
 
     private void Update()
@@ -105,6 +123,24 @@ public class Sanity : MonoBehaviour
                     Mathf.Lerp(60f, 15f, 1f - sanityPercent)
                 );
             }
+        }
+
+        //Temporary
+        if (chromaticAberration != null)
+        {
+            chromaticAberration.intensity.value = Mathf.Lerp(1f, 0f, sanityPercent);
+        }
+
+        //Temporary
+        if (lensDistortion != null)
+        {
+            lensDistortion.intensity.value = Mathf.Lerp(-0.5f, 0f, sanityPercent);
+        }
+
+        //Temporary
+        if (motionBlur != null)
+        {
+            motionBlur.intensity.value = Mathf.Lerp(0.5f, 0f, sanityPercent);
         }
     }
 
