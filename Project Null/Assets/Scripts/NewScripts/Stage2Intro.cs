@@ -93,15 +93,13 @@ public class Stage2Intro : MonoBehaviour
             foreach (var s in playerControlScripts)
                 if (s) s.enabled = true;
 
-        // Bring up the HUD
+        // Bring up the HUD with proper fade-ins
         if (hud != null)
         {
-            
-
             hud.ShowHealthBar();
             hud.ShowSanityBar();
-            hud.HandleBatteryDisplay();
-            hud.HandleInventoryDisplay();
+            hud.ShowBatteryDisplay();      // Now uses the fade-in function!
+            hud.ShowInventoryDisplay();    // Now uses the fade-in function!
             hud.ShowObjective6();
         }
     }

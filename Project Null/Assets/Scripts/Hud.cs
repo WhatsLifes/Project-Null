@@ -20,7 +20,7 @@ public class HUD : MonoBehaviour
     [SerializeField] private TMP_Text batteryText;
     [SerializeField] private CanvasGroup batteryGroup;
     [SerializeField] private FlashlightToggle flashlightToggle;
-    
+
     [Header("Inventory Display")]
     [SerializeField] private Image syringeImage;
     [SerializeField] private CanvasGroup inventoryGroup;
@@ -30,7 +30,7 @@ public class HUD : MonoBehaviour
     [SerializeField] private Sanity sanity;
     [SerializeField] private Slider sanityBar;
     [SerializeField] private CanvasGroup sanityGroup;
-    
+
     [Header("Animation Settings")]
     [SerializeField] private float fadeInDuration = 0.5f;
 
@@ -74,7 +74,7 @@ public class HUD : MonoBehaviour
             batteryGroup.alpha = 0f;
             batteryGroup.gameObject.SetActive(false);
         }
-        
+
         if (inventoryGroup != null)
         {
             inventoryGroup.alpha = 0f;
@@ -119,13 +119,13 @@ public class HUD : MonoBehaviour
         }
     }
 
-    public void ShowSanityBar() 
+    public void ShowSanityBar()
     {
         if (sanityGroup != null)
         {
             sanityGroup.gameObject.SetActive(true);
             StartCoroutine(FadeInCanvasGroup(sanityGroup));
-            if (player != null) 
+            if (player != null)
                 UpdateSanityDisplay(sanity.currentSanity, sanity.maxSanity);
         }
     }
@@ -177,6 +177,26 @@ public class HUD : MonoBehaviour
 
     // ===== BATTERY DISPLAY HANDLING =====
 
+    public void ShowBatteryDisplay()
+    {
+        if (batteryGroup != null && flashlightToggle != null && batteryText != null)
+        {
+            batteryGroup.gameObject.SetActive(true);
+            StartCoroutine(FadeInCanvasGroup(batteryGroup));
+
+            // Update the text to show current battery percentage in intervals of 5
+            float percent = Mathf.Clamp01(flashlightToggle.currentBattery / flashlightToggle.maxBattery) * 100f;
+            int roundedPercent = Mathf.RoundToInt(percent / 5f) * 5;
+            batteryText.text = $"Battery: {roundedPercent}%";
+        }
+    }
+
+    public void HideBatteryDisplay()
+    {
+        if (batteryGroup != null)
+            StartCoroutine(FadeOutCanvasGroup(batteryGroup));
+    }
+
     public void HandleBatteryDisplay()
     {
         if (flashlightToggle == null || batteryText == null || batteryGroup == null)
@@ -191,9 +211,10 @@ public class HUD : MonoBehaviour
                 StartCoroutine(FadeInCanvasGroup(batteryGroup));
             }
 
-            // Update the text to show current battery percentage
+            // Update the text to show current battery percentage in intervals of 5
             float percent = Mathf.Clamp01(flashlightToggle.currentBattery / flashlightToggle.maxBattery) * 100f;
-            batteryText.text = $"Battery: {percent:F0}%";
+            int roundedPercent = Mathf.RoundToInt(percent / 5f) * 5;
+            batteryText.text = $"Battery: {roundedPercent}%";
         }
         else
         {
@@ -204,7 +225,22 @@ public class HUD : MonoBehaviour
     }
 
     // =====    INVENTORY DISPLAY      =====
-    //       basically syringe for now
+
+    public void ShowInventoryDisplay()
+    {
+        if (inventoryGroup != null && inventory != null && syringeImage != null)
+        {
+            inventoryGroup.gameObject.SetActive(true);
+            StartCoroutine(FadeInCanvasGroup(inventoryGroup));
+        }
+    }
+
+    public void HideInventoryDisplay()
+    {
+        if (inventoryGroup != null)
+            StartCoroutine(FadeOutCanvasGroup(inventoryGroup));
+    }
+
     public void HandleInventoryDisplay()
     {
         if (inventory == null || inventoryGroup == null || syringeImage == null) return;
@@ -219,11 +255,11 @@ public class HUD : MonoBehaviour
         }
         else
         {
-            if (inventoryGroup.gameObject.activeSelf) 
+            if (inventoryGroup.gameObject.activeSelf)
                 StartCoroutine(FadeOutCanvasGroup(inventoryGroup));
         }
     }
-    
+
     // ===== HELPER FUNCTIONS =====
 
     private IEnumerator FadeInCanvasGroup(CanvasGroup group)

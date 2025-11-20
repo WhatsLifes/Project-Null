@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering; //Temporary
 using UnityEngine.Rendering.Universal; //Temporary
+using System.Collections;
 
 public class Sanity : MonoBehaviour
 {
@@ -8,8 +9,12 @@ public class Sanity : MonoBehaviour
 
     [Header("Sanity Settings")]
     public float maxSanity = 100f;
-    public float currentSanity = 0f;
+    public float currentSanity = 100f;  // Start at max instead of 0
     public float passiveDrainPerMinute = 5f;
+
+    [Header("Sanity Restoration")]
+    [Tooltip("Rate at which sanity restores per second when RestoreSanity is called")]
+    public float restoreRatePerSecond = 5f;
 
     [Header("Effects")]
     public Camera playerCamera;
@@ -24,6 +29,7 @@ public class Sanity : MonoBehaviour
     private float ringingTimer = 0f;
     private AudioSource ringingAudio;
     private AudioSource sanityAudioSource;
+    private Coroutine restoreCoroutine;
 
     [Header("Post Processing")] //Temporary
     public Volume postProcessVolume;
@@ -39,7 +45,7 @@ public class Sanity : MonoBehaviour
         flickerTimers = new float[lightsToFlicker.Length];
         lightStates = new bool[lightsToFlicker.Length];
 
-        for(int i = 0; i < lightsToFlicker.Length; i++)
+        for (int i = 0; i < lightsToFlicker.Length; i++)
         {
             flickerTimers[i] = Random.Range(0.1f, 1f);
             lightStates[i] = true;
@@ -71,7 +77,7 @@ public class Sanity : MonoBehaviour
     private void Update()
     {
         passiveDrainTimer += Time.deltaTime;
-        if(passiveDrainTimer >= 60f)
+        if (passiveDrainTimer >= 60f)
         {
             TakeSanityDamage(passiveDrainPerMinute);
             passiveDrainTimer = 0f;
@@ -84,19 +90,91 @@ public class Sanity : MonoBehaviour
 
     public void TakeSanityDamage(float amount)
     {
+        // Stop any ongoing restoration when taking damage
+        if (restoreCoroutine != null)
+        {
+            StopCoroutine(restoreCoroutine);
+            restoreCoroutine = null;
+        }
+
         currentSanity -= amount;
         currentSanity = Mathf.Clamp(currentSanity, 0f, maxSanity);
-        
+
         // Invoke the event
         OnSanityChanged?.Invoke(currentSanity, maxSanity);
     }
 
     public void RestoreSanity(float amount)
     {
+        RestoreSanity(amount, restoreRatePerSecond);
+    }
+
+    public void RestoreSanity(float amount, float ratePerSecond)
+    {
+        // Stop any previous restoration
+        if (restoreCoroutine != null)
+            StopCoroutine(restoreCoroutine);
+
+        restoreCoroutine = StartCoroutine(RestoreSanityOverTime(amount, ratePerSecond));
+    }
+
+    public void RestoreSanityInstant(float amount)
+    {
         currentSanity += amount;
         currentSanity = Mathf.Clamp(currentSanity, 0f, maxSanity);
-        
+
         // Invoke the event
+        OnSanityChanged?.Invoke(currentSanity, maxSanity);
+    }
+
+    private IEnumerator RestoreSanityOverTime(float totalAmount, float ratePerSecond)
+    {
+        float amountRestored = 0f;
+
+        while (amountRestored < totalAmount && currentSanity < maxSanity)
+        {
+            float restoreThisFrame = ratePerSecond * Time.deltaTime;
+
+            // Don't restore more than needed
+            restoreThisFrame = Mathf.Min(restoreThisFrame, totalAmount - amountRestored);
+
+            currentSanity += restoreThisFrame;
+            currentSanity = Mathf.Clamp(currentSanity, 0f, maxSanity);
+            amountRestored += restoreThisFrame;
+
+            // Invoke the event
+            OnSanityChanged?.Invoke(currentSanity, maxSanity);
+
+            yield return null;
+        }
+
+        restoreCoroutine = null;
+    }
+
+    public void StopRestoration()
+    {
+        if (restoreCoroutine != null)
+        {
+            StopCoroutine(restoreCoroutine);
+            restoreCoroutine = null;
+        }
+    }
+
+    public void SetRestoreRate(float newRate)
+    {
+        restoreRatePerSecond = Mathf.Max(0f, newRate);
+    }
+
+    public void SetSanity(float newValue)
+    {
+        currentSanity = Mathf.Clamp(newValue, 0f, maxSanity);
+        OnSanityChanged?.Invoke(currentSanity, maxSanity);
+    }
+
+    public void SetSanityValues(float newCurrent, float newMax)
+    {
+        maxSanity = Mathf.Max(0f, newMax);
+        currentSanity = Mathf.Clamp(newCurrent, 0f, maxSanity);
         OnSanityChanged?.Invoke(currentSanity, maxSanity);
     }
 
@@ -175,9 +253,9 @@ public class Sanity : MonoBehaviour
     {
         float sanityPercent = currentSanity / maxSanity;
 
-        if(sanityPercent > 0.5f)
+        if (sanityPercent > 0.5f)
         {
-            foreach(Light light in lightsToFlicker)
+            foreach (Light light in lightsToFlicker)
             {
                 if (light == null) continue;
                 light.intensity = 1f;
@@ -187,7 +265,7 @@ public class Sanity : MonoBehaviour
         float minInterval = Mathf.Lerp(1.5f, 0.05f, 1f - sanityPercent);
         float maxInterval = Mathf.Lerp(3f, 0.3f, 1f - sanityPercent);
 
-        for(int i = 0; i < lightsToFlicker.Length; i++)
+        for (int i = 0; i < lightsToFlicker.Length; i++)
         {
             Light light = lightsToFlicker[i];
             if (light == null) continue;
@@ -199,5 +277,12 @@ public class Sanity : MonoBehaviour
                 flickerTimers[i] = Random.Range(minInterval, maxInterval);
             }
         }
+    }
+
+    private void OnDestroy()
+    {
+        // Clean up coroutine
+        if (restoreCoroutine != null)
+            StopCoroutine(restoreCoroutine);
     }
 }
