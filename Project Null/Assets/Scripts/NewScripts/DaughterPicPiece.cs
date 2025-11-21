@@ -15,7 +15,7 @@ public class PickupDaughterPicture : MonoBehaviour, InteractableScript
 
     private static Image pictureImage;
     private static bool isDisplaying = false;
-    private static GameObject activePickup; // Keep reference to pickup
+    private static PickupDaughterPicture activeInstance;
 
     void Start()
     {
@@ -46,8 +46,8 @@ public class PickupDaughterPicture : MonoBehaviour, InteractableScript
 
     void Update()
     {
-        // Check if THIS is the active pickup and picture is displaying
-        if (activePickup == this.gameObject && isDisplaying)
+        // Check if THIS is the active instance and picture is displaying
+        if (activeInstance == this && isDisplaying)
         {
             // Check for ANY key press (keyboard or mouse)
             if (Input.anyKeyDown || Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
@@ -65,8 +65,10 @@ public class PickupDaughterPicture : MonoBehaviour, InteractableScript
         if (elevatorButton != null)
             elevatorButton.conditionMet = true;
 
-        // Set this as the active pickup
-        activePickup = this.gameObject;
+        Debug.Log("Daughter picture piece picked up!");
+
+        // Set this as the active instance
+        activeInstance = this;
 
         // Show UI
         if (pictureUIObject != null)
@@ -91,16 +93,38 @@ public class PickupDaughterPicture : MonoBehaviour, InteractableScript
             pressAnyKeyText.SetActive(true);
         }
 
-        // Hide the pickup visually but DON'T destroy yet
+        // Hide the entire GameObject (but keep Update running)
+        // This hides mesh, collider, everything except the script
+        HidePickupVisuals();
+    }
+
+    void HidePickupVisuals()
+    {
+        // Disable renderer so it's invisible
         MeshRenderer mr = GetComponent<MeshRenderer>();
         if (mr != null) mr.enabled = false;
 
+        // Also check for skinned mesh renderer
+        SkinnedMeshRenderer smr = GetComponent<SkinnedMeshRenderer>();
+        if (smr != null) smr.enabled = false;
+
+        // Disable collider so it can't be picked up again
         Collider col = GetComponent<Collider>();
         if (col != null) col.enabled = false;
+
+        // If there are child objects with renderers, hide those too
+        foreach (Renderer childRenderer in GetComponentsInChildren<Renderer>())
+        {
+            childRenderer.enabled = false;
+        }
+
+        Debug.Log("Pickup visuals hidden (GameObject still exists)");
     }
 
     void HidePicture()
     {
+        Debug.Log("Hiding picture UI");
+
         isDisplaying = false;
 
         if (pictureUIObject != null)
@@ -113,11 +137,42 @@ public class PickupDaughterPicture : MonoBehaviour, InteractableScript
             pressAnyKeyText.SetActive(false);
         }
 
-        // NOW destroy the pickup
-        if (activePickup != null)
+        // GameObject stays hidden, Update stops checking for input
+        activeInstance = null;
+    }
+
+    // Optional: Call this to show the pickup again (if needed for respawning)
+    public void ShowPickupVisuals()
+    {
+        MeshRenderer mr = GetComponent<MeshRenderer>();
+        if (mr != null) mr.enabled = true;
+
+        SkinnedMeshRenderer smr = GetComponent<SkinnedMeshRenderer>();
+        if (smr != null) smr.enabled = true;
+
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.enabled = true;
+
+        foreach (Renderer childRenderer in GetComponentsInChildren<Renderer>())
         {
-            Destroy(activePickup);
-            activePickup = null;
+            childRenderer.enabled = true;
         }
+
+        Debug.Log("Pickup visuals shown");
+    }
+
+    // Optional: Reset the pickup state (useful for respawning)
+    public void ResetPickup()
+    {
+        daughterPiecePickedUp = false;
+        isDisplaying = false;
+        activeInstance = null;
+
+        if (elevatorButton != null)
+            elevatorButton.conditionMet = false;
+
+        ShowPickupVisuals();
+
+        Debug.Log("Pickup reset");
     }
 }
