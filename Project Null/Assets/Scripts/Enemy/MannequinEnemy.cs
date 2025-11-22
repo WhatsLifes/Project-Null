@@ -24,6 +24,11 @@ public class MannequinEnemy : Enemy
     [Tooltip("How long the mannequin stays frozen after flashlight moves away (0 = instant unfreeze)")]
     public float freezeDuration = 2f;
 
+    [Header("Animation Settings")]
+    public Animator animator;
+    [Tooltip("Bool parameter to alternate between attack animations")]
+    public string attackTypeParameter = "AttackType";
+
     private enum EnemyState { Idle, Patrolling, Chasing, Attacking }
     private EnemyState currentState = EnemyState.Idle;
 
@@ -32,7 +37,7 @@ public class MannequinEnemy : Enemy
     private bool isAttacking = false;
     private bool isFrozenByFlashlight = false;
     private float freezeEndTime = 0f;
-    private Animator animator;
+    private bool useAttack1 = true; // Track which attack to use next
 
     protected override void Awake()
     {
@@ -44,7 +49,6 @@ public class MannequinEnemy : Enemy
             Debug.LogWarning($"{gameObject.name}: Agent was not assigned, found and assigned automatically.");
         }
 
-        animator = GetComponent<Animator>();
         if (animator == null)
         {
             animator = GetComponentInChildren<Animator>();
@@ -53,7 +57,6 @@ public class MannequinEnemy : Enemy
         if (agent != null)
         {
             defaultSpeed = agent.speed;
-            // Set initial patrol speed
             patrolSpeed = defaultSpeed;
         }
 
@@ -62,7 +65,6 @@ public class MannequinEnemy : Enemy
 
     private void Start()
     {
-        // Start patrolling (not hostile yet)
         StartCoroutine(StartPatrolling());
     }
 
@@ -73,7 +75,7 @@ public class MannequinEnemy : Enemy
         if (agent != null)
         {
             agent.enabled = true;
-            agent.speed = patrolSpeed; // Use patrol speed
+            agent.speed = patrolSpeed;
             agent.stoppingDistance = 0f;
             agent.updatePosition = true;
             agent.updateRotation = true;
@@ -91,7 +93,6 @@ public class MannequinEnemy : Enemy
         // Check if freeze duration has expired
         if (isFrozenByFlashlight && Time.time >= freezeEndTime)
         {
-            // Unfreeze now
             isFrozenByFlashlight = false;
 
             if (agent != null && agent.isOnNavMesh)
@@ -100,7 +101,7 @@ public class MannequinEnemy : Enemy
             }
             if (animator != null)
             {
-                animator.speed = 1f; // Resume animation at normal speed
+                animator.speed = 1f;
             }
 
             Debug.Log($"{gameObject.name} unfrozen - freeze duration expired");
@@ -117,7 +118,6 @@ public class MannequinEnemy : Enemy
         {
             Patrolling();
 
-            // Use cone vision - player must be in cone AND within sight range
             if (distance <= sightRange && CanSeePlayer())
             {
                 Debug.Log($"[{gameObject.name}] Player spotted in vision cone - ACTIVATING!");
@@ -131,23 +131,19 @@ public class MannequinEnemy : Enemy
 
         if (canSeePlayer)
         {
-            // Player visible in cone
             if (distance <= attackRange + attackDistanceBuffer)
             {
-                // Attack
                 SetState(EnemyState.Attacking);
                 AttackPlayer();
             }
             else
             {
-                // Chase
                 SetState(EnemyState.Chasing);
                 ChasePlayer();
             }
         }
         else
         {
-            // Lost sight of player - return to patrol
             isAttacking = false;
             SetState(EnemyState.Patrolling);
             Patrolling();
@@ -163,7 +159,7 @@ public class MannequinEnemy : Enemy
         if (agent != null)
         {
             agent.enabled = true;
-            agent.speed = chaseSpeed; // Use chase speed when activated
+            agent.speed = chaseSpeed;
             agent.stoppingDistance = attackDistanceBuffer;
             agent.updatePosition = true;
             agent.updateRotation = true;
@@ -175,7 +171,6 @@ public class MannequinEnemy : Enemy
 
     public new void Deactivate()
     {
-        // Make enemy non-hostile but keep patrolling
         isActive = false;
         isAttacking = false;
         SetState(EnemyState.Patrolling);
@@ -184,19 +179,17 @@ public class MannequinEnemy : Enemy
         {
             agent.ResetPath();
             agent.isStopped = false;
-            agent.speed = patrolSpeed; // Back to patrol speed
+            agent.speed = patrolSpeed;
             agent.stoppingDistance = 0f;
         }
 
         Debug.Log($"{gameObject.name} deactivated - back to passive patrol");
     }
 
-    // Freezes the mannequin completely when flashlight is on it
     public void FlashlightFreeze()
     {
         if (isFrozenByFlashlight)
         {
-            // Already frozen - just extend the freeze duration
             freezeEndTime = Time.time + freezeDuration;
             return;
         }
@@ -211,20 +204,16 @@ public class MannequinEnemy : Enemy
             agent.velocity = Vector3.zero;
         }
 
-        // Pause the animator
         if (animator != null)
         {
-            animator.speed = 0f; // Freeze animation
+            animator.speed = 0f;
         }
 
         Debug.Log($"{gameObject.name} frozen by flashlight for {freezeDuration} seconds");
     }
 
-    // Called when flashlight moves away (mannequin stays frozen for duration)
     public void FlashlightUnfreeze()
     {
-        // Don't actually unfreeze yet - just log
-        // The Update() method will handle unfreezing after the duration
         if (isFrozenByFlashlight)
         {
             float remainingTime = freezeEndTime - Time.time;
@@ -239,7 +228,6 @@ public class MannequinEnemy : Enemy
         Vector3 dirToPlayer = (player.position - transform.position).normalized;
         float angle = Vector3.Angle(transform.forward, dirToPlayer);
 
-        // Check if player is within the cone angle
         if (angle > attackConeAngle / 2f)
         {
             return false;
@@ -252,7 +240,6 @@ public class MannequinEnemy : Enemy
 
         if (playerCC != null)
         {
-            // Aim at the center - accounts for scale automatically
             float actualHeight = playerCC.height * player.lossyScale.y;
             targetPos = player.position + Vector3.up * (actualHeight / 2f);
         }
@@ -262,11 +249,8 @@ public class MannequinEnemy : Enemy
         }
 
         Vector3 directionToTarget = (targetPos - eyePos).normalized;
-
-        // Use layerMask to ignore the Enemy layer
         int layerMask = ~LayerMask.GetMask("Enemy");
 
-        // Raycast from eye position to player
         if (Physics.Raycast(eyePos, directionToTarget, out RaycastHit hit, sightRayDistance, layerMask))
         {
 #if UNITY_EDITOR
@@ -295,12 +279,11 @@ public class MannequinEnemy : Enemy
 
         agent.isStopped = false;
         agent.updateRotation = true;
-        agent.speed = chaseSpeed; // Set chase speed
+        agent.speed = chaseSpeed;
         agent.stoppingDistance = attackDistanceBuffer;
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        // Keep chasing if player is beyond attack range
         if (distanceToPlayer > attackRange + attackDistanceBuffer)
         {
             NavMeshHit hit;
@@ -315,7 +298,6 @@ public class MannequinEnemy : Enemy
         }
         else
         {
-            // In attack range, stop and attack
             agent.isStopped = true;
             agent.ResetPath();
         }
@@ -326,7 +308,6 @@ public class MannequinEnemy : Enemy
         if (!agent.isOnNavMesh || player == null || THEMC == null)
             return;
 
-        // Stop movement completely during attack
         if (!agent.isStopped)
         {
             agent.isStopped = true;
@@ -347,15 +328,32 @@ public class MannequinEnemy : Enemy
 
         float distance = Vector3.Distance(transform.position, player.position);
 
-        // Attack if within range and cooldown is over
         if (distance <= attackRange + attackDistanceBuffer && Time.time >= lastAttackTime + attackCooldown)
         {
+            // Set attack type parameter (0 or 1 for different attacks)
+            if (animator != null)
+            {
+                // Set which attack animation to use
+                if (!string.IsNullOrEmpty(attackTypeParameter))
+                {
+                    animator.SetBool(attackTypeParameter, useAttack1);
+                }
+
+                // Trigger the attack (uses "isAttacking" from base Enemy class)
+                animator.SetTrigger("isAttacking");
+
+                Debug.Log($"{gameObject.name} triggered attack - Using {(useAttack1 ? "Attack1" : "Attack2")}");
+
+                // Toggle for next attack
+                useAttack1 = !useAttack1;
+            }
+
+            // Deal damage
             Debug.Log($"{gameObject.name} attacks the player for {damage} damage!");
             THEMC.TakeDamage(damage);
             lastAttackTime = Time.time;
         }
 
-        // If player moves out of attack range but still in sight, resume chasing
         if (distance > attackRange + attackDistanceBuffer && CanSeePlayer())
         {
             SetState(EnemyState.Chasing);
@@ -369,7 +367,6 @@ public class MannequinEnemy : Enemy
         {
             currentState = newState;
 
-            // Adjust speed based on state
             if (agent != null && agent.isOnNavMesh)
             {
                 if (newState == EnemyState.Patrolling)
@@ -390,7 +387,6 @@ public class MannequinEnemy : Enemy
     {
         if (!agent.enabled || !agent.isOnNavMesh) return;
 
-        // Stop when colliding with player
         if (collision.gameObject.CompareTag("Player"))
         {
             if (isActive)
@@ -400,7 +396,6 @@ public class MannequinEnemy : Enemy
                 agent.velocity = Vector3.zero;
             }
         }
-        // Handle collisions with other enemies
         else if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
             Vector3 pushDirection = (transform.position - collision.transform.position).normalized;
@@ -417,12 +412,10 @@ public class MannequinEnemy : Enemy
     {
         if (!agent.enabled || !agent.isOnNavMesh) return;
 
-        // Keep agent stopped while colliding with player (only if hostile)
         if (collision.gameObject.CompareTag("Player") && isActive)
         {
             agent.velocity = Vector3.zero;
         }
-        // Maintain separation from other enemies
         else if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
             Vector3 pushDirection = (transform.position - collision.transform.position).normalized;
@@ -439,12 +432,10 @@ public class MannequinEnemy : Enemy
     {
         if (!showDebugGizmos) return;
 
-        // Forward direction
         Gizmos.color = Color.cyan;
         Gizmos.DrawLine(transform.position + Vector3.up * eyeHeight,
                         transform.position + Vector3.up * eyeHeight + transform.forward * sightRayDistance);
 
-        // Vision cone
         Gizmos.color = Color.yellow;
         Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
         Vector3 right = Quaternion.Euler(0, attackConeAngle / 2f, 0) * transform.forward;
@@ -452,7 +443,6 @@ public class MannequinEnemy : Enemy
         Gizmos.DrawLine(eyePos, eyePos + right * sightRayDistance);
         Gizmos.DrawLine(eyePos, eyePos + left * sightRayDistance);
 
-        // Attack range
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange + attackDistanceBuffer);
     }
