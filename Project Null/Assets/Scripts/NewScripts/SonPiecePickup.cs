@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-public class PickupSonPicture : MonoBehaviour, InteractableScript
+public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
 {
     [Header("UI Display")]
     [SerializeField] private GameObject pictureUIObject; // The UI Image GameObject
