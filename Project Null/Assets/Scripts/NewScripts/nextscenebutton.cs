@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ElevatorButtonSceneTransition : MonoBehaviour
+public class ElevatorButtonSceneTransition : MonoBehaviour, InteractableScript
 {
     [Header("Scene Settings")]
     [Tooltip("Name of the scene to load")]
@@ -49,19 +49,19 @@ public class ElevatorButtonSceneTransition : MonoBehaviour
             originalMaterial = buttonRenderer.material;
     }
 
-    private void Update()
-    {
-        CheckIfLookingAtButton();
-
-        // Try to interact when pressing key
-        if (Input.GetKeyDown(interactionKey) && playerLookingAtButton)
-        {
-            TryTransition();
-        }
-
-        // Update visual feedback
-        UpdateButtonAppearance();
-    }
+    // private void Update()
+    // {
+    //     CheckIfLookingAtButton();
+    //
+    //     // Try to interact when pressing key
+    //     if (Input.GetKeyDown(interactionKey) && playerLookingAtButton)
+    //     {
+    //         TryTransition();
+    //     }
+    //
+    //     // Update visual feedback
+    //     UpdateButtonAppearance();
+    // }
 
     private void CheckIfLookingAtButton()
     {
@@ -94,6 +94,11 @@ public class ElevatorButtonSceneTransition : MonoBehaviour
         playerLookingAtButton = false;
         if (interactionPrompt != null)
             interactionPrompt.SetActive(false);
+    }
+
+    public void InteractScript()
+    {
+        TryTransition();
     }
 
     private void TryTransition()
