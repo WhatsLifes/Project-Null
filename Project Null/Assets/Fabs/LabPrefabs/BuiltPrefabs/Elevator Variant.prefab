@@ -1,0 +1,198 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &7154179894716572050
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 746449149423298955, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_Range
+      value: 2.7254987
+      objectReference: {fileID: 0}
+    - target: {fileID: 1910933076441199892, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 1925307828270014908, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 2022821346872303732, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_Name
+      value: elevator right door
+      objectReference: {fileID: 0}
+    - target: {fileID: 3555253756261897932, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 3555253756261897932, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 8.79
+      objectReference: {fileID: 0}
+    - target: {fileID: 6849533219538584755, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.38
+      objectReference: {fileID: 0}
+    - target: {fileID: 7056391669086271353, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_Name
+      value: Elevator Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 7684977675741031875, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.6154633
+      objectReference: {fileID: 0}
+    - target: {fileID: 7684977675741031875, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -5.2223988
+      objectReference: {fileID: 0}
+    - target: {fileID: 7684977675741031875, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -5.006319
+      objectReference: {fileID: 0}
+    - target: {fileID: 7684977675741031875, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7684977675741031875, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7684977675741031875, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7684977675741031875, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7684977675741031875, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7684977675741031875, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7684977675741031875, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7897183285454645510, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_Name
+      value: elevator left door
+      objectReference: {fileID: 0}
+    - target: {fileID: 8214085932782790233, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_Name
+      value: ElevatorButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 8214085932782790233, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8214085932782790233, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 324628222270982573}
+    - targetCorrespondingSourceObject: {fileID: 8214085932782790233, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6040963552046279775}
+    - targetCorrespondingSourceObject: {fileID: 2022821346872303732, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3464561931221535209}
+    - targetCorrespondingSourceObject: {fileID: 7897183285454645510, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5253012929760737168}
+  m_SourcePrefab: {fileID: 100100000, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+--- !u!1 &1067545452477384852 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7897183285454645510, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+  m_PrefabInstance: {fileID: 7154179894716572050}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5253012929760737168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1067545452477384852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47f2047df148a70468d0898e0ce15f43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slideDistance: 1.2
+  slideSpeed: 2
+--- !u!1 &1348418071255025611 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8214085932782790233, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+  m_PrefabInstance: {fileID: 7154179894716572050}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &324628222270982573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1348418071255025611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6ad727ac02d3394d99f125475fd3702, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextSceneName: Stage2
+  elevatorButton: {fileID: 0}
+  interactionKey: 101
+  interactDistance: 3
+  playerCamera: {fileID: 0}
+  interactMask:
+    serializedVersion: 2
+    m_Bits: 0
+  interactionPrompt: {fileID: 0}
+  interactableMaterial: {fileID: 0}
+  disabledMaterial: {fileID: 0}
+--- !u!65 &6040963552046279775
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1348418071255025611}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.019999998, y: 0.02960737, z: 0.019999994}
+  m_Center: {x: 0.00000011920929, y: 0.0048036873, z: 0.000000014901161}
+--- !u!1 &9176719730633081318 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2022821346872303732, guid: a4d629adc8962814994d90ab0de671f2, type: 3}
+  m_PrefabInstance: {fileID: 7154179894716572050}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3464561931221535209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9176719730633081318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47f2047df148a70468d0898e0ce15f43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slideDistance: -1.2
+  slideSpeed: 2

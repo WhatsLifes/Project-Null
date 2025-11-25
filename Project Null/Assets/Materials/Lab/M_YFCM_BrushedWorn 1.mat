@@ -63,6 +63,7 @@ Material:
     - _Parallax: 0.005
     - _Smoothness: 0
     - _Surface: 0
+    - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 0.122641504, g: 0.10793222, b: 0.100080095, a: 1}
