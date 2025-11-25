@@ -421,7 +421,6 @@ GameObject:
   - component: {fileID: 2874031559322487781}
   - component: {fileID: 3201976954894095539}
   - component: {fileID: 7800597878036715262}
-  - component: {fileID: 368633545872964829}
   - component: {fileID: 2627916517186614001}
   m_Layer: 11
   m_Name: Cube
@@ -521,34 +520,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.2379303, y: 2.076944, z: 1.9905931}
   m_Center: {x: 0.11223793, y: -0.044475198, z: 0.49529642}
---- !u!114 &368633545872964829
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7612016586749281677}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f15313b9d42b574985bc0c8b1cf4748, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  waitBeforeOpen: 5
-  interactKey: 101
-  player: {fileID: 0}
-  leftDoor: {fileID: 0}
-  rightDoor: {fileID: 0}
-  audioSource: {fileID: 0}
-  correctLine: {fileID: 8300000, guid: 5fb626bb7375c124288e4756cbc488cd, type: 3}
-  wrongLine: {fileID: 8300000, guid: 2594a2e3962ed83488ec21b7387a8a4b, type: 3}
-  interactRange: 3
-  interactUI: {fileID: 0}
-  useManagerCondition: 1
-  conditionMet: 0
-  volume: 1
-  wrongLineCooldown: 3
-  successMusic: {fileID: 8300000, guid: dad087b0e09a07b4eb06d9bcaac52926, type: 3}
-  playFullTrack: 0
 --- !u!114 &2627916517186614001
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -66,6 +66,13 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
 
         Debug.Log("Son picture piece picked up! Bool set to true");
 
+        //ADDED: Tell GameProgressManager the condition is met
+        if (GameProgressManager.Instance != null)
+        {
+            GameProgressManager.Instance.buttonPressed = true;
+        }
+        // END ADD
+
         // Set this as the active instance
         activeInstance = this;
 
