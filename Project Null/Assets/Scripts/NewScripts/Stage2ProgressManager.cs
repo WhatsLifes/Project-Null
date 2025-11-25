@@ -14,9 +14,4 @@ public class Stage2ProgressManager : MonoBehaviour
         else
             Destroy(gameObject);
     }
-
-    public void SetSonPhotoPickedUp(bool state)
-    {
-        sonPhotoPickedUp = state;
-    }
 }

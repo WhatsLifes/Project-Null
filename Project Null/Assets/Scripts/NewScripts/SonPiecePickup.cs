@@ -5,8 +5,8 @@ using System.Collections;
 public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
 {
     [Header("UI Display")]
-    [SerializeField] private GameObject pictureUIObject; // The UI Image GameObject
-    [SerializeField] private GameObject pressAnyKeyText; // Optional "Press any key" prompt
+    [SerializeField] private GameObject pictureUIObject;
+    [SerializeField] private GameObject pressAnyKeyText;
 
     [Header("Game State")]
     public static bool sonPiecePickedUp = false;
@@ -14,45 +14,38 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
     [Header("Fade Settings")]
     [SerializeField] private float fadeDuration = 0.5f;
 
+    [Header("Dialogue Trigger")]
+    public DialogueTrigger dialogueTrigger;  // <-- ADD THIS
+
     private static Image pictureImage;
     private static bool isDisplaying = false;
     private static PickupSonPicture activeInstance;
 
     void Start()
     {
-        // Make sure the UI is hidden at start
         if (pictureUIObject != null)
         {
             pictureUIObject.SetActive(false);
             pictureImage = pictureUIObject.GetComponent<Image>();
 
-            // Force color to white with full alpha
             if (pictureImage != null)
-            {
                 pictureImage.color = Color.white;
-            }
 
-            // Remove any Canvas Group that might interfere
             CanvasGroup cg = pictureUIObject.GetComponent<CanvasGroup>();
-            if (cg != null)
-            {
-                cg.alpha = 1f;
-            }
+            if (cg != null) cg.alpha = 1f;
         }
 
         if (pressAnyKeyText != null)
-        {
             pressAnyKeyText.SetActive(false);
-        }
     }
 
     void Update()
     {
-        // Check if THIS is the active instance and picture is displaying
         if (activeInstance == this && isDisplaying)
         {
-            // Check for ANY key press (keyboard or mouse)
-            if (Input.anyKeyDown || Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+            if (Input.anyKeyDown ||
+                Input.GetMouseButtonDown(0) ||
+                Input.GetMouseButtonDown(1))
             {
                 HidePicture();
             }
@@ -61,104 +54,81 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
 
     public void InteractScript()
     {
-        // Set the bool to true
         sonPiecePickedUp = true;
+        Debug.Log("Son picture picked up!");
 
-        Debug.Log("Son picture piece picked up! Bool set to true");
-
-        //ADDED: Tell GameProgressManager the condition is met
-        if (GameProgressManager.Instance != null)
+        // 🔥 Update Stage2 Progress
+        if (Stage2ProgressManager.Instance != null)
         {
-            GameProgressManager.Instance.buttonPressed = true;
+            Stage2ProgressManager.Instance.sonPhotoPickedUp = true;
+            Debug.Log("Stage2ProgressManager updated: sonPhotoPickedUp = true");
         }
-        // END ADD
 
-        // Set this as the active instance
+        // 🔥 PLAY THE DIALOGUE LINE HERE
+        if (dialogueTrigger != null)
+        {
+            Debug.Log("Triggering pickup dialogue...");
+            dialogueTrigger.TriggerNow();
+        }
+        else
+        {
+            Debug.LogWarning("PickupSonPicture has NO DialogueTrigger assigned!");
+        }
+
         activeInstance = this;
 
-        // Show the picture on screen
         if (pictureUIObject != null)
         {
             pictureUIObject.SetActive(true);
             isDisplaying = true;
 
-            // FORCE the image to be visible
             if (pictureImage != null)
             {
                 pictureImage.enabled = true;
-                pictureImage.color = Color.white; // Full white, full alpha
+                pictureImage.color = Color.white;
 
-                // Double-check Canvas Group
                 CanvasGroup cg = pictureUIObject.GetComponent<CanvasGroup>();
                 if (cg != null) cg.alpha = 1f;
 
-                // Fade in effect
                 StartCoroutine(FadeIn());
             }
         }
 
-        // Show "press any key" prompt if you have one
         if (pressAnyKeyText != null)
-        {
             pressAnyKeyText.SetActive(true);
-        }
 
-        // Hide the pickup visually but DON'T destroy yet (so Update keeps running)
         HidePickupVisuals();
     }
 
     void HidePickupVisuals()
     {
-        // Disable renderer so it's invisible
-        MeshRenderer mr = GetComponent<MeshRenderer>();
-        if (mr != null) mr.enabled = false;
+        foreach (Renderer r in GetComponentsInChildren<Renderer>())
+            r.enabled = false;
 
-        // Also check for skinned mesh renderer
-        SkinnedMeshRenderer smr = GetComponent<SkinnedMeshRenderer>();
-        if (smr != null) smr.enabled = false;
-
-        // Disable collider so it can't be picked up again
         Collider col = GetComponent<Collider>();
         if (col != null) col.enabled = false;
-
-        // If there are child objects with renderers, hide those too
-        foreach (Renderer childRenderer in GetComponentsInChildren<Renderer>())
-        {
-            childRenderer.enabled = false;
-        }
-
-        Debug.Log("Son picture pickup visuals hidden");
     }
 
     void HidePicture()
     {
-        Debug.Log("Hiding son picture UI");
-
         isDisplaying = false;
 
         if (pictureUIObject != null)
-        {
             pictureUIObject.SetActive(false);
-        }
 
         if (pressAnyKeyText != null)
-        {
             pressAnyKeyText.SetActive(false);
-        }
 
-        // GameObject stays hidden, Update stops checking for input
         activeInstance = null;
     }
 
-    // Fade-in effect
     IEnumerator FadeIn()
     {
-        if (pictureImage == null) yield break;
+        if (pictureImage == null)
+            yield break;
 
         float elapsedTime = 0f;
         Color color = pictureImage.color;
-
-        // Start from transparent
         color.a = 0f;
         pictureImage.color = color;
 
@@ -170,38 +140,7 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
             yield return null;
         }
 
-        // Ensure it's fully visible at the end
         color.a = 1f;
         pictureImage.color = color;
-    }
-
-    // Optional: Reset the pickup (for respawning if needed)
-    public void ResetPickup()
-    {
-        sonPiecePickedUp = false;
-        isDisplaying = false;
-        activeInstance = null;
-
-        ShowPickupVisuals();
-
-        Debug.Log("Son picture pickup reset");
-    }
-
-    // Optional: Show pickup again
-    public void ShowPickupVisuals()
-    {
-        MeshRenderer mr = GetComponent<MeshRenderer>();
-        if (mr != null) mr.enabled = true;
-
-        SkinnedMeshRenderer smr = GetComponent<SkinnedMeshRenderer>();
-        if (smr != null) smr.enabled = true;
-
-        Collider col = GetComponent<Collider>();
-        if (col != null) col.enabled = true;
-
-        foreach (Renderer childRenderer in GetComponentsInChildren<Renderer>())
-        {
-            childRenderer.enabled = true;
-        }
     }
 }
