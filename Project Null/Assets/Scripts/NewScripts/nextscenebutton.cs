@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ElevatorButtonSceneTransition : MonoBehaviour, InteractableScript
+public class ElevatorButtonSceneTransition : MonoBehaviour, InteractableScript, stage2_InteractableScript
 {
     [Header("Scene Settings")]
     [Tooltip("Name of the scene to load")]

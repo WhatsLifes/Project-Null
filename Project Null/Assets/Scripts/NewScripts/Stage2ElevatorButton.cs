@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Stage2ElevatorButton : MonoBehaviour, InteractableScript
+public class Stage2ElevatorButton : MonoBehaviour, stage2_InteractableScript
 {
     [Header("Button Settings")]
     public float waitBeforeOpen = 15f;
