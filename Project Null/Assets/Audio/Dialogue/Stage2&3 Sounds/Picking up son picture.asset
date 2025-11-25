@@ -13,4 +13,20 @@ MonoBehaviour:
   m_Name: Picking up son picture
   m_EditorClassIdentifier: 
   sequenceName: 
-  lines: []
+  lines:
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: 96194717bedaf3247a95328864f28264, type: 3}
+    playerText: 
+    delayBeforeNext: 1
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: Who is this kid?
+    delayBeforeNext: 2
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: b566eecf2e4927e4c894a30d360f865d, type: 3}
+    playerText: 
+    delayBeforeNext: 2
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: I.. didnt do that
+    delayBeforeNext: 2
