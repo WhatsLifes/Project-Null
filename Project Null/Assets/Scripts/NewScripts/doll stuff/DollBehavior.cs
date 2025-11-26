@@ -216,8 +216,8 @@ public class DollBehavior : MonoBehaviour
             type = DollType.Normal;
         }
 
-        gameObject.layer = 9;
-        Debug.Log($"{gameObject.name} - Layer set to pickupable");
+        gameObject.layer = 11;
+        Debug.Log($"{gameObject.name} - Layer set to interactable");
 
 
         // Handle puzzle outcomes
