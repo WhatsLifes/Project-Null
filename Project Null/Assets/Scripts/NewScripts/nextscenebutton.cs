@@ -9,7 +9,27 @@ public class ElevatorButtonSceneTransition : MonoBehaviour, InteractableScript, 
 
     [Header("Elevator Requirements")]
     [Tooltip("Reference to the elevator button - elevator must be open to transition")]
-    public ElevatorButtonFixed elevatorButton;
+public MonoBehaviour elevatorButton;   // can hold ANY component
+
+private bool ElevatorIsOpen
+{
+    get
+    {
+        if (elevatorButton == null) return false;
+
+        // Try Stage 1 elevator
+        if (elevatorButton is ElevatorButtonFixed fixedButton)
+            return fixedButton.ElevatorOpened;
+
+        // Try Stage 2 elevator
+        if (elevatorButton is Stage2ElevatorButton stage2Button)
+            return stage2Button.ElevatorOpened;
+
+        return false;
+    }
+}
+
+
 
     [Header("Button Interaction")]
     [Tooltip("Key to press when looking at the button")]
@@ -36,7 +56,8 @@ public class ElevatorButtonSceneTransition : MonoBehaviour, InteractableScript, 
     private bool playerLookingAtButton = false;
 
     // ✅ Elevator must exist and be open
-    private bool CanTransition => elevatorButton != null && elevatorButton.ElevatorOpened;
+private bool CanTransition => ElevatorIsOpen;
+
 
     private void Start()
     {
