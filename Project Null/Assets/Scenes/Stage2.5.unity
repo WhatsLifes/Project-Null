@@ -94649,7 +94649,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 190723913800161003, guid: 2302d903e0c0095408ad51a10fc4a785, type: 3}
       propertyPath: m_Name
-      value: Elevator Variant (1)
+      value: Elevator Variant EXIT
       objectReference: {fileID: 0}
     - target: {fileID: 715587245780454481, guid: 2302d903e0c0095408ad51a10fc4a785, type: 3}
       propertyPath: m_LocalPosition.x
@@ -95294,7 +95294,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 190723913800161003, guid: 2302d903e0c0095408ad51a10fc4a785, type: 3}
       propertyPath: m_Name
-      value: Elevator Variant
+      value: Elevator Variant ENTER
       objectReference: {fileID: 0}
     - target: {fileID: 715587245780454481, guid: 2302d903e0c0095408ad51a10fc4a785, type: 3}
       propertyPath: m_LocalPosition.x
