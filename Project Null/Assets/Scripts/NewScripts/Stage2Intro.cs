@@ -99,7 +99,7 @@ public class Stage2Intro : MonoBehaviour
             hud.ShowHealthBar();
             hud.ShowSanityBar();
             hud.ShowBatteryDisplay();      // Now uses the fade-in function!
-            hud.ShowInventoryDisplay();    // Now uses the fade-in function!
+            hud.ShowInventorySlot();    // Now uses the fade-in function!
             hud.ShowObjective6();
         }
     }

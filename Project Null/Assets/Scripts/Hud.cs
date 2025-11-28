@@ -23,7 +23,8 @@ public class HUD : MonoBehaviour
 
     [Header("Inventory Display")]
     [SerializeField] private Image syringeImage;
-    [SerializeField] private CanvasGroup inventoryGroup;
+    [SerializeField] private CanvasGroup syringeGroup; // NEW: Separate group for just the syringe image
+    [SerializeField] private CanvasGroup inventoryGroup; // This is for the slot (border, background, text)
     [SerializeField] private Inventory inventory;
 
     [Header("Sanity Display")]
@@ -52,8 +53,6 @@ public class HUD : MonoBehaviour
             sanity.OnSanityChanged -= UpdateSanityDisplay;
     }
 
-
-
     private void Start()
     {
         // Hide everything at start
@@ -75,10 +74,17 @@ public class HUD : MonoBehaviour
             batteryGroup.gameObject.SetActive(false);
         }
 
+        // Hide both inventory slot and syringe at start
         if (inventoryGroup != null)
         {
             inventoryGroup.alpha = 0f;
             inventoryGroup.gameObject.SetActive(false);
+        }
+
+        if (syringeGroup != null)
+        {
+            syringeGroup.alpha = 0f;
+            syringeGroup.gameObject.SetActive(false);
         }
 
         if (sanityGroup != null)
@@ -226,37 +232,54 @@ public class HUD : MonoBehaviour
 
     // =====    INVENTORY DISPLAY      =====
 
-    public void ShowInventoryDisplay()
+    // NEW: Show the inventory slot (border, background, text) - call this early in the game
+    public void ShowInventorySlot()
     {
-        if (inventoryGroup != null && inventory != null && syringeImage != null)
+        if (inventoryGroup != null)
         {
             inventoryGroup.gameObject.SetActive(true);
             StartCoroutine(FadeInCanvasGroup(inventoryGroup));
         }
     }
 
-    public void HideInventoryDisplay()
+    // NEW: Hide the inventory slot if needed
+    public void HideInventorySlot()
     {
         if (inventoryGroup != null)
             StartCoroutine(FadeOutCanvasGroup(inventoryGroup));
     }
 
+    // DEPRECATED: Kept for backwards compatibility, but consider using ShowInventorySlot instead
+    public void ShowInventoryDisplay()
+    {
+        ShowInventorySlot();
+    }
+
+    // DEPRECATED: Kept for backwards compatibility
+    public void HideInventoryDisplay()
+    {
+        HideInventorySlot();
+    }
+
+    // UPDATED: Now handles only the syringe image fading in/out
     public void HandleInventoryDisplay()
     {
-        if (inventory == null || inventoryGroup == null || syringeImage == null) return;
+        if (inventory == null || syringeGroup == null || syringeImage == null) return;
 
         if (inventory.holdingSyringe)
         {
-            if (!inventoryGroup.gameObject.activeSelf)
+            // Show the syringe image
+            if (!syringeGroup.gameObject.activeSelf)
             {
-                inventoryGroup.gameObject.SetActive(true);
-                StartCoroutine(FadeInCanvasGroup(inventoryGroup));
+                syringeGroup.gameObject.SetActive(true);
+                StartCoroutine(FadeInCanvasGroup(syringeGroup));
             }
         }
         else
         {
-            if (inventoryGroup.gameObject.activeSelf)
-                StartCoroutine(FadeOutCanvasGroup(inventoryGroup));
+            // Hide the syringe image
+            if (syringeGroup.gameObject.activeSelf)
+                StartCoroutine(FadeOutCanvasGroup(syringeGroup));
         }
     }
 

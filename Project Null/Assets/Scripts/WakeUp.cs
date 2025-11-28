@@ -489,6 +489,7 @@ public class WakeUpSequence : MonoBehaviour
 
         hud.ShowHealthBar();
         hud.ShowSanityBar();
+        hud.ShowInventorySlot();
         hud.ShowObjective1();
     }
 
