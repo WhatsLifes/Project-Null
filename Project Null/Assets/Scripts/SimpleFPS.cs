@@ -23,6 +23,7 @@ public class SimpleFPS : MonoBehaviour
     [HideInInspector] public bool canLook = true;
     private bool isBeingForcedToLook = false;
     private Quaternion targetRotation;
+    private float verticalVelocity = 0f;
 
     void Start()
     {
@@ -44,7 +45,25 @@ public class SimpleFPS : MonoBehaviour
                 move = move.normalized;
 
             float currentSpeed = isCrouching ? crouchSpeed : speed;
-            controller.SimpleMove(move * currentSpeed);
+
+            // HORIZONTAL ONLY (XZ)
+            Vector3 horizontalVel = move * currentSpeed;
+
+            // GRAVITY (Y)
+            if (controller.isGrounded)
+            {
+                verticalVelocity = -2f;   // keep grounded
+            }
+            else
+            {
+                verticalVelocity += Physics.gravity.y * Time.deltaTime;
+            }
+
+            // COMBINE ALL VELOCITY
+            Vector3 fullVelocity = horizontalVel;
+            fullVelocity.y = verticalVelocity;
+
+            controller.Move(fullVelocity * Time.deltaTime);
         }
 
         // --- Look ---
