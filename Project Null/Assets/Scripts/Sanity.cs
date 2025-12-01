@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.Rendering; //Temporary
-using UnityEngine.Rendering.Universal; //Temporary
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using System.Collections;
 
 public class Sanity : MonoBehaviour
@@ -31,14 +31,26 @@ public class Sanity : MonoBehaviour
     private AudioSource sanityAudioSource;
     private Coroutine restoreCoroutine;
 
-    [Header("Post Processing")] //Temporary
+    [Header("Post Processing")] //Visual Effects
     public Volume postProcessVolume;
 
-    private ChromaticAberration chromaticAberration; //temporary
-    private LensDistortion lensDistortion; //temporary
-    private MotionBlur motionBlur; //Temporary
+    [Header("Camera Shake")]
+    public float shakeAmount = 1f;
+    public float shakeSpeed = 30f;
+
+    private float shakeTime;
+    private Quaternion originalLocalRot;
+
+    private ChromaticAberration chromaticAberration;
+    private LensDistortion lensDistortion;
+    private MotionBlur motionBlur;
 
     public event System.Action<float, float> OnSanityChanged; // (current, max)
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
@@ -65,13 +77,16 @@ public class Sanity : MonoBehaviour
         sanityAudioSource.spatialBlend = 0f;
         sanityAudioSource.loop = false;
 
-        //Temporary
+        //Visual Effects for Sanity
         if (postProcessVolume != null && postProcessVolume.profile != null)
         {
             postProcessVolume.profile.TryGet(out chromaticAberration);
             postProcessVolume.profile.TryGet(out lensDistortion);
             postProcessVolume.profile.TryGet(out motionBlur);
         }
+
+        originalLocalRot = playerCamera.transform.localRotation;
+        FindPlayerCamera();
     }
 
     private void Update()
@@ -79,16 +94,27 @@ public class Sanity : MonoBehaviour
         passiveDrainTimer += Time.deltaTime;
         if (passiveDrainTimer >= 60f)
         {
-            TakeSanityDamage(passiveDrainPerMinute);
+            TakeSanityDamage(passiveDrainPerMinute, false);
             passiveDrainTimer = 0f;
         }
 
         ApplySanityEffects();
         HandleLightFlicker();
         HandleRandomSanitySounds();
+        FindPlayerCamera();
     }
 
-    public void TakeSanityDamage(float amount)
+    //ShakeCamera function with a duration and intensity value
+    public void ShakeCamera(float duration, float intensity)
+    {
+        if (playerCamera == null)
+            return;
+
+        shakeTime = Mathf.Max(shakeTime, duration);
+        shakeAmount = Mathf.Max(shakeAmount, intensity);
+    }
+
+    public void TakeSanityDamage(float amount, bool playShake = true)
     {
         // Stop any ongoing restoration when taking damage
         if (restoreCoroutine != null)
@@ -97,8 +123,12 @@ public class Sanity : MonoBehaviour
             restoreCoroutine = null;
         }
 
-        currentSanity -= amount;
+        //Temporary cut out to not lose sanity when being attacked
+        //currentSanity -= amount;
         currentSanity = Mathf.Clamp(currentSanity, 0f, maxSanity);
+
+        if (playShake)
+            ShakeCamera(0.25f, 0.75f);
 
         // Invoke the event
         OnSanityChanged?.Invoke(currentSanity, maxSanity);
@@ -178,6 +208,44 @@ public class Sanity : MonoBehaviour
         OnSanityChanged?.Invoke(currentSanity, maxSanity);
     }
 
+    //Function so that there is no breakage when camera updates
+    private void FindPlayerCamera()
+    {
+        if (playerCamera == null)
+        {
+            playerCamera = Camera.main;
+            if (playerCamera != null)
+                originalLocalRot = playerCamera.transform.localRotation;
+        }
+    }
+
+    private void LateUpdate()
+    {
+        ApplyCameraShake();
+    }
+
+    //Function to apply the effect on playerCamera
+    private void ApplyCameraShake()
+    {
+        if (playerCamera == null)
+            return;
+
+        if (shakeTime > 0)
+        {
+
+            float x = Mathf.Sin(Time.time * shakeSpeed) * shakeAmount;
+            float y = Mathf.Cos(Time.time * shakeSpeed * 0.9f) * shakeAmount;
+
+            Quaternion shakeRot = Quaternion.Euler(x, y, 0f);
+            playerCamera.transform.localRotation = Quaternion.Slerp(
+                playerCamera.transform.localRotation,
+                playerCamera.transform.localRotation * shakeRot,
+                Time.deltaTime * 20f
+            );
+
+            shakeTime -= Time.deltaTime;
+        }
+    }
     private void ApplySanityEffects()
     {
         float sanityPercent = currentSanity / maxSanity;
