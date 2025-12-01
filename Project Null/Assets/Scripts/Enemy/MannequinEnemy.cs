@@ -351,6 +351,13 @@ public class MannequinEnemy : Enemy
             // Deal damage
             Debug.Log($"{gameObject.name} attacks the player for {damage} damage!");
             THEMC.TakeDamage(damage);
+
+            // Camera Shake trigger effect
+            if (Sanity.Instance != null)
+            {
+                Sanity.Instance.TakeSanityDamage(damage, true);
+            }
+
             lastAttackTime = Time.time;
         }
 

@@ -345,6 +345,12 @@ public class Enemy : MonoBehaviour
 
             THEMC.TakeDamage(damage);
 
+            // Camera shake to add here
+            if (Sanity.Instance != null)
+            {
+                Sanity.Instance.TakeSanityDamage(damage, true);
+            }
+
             alreadyAttacked = true;
             attackCooldownCoroutine = StartCoroutine(AttackCooldown());
             
