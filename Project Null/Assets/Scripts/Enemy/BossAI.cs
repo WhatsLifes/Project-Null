@@ -39,7 +39,6 @@ public class BossAI : MonoBehaviour
     [Header("Debug")]
     public bool showDebugGizmos = true;
 
-    // Private variables
     private enum BossState { Patrolling, Investigating, Chasing, Attacking, MovingToCrow }
     private BossState currentState = BossState.Patrolling;
 
@@ -87,14 +86,14 @@ public class BossAI : MonoBehaviour
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        // Check for kill range (highest priority)
+        // Check for kill range
         if (distanceToPlayer <= killRadius && currentState == BossState.Chasing)
         {
             StartCoroutine(PerformInstantKill());
             return;
         }
 
-        // Check for vision range (aggro)
+        // Check for vision range
         if (distanceToPlayer <= visionRadius)
         {
             SetState(BossState.Chasing);
