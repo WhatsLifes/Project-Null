@@ -13,13 +13,14 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
 
     [Header("Fade Settings")]
     [SerializeField] private float fadeDuration = 0.5f;
+    [SerializeField] private float inputDelay = 0.3f; // NEW: Delay before accepting input to close
 
     [Header("Dialogue Trigger")]
-    public DialogueTrigger dialogueTrigger;  // <-- ADD THIS
+    public DialogueTrigger dialogueTrigger;
 
-    private static Image pictureImage;
-    private static bool isDisplaying = false;
-    private static PickupSonPicture activeInstance;
+    private Image pictureImage;
+    private bool isDisplaying = false;
+    private float displayStartTime; // NEW: Track when picture was displayed
 
     void Start()
     {
@@ -29,10 +30,11 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
             pictureImage = pictureUIObject.GetComponent<Image>();
 
             if (pictureImage != null)
-                pictureImage.color = Color.white;
-
-            CanvasGroup cg = pictureUIObject.GetComponent<CanvasGroup>();
-            if (cg != null) cg.alpha = 1f;
+            {
+                Color color = pictureImage.color;
+                color.a = 0f;
+                pictureImage.color = color;
+            }
         }
 
         if (pressAnyKeyText != null)
@@ -41,30 +43,37 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
 
     void Update()
     {
-        if (activeInstance == this && isDisplaying)
+        if (isDisplaying)
         {
-            if (Input.anyKeyDown ||
-                Input.GetMouseButtonDown(0) ||
-                Input.GetMouseButtonDown(1))
+            // NEW: Only accept input after the delay
+            if (Time.time >= displayStartTime + inputDelay)
             {
-                HidePicture();
+                if (Input.anyKeyDown ||
+                    Input.GetMouseButtonDown(0) ||
+                    Input.GetMouseButtonDown(1))
+                {
+                    Debug.Log("Key pressed - hiding picture");
+                    HidePicture();
+                }
             }
         }
     }
 
     public void InteractScript()
     {
+        Debug.Log("=== INTERACT SCRIPT CALLED ===");
+
         sonPiecePickedUp = true;
         Debug.Log("Son picture picked up!");
 
-        // 🔥 Update Stage2 Progress
+        // Update Stage2 Progress
         if (Stage2ProgressManager.Instance != null)
         {
             Stage2ProgressManager.Instance.sonPhotoPickedUp = true;
             Debug.Log("Stage2ProgressManager updated: sonPhotoPickedUp = true");
         }
 
-        // 🔥 PLAY THE DIALOGUE LINE HERE
+        // Play the dialogue line
         if (dialogueTrigger != null)
         {
             Debug.Log("Triggering pickup dialogue...");
@@ -75,21 +84,15 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
             Debug.LogWarning("PickupSonPicture has NO DialogueTrigger assigned!");
         }
 
-        activeInstance = this;
-
+        // Show the picture
         if (pictureUIObject != null)
         {
             pictureUIObject.SetActive(true);
             isDisplaying = true;
+            displayStartTime = Time.time; // NEW: Record when we started displaying
 
             if (pictureImage != null)
             {
-                pictureImage.enabled = true;
-                pictureImage.color = Color.white;
-
-                CanvasGroup cg = pictureUIObject.GetComponent<CanvasGroup>();
-                if (cg != null) cg.alpha = 1f;
-
                 StartCoroutine(FadeIn());
             }
         }
@@ -111,6 +114,7 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
 
     void HidePicture()
     {
+        Debug.Log("=== HIDING PICTURE ===");
         isDisplaying = false;
 
         if (pictureUIObject != null)
@@ -118,8 +122,6 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
 
         if (pressAnyKeyText != null)
             pressAnyKeyText.SetActive(false);
-
-        activeInstance = null;
     }
 
     IEnumerator FadeIn()
@@ -129,9 +131,12 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
 
         float elapsedTime = 0f;
         Color color = pictureImage.color;
+
+        // Start fully transparent
         color.a = 0f;
         pictureImage.color = color;
 
+        // Fade in
         while (elapsedTime < fadeDuration)
         {
             elapsedTime += Time.deltaTime;
@@ -140,7 +145,9 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
             yield return null;
         }
 
+        // Ensure fully opaque at end
         color.a = 1f;
         pictureImage.color = color;
+        Debug.Log("Fade complete - alpha set to 1");
     }
 }
