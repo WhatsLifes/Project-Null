@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class RoomAudioTrigger : MonoBehaviour
 {
+    private static RoomAudioTrigger previousActiveAudio;
+    private static RoomAudioTrigger currentActiveAudio;
+    public int priority = 0;
     private AudioSource audioSource;
     public float fadeTime = 1.5f;
     public float maxVolume = 1.0f;
@@ -17,6 +20,13 @@ public class RoomAudioTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            if (currentActiveAudio != null && currentActiveAudio != this && currentActiveAudio.priority < priority)
+            {
+                previousActiveAudio = currentActiveAudio;
+                previousActiveAudio.StartCoroutine(previousActiveAudio.FadeOut());
+            }
+            
+            currentActiveAudio = this;
             StartCoroutine(FadeIn());
         }
     }
@@ -25,7 +35,18 @@ public class RoomAudioTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            StartCoroutine(FadeOut());
+            if (currentActiveAudio == this)
+            {
+                StartCoroutine(FadeOut());
+                currentActiveAudio = null;
+
+                if (previousActiveAudio != null)
+                {
+                    previousActiveAudio.StartCoroutine(previousActiveAudio.FadeIn());
+                    currentActiveAudio = previousActiveAudio;
+                    previousActiveAudio = null;
+                }
+            }
         }
     }
 
