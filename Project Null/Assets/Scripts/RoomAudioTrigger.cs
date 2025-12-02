@@ -5,6 +5,7 @@ public class RoomAudioTrigger : MonoBehaviour
 {
     private AudioSource audioSource;
     public float fadeTime = 1.5f;
+    public float maxVolume = 1.0f;
 
     void Start()
     {
@@ -35,12 +36,12 @@ public class RoomAudioTrigger : MonoBehaviour
 
         while (t < fadeTime)
         {
-            audioSource.volume = Mathf.Lerp(0, 1, t / fadeTime);
+            audioSource.volume = Mathf.Lerp(0, maxVolume, t / fadeTime);
             t += Time.deltaTime;
             yield return null;
         }
 
-        audioSource.volume = 1;
+        audioSource.volume = maxVolume;
     }
 
     IEnumerator FadeOut()
