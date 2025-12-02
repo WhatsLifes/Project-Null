@@ -372,6 +372,16 @@ public class MannequinEnemy : Enemy
     {
         if (currentState != newState)
         {
+            if (currentState != EnemyState.Chasing && newState == EnemyState.Chasing)
+            {
+                if (ChaseAudioManager.Instance != null) ChaseAudioManager.Instance.EnemeyStartedChasing(this);
+            
+            }
+            else if (currentState == EnemyState.Chasing && newState != EnemyState.Chasing)
+            {
+                if (ChaseAudioManager.Instance != null) ChaseAudioManager.Instance.EnemyStoppedChasing(this);
+            }
+
             currentState = newState;
 
             if (agent != null && agent.isOnNavMesh)
