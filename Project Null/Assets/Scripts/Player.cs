@@ -9,14 +9,24 @@ public class Player : MonoBehaviour
     public event Action<int, int> OnHealthChanged; // (current, max)
 
     [Header("Player Settings")]
-    public int MaxHealth = 100;        
+    public int MaxHealth = 100;
     public int Health = 100;
+
+    [Header("Health Regeneration")]
+    [Tooltip("Enable health regeneration")]
+    public bool enableRegen = true;
+    [Tooltip("Health points restored per second")]
+    public float regenRate = 5f;
+    [Tooltip("Delay in seconds after taking damage before regeneration starts")]
+    public float regenDelay = 3f;
 
     [Header("UI References")]
     public Image bloodyScreenImage;  // Assign your bloody PNG Image here (in Canvas)
 
     private bool isShowingBlood = false;
     private Coroutine bloodCR; // prevent overlapping fades
+    private Coroutine regenCR; // regeneration coroutine
+    private float lastDamageTime; // track when damage was last taken
 
     private void Start()
     {
@@ -32,6 +42,12 @@ public class Player : MonoBehaviour
             bloodyScreenImage.color = color;
             bloodyScreenImage.enabled = false;
         }
+
+        // Start regeneration coroutine if enabled
+        if (enableRegen)
+        {
+            regenCR = StartCoroutine(RegenerateHealth());
+        }
     }
 
     public void TakeDamage(int damage)
@@ -41,6 +57,9 @@ public class Player : MonoBehaviour
         // Subtract & clamp
         Health = Mathf.Clamp(Health - Mathf.Max(0, damage), 0, MaxHealth);
         Debug.Log($"Player took {damage} damage. Remaining Health: {Health}");
+
+        // Record time of damage for regeneration delay
+        lastDamageTime = Time.time;
 
         //  notify HUD
         OnHealthChanged?.Invoke(Health, MaxHealth);
@@ -57,14 +76,87 @@ public class Player : MonoBehaviour
     public void Heal(int amount)
     {
         if (Health <= 0) return;
+
         Health = Mathf.Clamp(Health + Mathf.Max(0, amount), 0, MaxHealth);
-        OnHealthChanged?.Invoke(Health, MaxHealth); // 
+        OnHealthChanged?.Invoke(Health, MaxHealth);
+    }
+
+    private IEnumerator RegenerateHealth()
+    {
+        while (true)
+        {
+            yield return null; // Wait one frame
+
+            // Only regenerate if:
+            // 1. Regen is enabled
+            // 2. Player is alive
+            // 3. Health is not full
+            // 4. Enough time has passed since last damage
+            if (enableRegen && Health > 0 && Health < MaxHealth)
+            {
+                float timeSinceLastDamage = Time.time - lastDamageTime;
+
+                if (timeSinceLastDamage >= regenDelay)
+                {
+                    // Regenerate health
+                    float regenAmount = regenRate * Time.deltaTime;
+                    int previousHealth = Health;
+
+                    // Use float for precise calculation, then convert to int
+                    float newHealth = Health + regenAmount;
+                    Health = Mathf.Clamp(Mathf.RoundToInt(newHealth), 0, MaxHealth);
+
+                    // Only notify HUD if health actually changed
+                    if (Health != previousHealth)
+                    {
+                        OnHealthChanged?.Invoke(Health, MaxHealth);
+                    }
+                }
+            }
+        }
+    }
+
+    // Public method to toggle regeneration on/off at runtime
+    public void SetRegenerationEnabled(bool enabled)
+    {
+        enableRegen = enabled;
+
+        // Start or stop the coroutine based on the new state
+        if (enabled && regenCR == null)
+        {
+            regenCR = StartCoroutine(RegenerateHealth());
+        }
+        else if (!enabled && regenCR != null)
+        {
+            StopCoroutine(regenCR);
+            regenCR = null;
+        }
+    }
+
+    // Public method to adjust regen rate at runtime
+    public void SetRegenRate(float newRate)
+    {
+        regenRate = Mathf.Max(0f, newRate); // Ensure it's not negative
+    }
+
+    // Public method to adjust regen delay at runtime
+    public void SetRegenDelay(float newDelay)
+    {
+        regenDelay = Mathf.Max(0f, newDelay); // Ensure it's not negative
     }
 
     private void PlayerDeath()
     {
         var fps = GetComponent<SimpleFPS>();
         if (fps != null) fps.enabled = false;
+
+        // Stop regeneration on death
+        if (regenCR != null)
+        {
+            StopCoroutine(regenCR);
+            regenCR = null;
+        }
+
         Debug.Log("Player died");
     }
 
@@ -111,5 +203,12 @@ public class Player : MonoBehaviour
             var enemy = other.gameObject.GetComponent<TestEnemy>();
             if (enemy != null) TakeDamage(enemy.damage);
         }
+    }
+
+    private void OnDestroy()
+    {
+        // Clean up coroutines when destroyed
+        if (bloodCR != null) StopCoroutine(bloodCR);
+        if (regenCR != null) StopCoroutine(regenCR);
     }
 }

@@ -10,6 +10,12 @@ public class FlashlightToggle : MonoBehaviour
     public Light flashlight;  // Assign in Inspector
     public KeyCode toggleKey = KeyCode.F;
 
+    [Header("Mannequin Freeze Settings")]
+    [Tooltip("Maximum distance the flashlight can freeze mannequins")]
+    public float freezeDistance = 20f;
+    [Tooltip("Layer mask for mannequins (set to 'Enemy' layer)")]
+    public LayerMask mannequinLayer;
+
     [Header("Battery Settings")]
     [Range(0f, 100f)]
     public float maxBattery = 100f;
@@ -39,6 +45,7 @@ public class FlashlightToggle : MonoBehaviour
     private float nextFlickerTime = 0f;
     private float flickerEndTime = 0f;
     private float originalIntensity;
+    private MannequinEnemy currentlyFrozenMannequin = null; // Track which mannequin is frozen
 
     void Start()
     {
@@ -59,6 +66,7 @@ public class FlashlightToggle : MonoBehaviour
         HandleToggle();
         HandleBattery();
         HandleFlicker();
+        HandleMannequinFreeze(); // NEW: Check for mannequins to freeze
     }
 
     void HandleToggle()
@@ -76,6 +84,9 @@ public class FlashlightToggle : MonoBehaviour
                 // Turn off
                 isOn = false;
                 flashlight.enabled = false;
+
+                // Unfreeze any frozen mannequin when turning off
+                UnfreezeMannequin();
             }
             // If battery too low, do nothing (can't turn on)
         }
@@ -94,6 +105,7 @@ public class FlashlightToggle : MonoBehaviour
             {
                 isOn = false;
                 flashlight.enabled = false;
+                UnfreezeMannequin(); // Unfreeze when battery dies
             }
         }
         else
@@ -119,6 +131,14 @@ public class FlashlightToggle : MonoBehaviour
         {
             // Dim instead of turning completely off
             flashlight.intensity = originalIntensity * flickerIntensityMultiplier;
+
+            // Unfreeze mannequin during flicker (they can move when light flickers!)
+            if (currentlyFrozenMannequin != null)
+            {
+                currentlyFrozenMannequin.FlashlightUnfreeze();
+                currentlyFrozenMannequin = null;
+            }
+
             return;
         }
 
@@ -146,25 +166,64 @@ public class FlashlightToggle : MonoBehaviour
         }
     }
 
+    void HandleMannequinFreeze()
+    {
+        // Only freeze if flashlight is on
+        if (!isOn)
+        {
+            UnfreezeMannequin();
+            return;
+        }
+
+        // Raycast from flashlight to see if we're hitting a mannequin
+        Ray ray = new Ray(flashlight.transform.position, flashlight.transform.forward);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, freezeDistance, mannequinLayer))
+        {
+            // Draw debug ray
+            Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.cyan);
+
+            // Check if we hit a mannequin
+            MannequinEnemy mannequin = hit.collider.GetComponent<MannequinEnemy>();
+
+            if (mannequin != null)
+            {
+                // If this is a new mannequin, unfreeze the old one first
+                if (currentlyFrozenMannequin != null && currentlyFrozenMannequin != mannequin)
+                {
+                    currentlyFrozenMannequin.FlashlightUnfreeze();
+                }
+
+                // Freeze this mannequin
+                mannequin.FlashlightFreeze();
+                currentlyFrozenMannequin = mannequin;
+            }
+            else
+            {
+                // Hit something else, unfreeze
+                UnfreezeMannequin();
+            }
+        }
+        else
+        {
+            // Not hitting anything, unfreeze
+            UnfreezeMannequin();
+        }
+    }
+
+    void UnfreezeMannequin()
+    {
+        if (currentlyFrozenMannequin != null)
+        {
+            currentlyFrozenMannequin.FlashlightUnfreeze();
+            currentlyFrozenMannequin = null;
+        }
+    }
+
     // Public method to be called by the pickup script
     public void Pickup()
     {
         isPickedUp = true;
-    }
-
-    // Optional: Display battery level in Inspector during play mode
-    void OnGUI()
-    {
-        if (!isPickedUp)
-        {
-            GUI.Label(new Rect(10, 10, 200, 20), "Find the flashlight...");
-            return;
-        }
-
-        GUI.Label(new Rect(10, 10, 200, 20), $"Battery: {currentBattery:F1} / {maxBattery:F1}");
-        if (currentBattery < flickerThreshold && isOn)
-        {
-            GUI.Label(new Rect(10, 30, 200, 20), "⚠ Low Battery - Flickering");
-        }
     }
 }

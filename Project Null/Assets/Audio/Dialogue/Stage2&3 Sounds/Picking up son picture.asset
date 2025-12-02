@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ac8fbc885c7d704baad501dfad8b7ea, type: 3}
+  m_Name: Picking up son picture
+  m_EditorClassIdentifier: 
+  sequenceName: 
+  lines:
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: 96194717bedaf3247a95328864f28264, type: 3}
+    playerText: 
+    delayBeforeNext: 1
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: Who is this kid?
+    delayBeforeNext: 2
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: b566eecf2e4927e4c894a30d360f865d, type: 3}
+    playerText: 
+    delayBeforeNext: 2
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: I.. didnt do that
+    delayBeforeNext: 2

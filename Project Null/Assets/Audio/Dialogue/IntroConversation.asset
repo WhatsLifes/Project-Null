@@ -15,14 +15,26 @@ MonoBehaviour:
   sequenceName: IntroConversation
   lines:
   - isDoctor: 1
-    voiceClip: {fileID: 8300000, guid: 49df3d7a2b2226c43b4f38f4ff360361, type: 3}
+    voiceClip: {fileID: 8300000, guid: 83aa0d99cd8daac4b87cd85fb396d63a, type: 3}
     playerText: 
     delayBeforeNext: 1
   - isDoctor: 0
     voiceClip: {fileID: 0}
-    playerText: Where am I .... Who are you?
+    playerText: Where am I .... ?
     delayBeforeNext: 1
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: Who are you?
+    delayBeforeNext: 0
   - isDoctor: 1
-    voiceClip: {fileID: 8300000, guid: a99c821ec177a3e41875da9c243414d1, type: 3}
+    voiceClip: {fileID: 8300000, guid: 410cc6a2a8fe6df4c89b5db1e0d95099, type: 3}
     playerText: 
     delayBeforeNext: 1
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: 6353e81774013374d968e5606d5a4a49, type: 3}
+    playerText: 
+    delayBeforeNext: 1
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: Null?
+    delayBeforeNext: 0
