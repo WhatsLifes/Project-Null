@@ -95242,6 +95242,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &707303095
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 707303097}
+  - component: {fileID: 707303096}
+  m_Layer: 0
+  m_Name: SanityVisuals
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &707303096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 707303095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: c563b62b098c098429760644e4592ab1, type: 2}
+--- !u!4 &707303097
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 707303095}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -97.21342, y: 175.35345, z: -15.082363}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &725923915
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -95510,6 +95559,10 @@ PrefabInstance:
       propertyPath: currentSanity
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 2770315884296941280, guid: 6a519e52df2b4e4449b7e547a2c49be5, type: 3}
+      propertyPath: postProcessVolume
+      value: 
+      objectReference: {fileID: 707303096}
     - target: {fileID: 4291127396165352753, guid: 6a519e52df2b4e4449b7e547a2c49be5, type: 3}
       propertyPath: isPickedUp
       value: 1
@@ -98609,3 +98662,4 @@ SceneRoots:
   - {fileID: 383543460}
   - {fileID: 1854231586}
   - {fileID: 1644610789}
+  - {fileID: 707303097}
