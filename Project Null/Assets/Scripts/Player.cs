@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
 {
     //  HUD subscribers will listen to this
     public event Action<int, int> OnHealthChanged; // (current, max)
+    public event Action OnDeath; // NEW: Death event for DeathManager
 
     [Header("Player Settings")]
     public int MaxHealth = 100;
@@ -158,6 +159,9 @@ public class Player : MonoBehaviour
         }
 
         Debug.Log("Player died");
+
+        // NEW: Trigger the death event
+        OnDeath?.Invoke();
     }
 
     private IEnumerator BloodyScreenEffect()
