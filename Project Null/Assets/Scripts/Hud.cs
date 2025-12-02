@@ -2,6 +2,8 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Image = UnityEngine.UI.Image;
+using Slider = UnityEngine.UI.Slider;
 
 public class HUD : MonoBehaviour
 {
@@ -280,6 +282,47 @@ public class HUD : MonoBehaviour
             // Hide the syringe image
             if (syringeGroup.gameObject.activeSelf)
                 StartCoroutine(FadeOutCanvasGroup(syringeGroup));
+        }
+    }
+
+    // ===== HIDE ALL HUD ELEMENTS =====
+    public void HideAllHUD()
+    {
+        // Immediately hide all HUD elements without fading
+        if (healthGroup != null)
+        {
+            healthGroup.alpha = 0f;
+            healthGroup.gameObject.SetActive(false);
+        }
+
+        if (sanityGroup != null)
+        {
+            sanityGroup.alpha = 0f;
+            sanityGroup.gameObject.SetActive(false);
+        }
+
+        if (objectiveGroup != null)
+        {
+            objectiveGroup.alpha = 0f;
+            objectiveGroup.gameObject.SetActive(false);
+        }
+
+        if (batteryGroup != null)
+        {
+            batteryGroup.alpha = 0f;
+            batteryGroup.gameObject.SetActive(false);
+        }
+
+        if (inventoryGroup != null)
+        {
+            inventoryGroup.alpha = 0f;
+            inventoryGroup.gameObject.SetActive(false);
+        }
+
+        if (syringeGroup != null)
+        {
+            syringeGroup.alpha = 0f;
+            syringeGroup.gameObject.SetActive(false);
         }
     }
 
