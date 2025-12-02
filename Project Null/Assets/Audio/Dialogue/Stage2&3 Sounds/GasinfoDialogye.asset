@@ -13,4 +13,24 @@ MonoBehaviour:
   m_Name: GasinfoDialogye
   m_EditorClassIdentifier: 
   sequenceName: 
-  lines: []
+  lines:
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: 'WHAT IS THIS... '
+    delayBeforeNext: 1
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: I CAN'T BREATHE
+    delayBeforeNext: 0
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: c12b947b9537452469062aa61010ea78, type: 3}
+    playerText: 
+    delayBeforeNext: 0
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: 75c2f2ac34df4244bb6cc4ebf2071cbc, type: 3}
+    playerText: 
+    delayBeforeNext: 0
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: 2ff8666a3a27b92428d2f78529104e12, type: 3}
+    playerText: 
+    delayBeforeNext: 0

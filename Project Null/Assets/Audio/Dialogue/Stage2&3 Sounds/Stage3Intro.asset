@@ -13,4 +13,20 @@ MonoBehaviour:
   m_Name: Stage3Intro
   m_EditorClassIdentifier: 
   sequenceName: 
-  lines: []
+  lines:
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: 67046316852928e4f9d8e19023bccfd0, type: 3}
+    playerText: 
+    delayBeforeNext: 0
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: Who's waiting for me?
+    delayBeforeNext: 0
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: What are you ...
+    delayBeforeNext: 2
+  - isDoctor: 1
+    voiceClip: {fileID: 0}
+    playerText: what is that?
+    delayBeforeNext: 0
