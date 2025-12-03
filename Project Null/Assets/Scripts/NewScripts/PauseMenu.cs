@@ -1,3 +1,4 @@
+using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.LowLevel;
@@ -16,11 +17,15 @@ public class PauseMenu : MonoBehaviour
 
     [Header("Options UI")]
     public Slider sensitivitySlider;
-    public Slider volumeSlider;
+    public Slider ambienceVolumeSlider;
+    public Slider sfxVolumeSlider;
+    public Slider dialogueVolumeSlider;
 
     [Header("Audio")]
     public AudioMixer audioMixer;          // Assign your MasterMixer here
-    public string volumeParameter = "MasterVolume"; // must match exposed name
+    public string ambienceVolumeParam = "AmbienceVolume";   // must match exposed name
+    public string sfxVolumeParam = "SFXVolume";
+    public string dialogueVolumeParam = "SpeakerFilter";
 
     public static bool IsPaused = false;
 
@@ -62,11 +67,27 @@ public class PauseMenu : MonoBehaviour
             sensitivitySlider.value = _playerLook.mouseSensitivity;
         }
 
-        if (volumeSlider != null)
+        SetupSlider(ambienceVolumeSlider, ambienceVolumeParam);
+        SetupSlider(sfxVolumeSlider, sfxVolumeParam);
+        SetupSlider(dialogueVolumeSlider, dialogueVolumeParam);
+
+    }
+
+    void SetupSlider(Slider slider, string param)
+    {
+        if (slider == null) return;
+        
+        slider.minValue = 0.0001f;
+        slider.maxValue = 2f;
+
+        float db;
+        if (audioMixer.GetFloat(param, out db))
         {
-            volumeSlider.minValue = 0.0001f; // avoid log(0)
-            volumeSlider.maxValue = 1f;
-            volumeSlider.value = 1f; // full volume by default
+            slider.value = Mathf.Pow(10f, db / 20f);
+        }
+        else
+        {
+            slider.value = 1f;
         }
     }
 
@@ -146,15 +167,25 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
-    // Hook this to VolumeSlider OnValueChanged(float)
-    public void OnVolumeChanged(float newValue)
+    // Hook these to each respective volume slider
+    public void OnAmbienceVolumeChanged(float newValue)
     {
-        if (audioMixer != null)
-        {
-            // Map [0,1] to decibels
-            float dB = Mathf.Log10(newValue) * 20f;
-            audioMixer.SetFloat(volumeParameter, dB);
-        }
+        SetVolume(ambienceVolumeParam, newValue);
+    }
+    public void OnSFXVolumeChanged(float newValue)
+    {
+        SetVolume(sfxVolumeParam, newValue);
+    }
+    public void OnDialogueVolumeChanged(float newValue)
+    {
+        SetVolume(dialogueVolumeParam, newValue);
+    }
+
+    void SetVolume(string param, float value)
+    {
+        if (audioMixer == null) return;
+        float dB = Mathf.Log10(value) * 20f;
+        audioMixer.SetFloat(param, dB);
     }
 
     public void QuitToMenu()

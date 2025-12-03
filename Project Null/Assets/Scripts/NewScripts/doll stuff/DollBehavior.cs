@@ -23,7 +23,7 @@ public class DollBehavior : MonoBehaviour
     private bool shouldBePickableAfterDeath = false;
     private bool shouldDisappearAfterDeath = false;
 
-    private AudioSource audioSource;
+    public AudioSource audioSource;
     private Rigidbody rb;
     private Collider col;
 
@@ -33,13 +33,18 @@ public class DollBehavior : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
-        audioSource = GetComponent<AudioSource>();
         anim = GetComponentInChildren<Animator>();
 
 
         if (audioSource == null)
         {
-            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource = GetComponent<AudioSource>();
+
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+            }
+            
             audioSource.spatialBlend = 1f;
             audioSource.playOnAwake = false;
         }
@@ -70,12 +75,12 @@ public class DollBehavior : MonoBehaviour
         Debug.Log($"{gameObject.name} - OnPickedUp called, type: {type}");
 
         if (type == DollType.Audio && scaryClip != null && audioSource != null)
-            audioSource.PlayOneShot(scaryClip, volume);
+            PlayScaryClip();
 
         if (type == DollType.Hostile)
         {
             if (scaryClip != null && audioSource != null)
-                audioSource.PlayOneShot(scaryClip, volume);
+                PlayScaryClip();
 
             // IMMEDIATELY force drop from player's hands and activate
             ForceDropAndActivate();
@@ -173,7 +178,7 @@ public class DollBehavior : MonoBehaviour
         ActivateAttackBehavior();
 
         if (scaryClip != null && audioSource != null)
-            audioSource.PlayOneShot(scaryClip, volume);
+            PlayScaryClip();
     }
 
     private void ActivateAttackBehavior()
@@ -200,6 +205,13 @@ public class DollBehavior : MonoBehaviour
         {
             anim.SetBool("isMoving", true);
         }
+    }
+
+    private void PlayScaryClip()
+    {
+        audioSource.clip = scaryClip;
+        audioSource.volume = volume;
+        audioSource.Play();
     }
 
     // Called by Enemy script when health reaches 0
