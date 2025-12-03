@@ -611,8 +611,9 @@ GameObject:
   - component: {fileID: 145203182}
   - component: {fileID: 145203181}
   - component: {fileID: 145203180}
+  - component: {fileID: 145203183}
   m_Layer: 0
-  m_Name: DollSpotLight
+  m_Name: GirlLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -727,6 +728,25 @@ Transform:
   - {fileID: 260591261}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &145203183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 145203179}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b334a0167e6553f4499b4621f8795dea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lightToTurnOn1: {fileID: 259769012}
+  lightToTurnOn2: {fileID: 0}
+  lightToTurnOn3: {fileID: 0}
+  lightToTurnOff1: {fileID: 145203181}
+  lightToTurnOff2: {fileID: 0}
+  lightToTurnOff3: {fileID: 0}
+  delayBeforeSwitch: 18
 --- !u!1001 &242726756
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -867,8 +887,9 @@ GameObject:
   - component: {fileID: 259769013}
   - component: {fileID: 259769012}
   - component: {fileID: 259769011}
+  - component: {fileID: 259769014}
   m_Layer: 0
-  m_Name: CarnivalSpotLight
+  m_Name: Boylight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -904,7 +925,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 259769010}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 11
   m_Type: 0
   m_Color: {r: 1, g: 0.7813763, b: 0.6462264, a: 1}
@@ -979,6 +1000,25 @@ Transform:
   - {fileID: 1944661412}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &259769014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 259769010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b334a0167e6553f4499b4621f8795dea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lightToTurnOn1: {fileID: 559103896}
+  lightToTurnOn2: {fileID: 752305477}
+  lightToTurnOn3: {fileID: 1661816721}
+  lightToTurnOff1: {fileID: 259769012}
+  lightToTurnOff2: {fileID: 0}
+  lightToTurnOff3: {fileID: 0}
+  delayBeforeSwitch: 18
 --- !u!1001 &260591260
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1132,6 +1172,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 559103897}
     m_Modifications:
+    - target: {fileID: 1104356797816755020, guid: 9e9f635c4afc13342ae64a7886004b61, type: 3}
+      propertyPath: m_Name
+      value: TableLight
+      objectReference: {fileID: 0}
+    - target: {fileID: 2095889340372367363, guid: 9e9f635c4afc13342ae64a7886004b61, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 248d10b6bbfda6b4c827e6cda403bbed, type: 2}
+    - target: {fileID: 4920197760407571389, guid: 9e9f635c4afc13342ae64a7886004b61, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8152861011236322809, guid: 9e9f635c4afc13342ae64a7886004b61, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.15
@@ -1792,7 +1844,7 @@ GameObject:
   - component: {fileID: 559103896}
   - component: {fileID: 559103895}
   m_Layer: 0
-  m_Name: LabSpotLight
+  m_Name: ElevatorLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1828,14 +1880,14 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 559103894}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 11
   m_Type: 0
   m_Color: {r: 0.78512245, g: 0.9528302, b: 0.6067551, a: 1}
   m_Intensity: 140
   m_Range: 12.57
-  m_SpotAngle: 47.419437
-  m_InnerSpotAngle: 28.313557
+  m_SpotAngle: 78.35771
+  m_InnerSpotAngle: 59.251827
   m_CookieSize: 10
   m_Shadows:
     m_Type: 0
@@ -1895,7 +1947,7 @@ Transform:
   m_GameObject: {fileID: 559103894}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 14.91, y: 11.45, z: -11.31}
+  m_LocalPosition: {x: 12.49, y: 11.45, z: -12.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -95434,6 +95486,11 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 10
   m_Center: {x: 2, y: 2, z: 2}
+--- !u!108 &752305477 stripped
+Light:
+  m_CorrespondingSourceObject: {fileID: 7571442945330907161, guid: 2302d903e0c0095408ad51a10fc4a785, type: 3}
+  m_PrefabInstance: {fileID: 858165169}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &784395601 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8243479265316723902, guid: 6a519e52df2b4e4449b7e547a2c49be5, type: 3}
@@ -95638,7 +95695,7 @@ PrefabInstance:
     - target: {fileID: 324628222270982573, guid: 2302d903e0c0095408ad51a10fc4a785, type: 3}
       propertyPath: elevatorButton
       value: 
-      objectReference: {fileID: 2046301682}
+      objectReference: {fileID: 0}
     - target: {fileID: 715587245780454481, guid: 2302d903e0c0095408ad51a10fc4a785, type: 3}
       propertyPath: m_LocalPosition.x
       value: 16.58
@@ -95680,12 +95737,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1633312332116043109, guid: 2302d903e0c0095408ad51a10fc4a785, type: 3}
+      propertyPath: m_Name
+      value: Elevatorinsidelight
+      objectReference: {fileID: 0}
+    - target: {fileID: 1633312332116043109, guid: 2302d903e0c0095408ad51a10fc4a785, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3464561931221535209, guid: 2302d903e0c0095408ad51a10fc4a785, type: 3}
       propertyPath: slideDistance
       value: -1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7571442945330907161, guid: 2302d903e0c0095408ad51a10fc4a785, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8776459281860973702, guid: 2302d903e0c0095408ad51a10fc4a785, type: 3}
       propertyPath: m_LocalPosition.x
@@ -97135,7 +97200,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1487092730}
-  - component: {fileID: 1487092729}
+  - component: {fileID: 1487092731}
   m_Layer: 0
   m_Name: ProgressManager
   m_TagString: Untagged
@@ -97143,19 +97208,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1487092729
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1487092728}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05c5e0971ef9b9c40b51f6ba402ee76f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sonPhotoPickedUp: 0
 --- !u!4 &1487092730
 Transform:
   m_ObjectHideFlags: 0
@@ -97171,6 +97223,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1487092731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1487092728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b63e177bf8330d4183f5abff99b840c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boyFlowerPickedUp: 0
+  girlFlowerPickedUp: 0
 --- !u!1001 &1622421959
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -97447,6 +97513,11 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!108 &1661816721 stripped
+Light:
+  m_CorrespondingSourceObject: {fileID: 4920197760407571389, guid: 9e9f635c4afc13342ae64a7886004b61, type: 3}
+  m_PrefabInstance: {fileID: 306128666}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1789888644
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -97776,13 +97847,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 326225778}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a5b14eea6082d5428a6266f1b3271a0, type: 3}
+  m_Script: {fileID: 11500000, guid: 0061f7f0dc83cc5419519e8fd07668b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pictureUIObject: {fileID: 0}
-  pressAnyKeyText: {fileID: 0}
-  fadeDuration: 0.5
-  inputDelay: 0.3
+  flowerType: 1
+  lightController: {fileID: 145203183}
   dialogueTrigger: {fileID: 1790940884}
 --- !u!1001 &1826798420
 PrefabInstance:
@@ -98394,13 +98463,13 @@ PrefabInstance:
       addedObject: {fileID: 1944661416}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4673f2fe765b25840b05b88efcb103bc, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1944661415}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4673f2fe765b25840b05b88efcb103bc, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1944661414}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4673f2fe765b25840b05b88efcb103bc, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1944661413}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4673f2fe765b25840b05b88efcb103bc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1944661417}
   m_SourcePrefab: {fileID: 100100000, guid: 4673f2fe765b25840b05b88efcb103bc, type: 3}
 --- !u!4 &1944661412 stripped
 Transform:
@@ -98439,23 +98508,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   whiteDotCanvas: {fileID: 0}
   promptCanvas: {fileID: 0}
---- !u!114 &1944661415
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 280967172}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a5b14eea6082d5428a6266f1b3271a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pictureUIObject: {fileID: 0}
-  pressAnyKeyText: {fileID: 0}
-  fadeDuration: 0.5
-  inputDelay: 0.3
-  dialogueTrigger: {fileID: 1944661413}
 --- !u!65 &1944661416
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -98477,6 +98529,21 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1944661417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 280967172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0061f7f0dc83cc5419519e8fd07668b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flowerType: 0
+  lightController: {fileID: 259769014}
+  dialogueTrigger: {fileID: 1944661413}
 --- !u!114 &2026330311 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5253012929760737168, guid: 2302d903e0c0095408ad51a10fc4a785, type: 3}
@@ -98500,8 +98567,8 @@ GameObject:
   - component: {fileID: 2046301685}
   - component: {fileID: 2046301684}
   - component: {fileID: 2046301683}
-  - component: {fileID: 2046301682}
   - component: {fileID: 2046301681}
+  - component: {fileID: 2046301686}
   m_Layer: 11
   m_Name: Cube
   m_TagString: Untagged
@@ -98539,31 +98606,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   whiteDotCanvas: {fileID: 0}
   promptCanvas: {fileID: 0}
---- !u!114 &2046301682
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2046301679}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59686b8ac7f282c4c8fd24e8ab4db3f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  waitBeforeOpen: 5
-  player: {fileID: 784395604}
-  leftDoor: {fileID: 2026330311}
-  rightDoor: {fileID: 1018423700}
-  audioSource: {fileID: 0}
-  correctLine: {fileID: 0}
-  wrongLine: {fileID: 0}
-  interactRange: 3
-  interactUI: {fileID: 0}
-  volume: 1
-  wrongLineCooldown: 3
-  successMusic: {fileID: 0}
-  playFullTrack: 0
 --- !u!65 &2046301683
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -98638,6 +98680,31 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2046301679}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2046301686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046301679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68368c8ceeeaa5747bc6a6320bd14492, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waitBeforeOpen: 5
+  player: {fileID: 784395604}
+  leftDoor: {fileID: 2026330311}
+  rightDoor: {fileID: 1018423700}
+  audioSource: {fileID: 0}
+  correctLine: {fileID: 0}
+  wrongLine: {fileID: 0}
+  interactRange: 3
+  interactUI: {fileID: 0}
+  volume: 1
+  wrongLineCooldown: 3
+  successMusic: {fileID: 0}
+  playFullTrack: 0
 --- !u!4 &2123841579 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 715587245780454481, guid: 2302d903e0c0095408ad51a10fc4a785, type: 3}
