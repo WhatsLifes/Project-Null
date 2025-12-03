@@ -44,7 +44,7 @@ public class Enemy : MonoBehaviour
     private Rigidbody rb;
     private Vector3 lastValidPosition;
 
-    private AudioSource audioSource;
+    public AudioSource audioSource;
     public AudioClip hitSound;
     [Range(0f, 1f)] public float volume = 1f;
 
