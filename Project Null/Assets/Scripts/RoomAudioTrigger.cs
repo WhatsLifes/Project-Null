@@ -20,7 +20,7 @@ public class RoomAudioTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            if (currentActiveAudio != null && currentActiveAudio != this && currentActiveAudio.priority < priority)
+            if (currentActiveAudio != null && currentActiveAudio != this && currentActiveAudio.priority <= priority)
             {
                 previousActiveAudio = currentActiveAudio;
                 previousActiveAudio.StartCoroutine(previousActiveAudio.FadeOut());
