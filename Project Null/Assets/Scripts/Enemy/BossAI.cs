@@ -300,16 +300,12 @@ public class BossAI : MonoBehaviour
     {
         Debug.Log("Player killed by boss!");
 
-        // Trigger death - you can expand this with your death system
-        SimpleFPS fps = player.GetComponent<SimpleFPS>();
-        if (fps != null)
+        // Deal lethal damage to trigger proper death system
+        Player playerScript = player.GetComponent<Player>();
+        if (playerScript != null)
         {
-            fps.canMove = false;
-            fps.canLook = false;
+            playerScript.TakeDamage(playerScript.Health); // Or just a large number like 9999
         }
-
-        // Add your death handling here (reload scene, game over screen, etc.)
-        // Example: SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
         agent.isStopped = false;
         isChargingKill = false;
