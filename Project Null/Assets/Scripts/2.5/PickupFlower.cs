@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PickupFlower : MonoBehaviour, stage2_InteractableScript
+public class PickupFlower : MonoBehaviour, InteractableScript
 {
     public enum FlowerType
     {
