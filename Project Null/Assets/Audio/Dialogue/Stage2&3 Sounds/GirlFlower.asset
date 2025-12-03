@@ -13,4 +13,20 @@ MonoBehaviour:
   m_Name: GirlFlower
   m_EditorClassIdentifier: 
   sequenceName: 
-  lines: []
+  lines:
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: I know this Flower..
+    delayBeforeNext: 2
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: 9cfa681eb1ac6794ba1a7ed16351c5bb, type: 3}
+    playerText: 
+    delayBeforeNext: 2
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: I... I know what these make.
+    delayBeforeNext: 1
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: Poison.
+    delayBeforeNext: 0

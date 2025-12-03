@@ -95224,7 +95224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   doctorAudioSource: {fileID: 1215409524}
-  playerTextUI: {fileID: 0}
+  playerTextUI: {fileID: 55000089}
   typingSpeed: 0.05
   textFadeDuration: 0.5
 --- !u!4 &695149537
@@ -97726,7 +97726,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3fc8ef8757b5b840ae29f9c68134a0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogueToPlay: {fileID: 0}
+  dialogueToPlay: {fileID: 11400000, guid: 5b19f3e9c6c5d7341bff4a0d76f47307, type: 2}
   playOnStart: 0
   startDelay: 1
   playOnce: 1
@@ -97783,7 +97783,7 @@ MonoBehaviour:
   pressAnyKeyText: {fileID: 0}
   fadeDuration: 0.5
   inputDelay: 0.3
-  dialogueTrigger: {fileID: 0}
+  dialogueTrigger: {fileID: 1790940884}
 --- !u!1001 &1826798420
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -98419,7 +98419,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3fc8ef8757b5b840ae29f9c68134a0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogueToPlay: {fileID: 0}
+  dialogueToPlay: {fileID: 11400000, guid: 1bacb3ac25a5b1942887827d555b7437, type: 2}
   playOnStart: 0
   startDelay: 1
   playOnce: 1
