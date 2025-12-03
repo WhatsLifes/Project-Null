@@ -20,13 +20,13 @@ AnimatorStateMachine:
     m_Position: {x: 360, y: 250, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 4194386865645451129}
-    m_Position: {x: 370, y: 380, z: 0}
+    m_Position: {x: 380, y: 340, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4064775258352079132}
     m_Position: {x: 680, y: 230, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6737903591398071851}
-    m_Position: {x: 390, y: 610, z: 0}
+    m_Position: {x: 380, y: 500, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: -3405279967918719169}
@@ -442,7 +442,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: CrawlRun
-  m_Speed: 1.7
+  m_Speed: 3
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 863151497490264195}
