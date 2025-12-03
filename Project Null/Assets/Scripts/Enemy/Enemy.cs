@@ -31,7 +31,7 @@ public class Enemy : MonoBehaviour
     [Header("Detection")]
     public float sightRange = 10f;
     public float attackRange = 1f;
-    public float stoppingDistance = 1f; // ADDED: Distance to stop before player
+    public float stoppingDistance = 1f; // Distance to stop before player
     public bool playerInSightRange;
     public bool playerInAttackRange;
     public bool isChasingPlayer = false;
@@ -216,7 +216,7 @@ public class Enemy : MonoBehaviour
         {
             ChasePlayer();
         }
-        else if (playerInAttackRange )
+        else if (playerInAttackRange)
         {
             AttackPlayer();
         }
@@ -320,7 +320,7 @@ public class Enemy : MonoBehaviour
             agent.ResetPath();
             agent.velocity = Vector3.zero; // Force stop velocity
         }
-        
+
 
 
         // Manual rotation
@@ -353,7 +353,7 @@ public class Enemy : MonoBehaviour
 
             alreadyAttacked = true;
             attackCooldownCoroutine = StartCoroutine(AttackCooldown());
-            
+
         }
 
 
