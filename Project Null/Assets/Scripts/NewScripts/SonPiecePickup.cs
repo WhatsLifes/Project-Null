@@ -13,14 +13,17 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
 
     [Header("Fade Settings")]
     [SerializeField] private float fadeDuration = 0.5f;
-    [SerializeField] private float inputDelay = 0.3f; // NEW: Delay before accepting input to close
+    [SerializeField] private float inputDelay = 0.3f;
 
     [Header("Dialogue Trigger")]
     public DialogueTrigger dialogueTrigger;
 
+    [Header("HUD Reference")] // NEW
+    [SerializeField] private HUD hud;
+
     private Image pictureImage;
     private bool isDisplaying = false;
-    private float displayStartTime; // NEW: Track when picture was displayed
+    private float displayStartTime;
 
     void Start()
     {
@@ -39,13 +42,18 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
 
         if (pressAnyKeyText != null)
             pressAnyKeyText.SetActive(false);
+
+        // NEW: Auto-find HUD if not assigned
+        if (hud == null)
+        {
+            hud = FindObjectOfType<HUD>();
+        }
     }
 
     void Update()
     {
         if (isDisplaying)
         {
-            // NEW: Only accept input after the delay
             if (Time.time >= displayStartTime + inputDelay)
             {
                 if (Input.anyKeyDown ||
@@ -73,6 +81,17 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
             Debug.Log("Stage2ProgressManager updated: sonPhotoPickedUp = true");
         }
 
+        // NEW: Show Objective 9
+        if (hud != null)
+        {
+            hud.ShowObjective9();
+            Debug.Log("Objective 9 shown!");
+        }
+        else
+        {
+            Debug.LogWarning("HUD reference is null - cannot show objective!");
+        }
+
         // Play the dialogue line
         if (dialogueTrigger != null)
         {
@@ -89,7 +108,7 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
         {
             pictureUIObject.SetActive(true);
             isDisplaying = true;
-            displayStartTime = Time.time; // NEW: Record when we started displaying
+            displayStartTime = Time.time;
 
             if (pictureImage != null)
             {
@@ -132,11 +151,9 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
         float elapsedTime = 0f;
         Color color = pictureImage.color;
 
-        // Start fully transparent
         color.a = 0f;
         pictureImage.color = color;
 
-        // Fade in
         while (elapsedTime < fadeDuration)
         {
             elapsedTime += Time.deltaTime;
@@ -145,7 +162,6 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
             yield return null;
         }
 
-        // Ensure fully opaque at end
         color.a = 1f;
         pictureImage.color = color;
         Debug.Log("Fade complete - alpha set to 1");

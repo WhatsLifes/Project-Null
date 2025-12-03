@@ -17,6 +17,9 @@ public class PickupFlower : MonoBehaviour, InteractableScript
     [Header("Optional Dialogue")]
     public DialogueTrigger dialogueTrigger;
 
+    [Header("HUD Reference")] // NEW
+    [SerializeField] private HUD hud;
+
     public void InteractScript()
     {
         Debug.Log("[PickupFlower] InteractScript called for: " + flowerType.ToString());
@@ -26,11 +29,13 @@ public class PickupFlower : MonoBehaviour, InteractableScript
         {
             Stage2_5ProgressManager.Instance.boyFlowerPickedUp = true;
             Debug.Log("[PickupFlower] Boy flower picked up.");
+            hud.ShowObjective12();
         }
         else if (flowerType == FlowerType.GirlFlower)
         {
             Stage2_5ProgressManager.Instance.girlFlowerPickedUp = true;
             Debug.Log("[PickupFlower] Girl flower picked up.");
+            hud.ShowObjective11();
         }
 
         // Trigger dialogue if present
