@@ -13,4 +13,20 @@ MonoBehaviour:
   m_Name: Boyflower
   m_EditorClassIdentifier: 
   sequenceName: 
-  lines: []
+  lines:
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: I remember making these..
+    delayBeforeNext: 1
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: 63f655a10a2b3da4c83f3a2b89ff77ec, type: 3}
+    playerText: 
+    delayBeforeNext: 1
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: I did.. We built these..
+    delayBeforeNext: 3
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: together.
+    delayBeforeNext: 0

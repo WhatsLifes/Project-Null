@@ -25,6 +25,9 @@ private bool ElevatorIsOpen
         if (elevatorButton is Stage2ElevatorButton stage2Button)
             return stage2Button.ElevatorOpened;
 
+        if(elevatorButton is Stage2_5ElevatorButton stage2_5button)
+                return stage2_5button.ElevatorOpened;
+
         return false;
     }
 }
@@ -56,7 +59,7 @@ private bool ElevatorIsOpen
     private bool playerLookingAtButton = false;
 
     // ✅ Elevator must exist and be open
-private bool CanTransition => ElevatorIsOpen;
+    private bool CanTransition => ElevatorIsOpen;
 
 
     private void Start()

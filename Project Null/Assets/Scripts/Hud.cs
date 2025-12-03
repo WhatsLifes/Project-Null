@@ -155,9 +155,17 @@ public class HUD : MonoBehaviour
     public void ShowObjective3() => ShowObjective("Investigate the Doll Room");
     public void ShowObjective4() => ShowObjective("Solve her puzzle");
     public void ShowObjective5() => ShowObjective("Find a way to the second floor");
-    public void ShowObjective6() => ShowObjective("Figure out who the voice is");
+    public void ShowObjective6() => ShowObjective("Identify the voice");
     public void ShowObjective7() => ShowObjective("Explore the Carnival Room");
     public void ShowObjective8() => ShowObjective("Locate the next picture piece");
+    public void ShowObjective9() => ShowObjective("Find a way to the next floor");
+    public void ShowObjective10() => ShowObjective("Pick up the flowers (0/2)");
+    public void ShowObjective11() => ShowObjective("Pick up the flowers (1/2)");
+    public void ShowObjective12() => ShowObjective("Continue to the next floor");
+    public void ShowObjective13() => ShowObjective("Find the last flower");
+
+
+
 
     public void ShowObjective(string objectiveMessage)
     {

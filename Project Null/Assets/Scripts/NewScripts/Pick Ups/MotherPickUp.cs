@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-public class PickupMotherPicture : MonoBehaviour, stage2_InteractableScript
+public class PickupMotherPicture : MonoBehaviour, InteractableScript
 {
     [Header("UI Display")]
     [SerializeField] private GameObject pictureUIObject;
@@ -65,6 +65,7 @@ public class PickupMotherPicture : MonoBehaviour, stage2_InteractableScript
 
         motherPiecePickedUp = true;
         Debug.Log("Mother picture picked up!");
+        StartingRoomPickupManager.Instance?.ItemPickedUp(gameObject);
 
         // Play the dialogue line
         if (dialogueTrigger != null)
