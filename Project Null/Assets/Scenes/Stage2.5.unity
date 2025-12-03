@@ -95954,7 +95954,7 @@ PrefabInstance:
     - target: {fileID: 324628222270982573, guid: 2302d903e0c0095408ad51a10fc4a785, type: 3}
       propertyPath: elevatorButton
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2046301686}
     - target: {fileID: 715587245780454481, guid: 2302d903e0c0095408ad51a10fc4a785, type: 3}
       propertyPath: m_LocalPosition.x
       value: 16.58
