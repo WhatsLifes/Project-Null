@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-public class FilePickup : MonoBehaviour, InteractableScript
+public class FilePickup : MonoBehaviour, InteractableScript, stage2_InteractableScript
 {
     [Header("UI Display")]
     [SerializeField] private GameObject fileUIObject;

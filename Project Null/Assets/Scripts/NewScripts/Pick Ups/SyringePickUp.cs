@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SyringePickUp : MonoBehaviour, InteractableScript
+public class SyringePickUp : MonoBehaviour, InteractableScript, stage2_InteractableScript
 {
     [SerializeField] public Inventory inventory;
     public void InteractScript()
