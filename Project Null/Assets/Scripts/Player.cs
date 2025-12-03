@@ -1,4 +1,4 @@
-using System; //  add this
+﻿using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
 {
     //  HUD subscribers will listen to this
     public event Action<int, int> OnHealthChanged; // (current, max)
-    public event Action OnDeath; // NEW: Death event for DeathManager
+    public event Action OnDeath;
 
     [Header("Player Settings")]
     public int MaxHealth = 100;
@@ -17,23 +17,23 @@ public class Player : MonoBehaviour
     [Tooltip("Enable health regeneration")]
     public bool enableRegen = true;
     [Tooltip("Health points restored per second")]
-    public float regenRate = 5f;
+    public float regenRate = 20f;
     [Tooltip("Delay in seconds after taking damage before regeneration starts")]
-    public float regenDelay = 3f;
+    public float regenDelay = 1f;
 
     [Header("UI References")]
-    public Image bloodyScreenImage;  // Assign your bloody PNG Image here (in Canvas)
+    public Image bloodyScreenImage;
 
     private bool isShowingBlood = false;
-    private Coroutine bloodCR; // prevent overlapping fades
-    private Coroutine regenCR; // regeneration coroutine
-    private float lastDamageTime; // track when damage was last taken
+    private Coroutine bloodCR;
+    private Coroutine regenCR;
+    private float lastDamageTime;
 
     private void Start()
     {
         // Clamp & sync starting values
         Health = Mathf.Clamp(Health, 0, MaxHealth);
-        OnHealthChanged?.Invoke(Health, MaxHealth); //  notify HUD at start
+        OnHealthChanged?.Invoke(Health, MaxHealth);
 
         // Ensure the bloody screen starts invisible
         if (bloodyScreenImage != null)
@@ -62,10 +62,10 @@ public class Player : MonoBehaviour
         // Record time of damage for regeneration delay
         lastDamageTime = Time.time;
 
-        //  notify HUD
+        // Notify HUD
         OnHealthChanged?.Invoke(Health, MaxHealth);
 
-        // Trigger bloody screen effect (cancel previous if still running)
+        // Trigger bloody screen effect
         if (bloodCR != null) StopCoroutine(bloodCR);
         bloodCR = StartCoroutine(BloodyScreenEffect());
 
@@ -73,7 +73,6 @@ public class Player : MonoBehaviour
             PlayerDeath();
     }
 
-    // Optional: healing support
     public void Heal(int amount)
     {
         if (Health <= 0) return;
@@ -84,45 +83,49 @@ public class Player : MonoBehaviour
 
     private IEnumerator RegenerateHealth()
     {
+        float accumulatedRegen = 0f;
+
         while (true)
         {
-            yield return null; // Wait one frame
+            yield return null;
 
-            // Only regenerate if:
-            // 1. Regen is enabled
-            // 2. Player is alive
-            // 3. Health is not full
-            // 4. Enough time has passed since last damage
             if (enableRegen && Health > 0 && Health < MaxHealth)
             {
                 float timeSinceLastDamage = Time.time - lastDamageTime;
 
                 if (timeSinceLastDamage >= regenDelay)
                 {
-                    // Regenerate health
-                    float regenAmount = regenRate * Time.deltaTime;
-                    int previousHealth = Health;
+                    // Accumulate regeneration
+                    accumulatedRegen += regenRate * Time.deltaTime;
 
-                    // Use float for precise calculation, then convert to int
-                    float newHealth = Health + regenAmount;
-                    Health = Mathf.Clamp(Mathf.RoundToInt(newHealth), 0, MaxHealth);
-
-                    // Only notify HUD if health actually changed
-                    if (Health != previousHealth)
+                    // Apply when we've accumulated at least 1 HP
+                    if (accumulatedRegen >= 1f)
                     {
+                        int hpToAdd = Mathf.FloorToInt(accumulatedRegen);
+                        accumulatedRegen -= hpToAdd;
+
+                        Health = Mathf.Clamp(Health + hpToAdd, 0, MaxHealth);
                         OnHealthChanged?.Invoke(Health, MaxHealth);
                     }
                 }
+                else
+                {
+                    // Reset accumulated regen while waiting
+                    accumulatedRegen = 0f;
+                }
+            }
+            else
+            {
+                // Reset accumulated regen
+                accumulatedRegen = 0f;
             }
         }
     }
 
-    // Public method to toggle regeneration on/off at runtime
     public void SetRegenerationEnabled(bool enabled)
     {
         enableRegen = enabled;
 
-        // Start or stop the coroutine based on the new state
         if (enabled && regenCR == null)
         {
             regenCR = StartCoroutine(RegenerateHealth());
@@ -134,16 +137,14 @@ public class Player : MonoBehaviour
         }
     }
 
-    // Public method to adjust regen rate at runtime
     public void SetRegenRate(float newRate)
     {
-        regenRate = Mathf.Max(0f, newRate); // Ensure it's not negative
+        regenRate = Mathf.Max(0f, newRate);
     }
 
-    // Public method to adjust regen delay at runtime
     public void SetRegenDelay(float newDelay)
     {
-        regenDelay = Mathf.Max(0f, newDelay); // Ensure it's not negative
+        regenDelay = Mathf.Max(0f, newDelay);
     }
 
     private void PlayerDeath()
@@ -160,7 +161,7 @@ public class Player : MonoBehaviour
 
         Debug.Log("Player died");
 
-        // NEW: Trigger the death event
+        // Trigger the death event
         OnDeath?.Invoke();
     }
 
@@ -211,7 +212,6 @@ public class Player : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Clean up coroutines when destroyed
         if (bloodCR != null) StopCoroutine(bloodCR);
         if (regenCR != null) StopCoroutine(regenCR);
     }
