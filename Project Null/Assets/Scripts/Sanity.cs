@@ -35,7 +35,7 @@ public class Sanity : MonoBehaviour
     public Volume postProcessVolume;
 
     [Header("Camera Shake")]
-    public float shakeAmount = 1f;
+    public float shakeAmount = 15f;
     public float shakeSpeed = 30f;
 
     private float shakeTime;
@@ -124,7 +124,7 @@ public class Sanity : MonoBehaviour
         }
 
         //Temporary cut out to not lose sanity when being attacked
-        //currentSanity -= amount;
+        currentSanity -= amount;
         currentSanity = Mathf.Clamp(currentSanity, 0f, maxSanity);
 
         if (playShake)
