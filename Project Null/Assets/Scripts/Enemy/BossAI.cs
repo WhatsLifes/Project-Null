@@ -1,363 +1,425 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class BossAI : MonoBehaviour
 {
     [Header("References")]
-    public NavMeshAgent agent;
     public Transform player;
-    public Transform crowPosition; // Position to move to when called by crow
+    public NavMeshAgent agent;
 
     [Header("Audio")]
     public AudioSource audioSource;
     public AudioClip normalAudio;
     public AudioClip chaseAudio;
-    [Range(0f, 1f)] public float audioVolume = 1f;
 
-    [Header("Detection Ranges")]
-    [Tooltip("Radius where boss can hear player footsteps (largest)")]
-    public float hearingRadius = 30f;
-    [Tooltip("Radius where boss can see the player (medium)")]
-    public float visionRadius = 15f;
-    [Tooltip("Radius where boss performs instant kill (smallest)")]
+    [Header("Hearing Settings")]
+    public float hearingRadius = 15f;
+    public float hearingMoveSpeed = 3.5f;
+
+    [Header("Vision Settings")]
+    public float visionRadius = 8f;
+    public float chaseSpeed = 6f;
+
+    [Header("Kill Settings")]
     public float killRadius = 2f;
-
-    [Header("Movement Speeds")]
-    public float patrolSpeed = 2f;
-    public float investigateSpeed = 3.5f;
-    public float chaseSpeed = 5f;
-
-    [Header("Attack Settings")]
-    [Tooltip("Delay before executing instant kill attack")]
-    public float attackChargeDelay = 0.5f;
+    public float killChargeDelay = 0.5f;
 
     [Header("Patrol Settings")]
+    public float patrolSpeed = 2f;
     public float patrolWaitTime = 3f;
-    public float patrolRange = 20f;
+    public Vector2 mapBoundsX = new Vector2(-50f, 50f);
+    public Vector2 mapBoundsZ = new Vector2(-50f, 50f);
 
     [Header("Debug")]
-    public bool showDebugGizmos = true;
+    public bool showDebugLogs = true;
 
-    private enum BossState { Patrolling, Investigating, Chasing, Attacking, MovingToCrow }
+    // State tracking
+    private enum BossState { Patrolling, Investigating, Chasing, Charging }
     private BossState currentState = BossState.Patrolling;
 
     private Vector3 lastHeardPosition;
-    private Vector3 patrolDestination;
-    private bool isWaiting = false;
-    private bool isAttacking = false;
-    private float patrolWaitTimer = 0f;
+    private Vector3 patrolTarget;
+    private float patrolWaitTimer;
+    private bool isChargingKill = false;
+    private float killChargeTimer;
+    private bool hasPlayedChaseAudio = false;
 
-    private void Start()
+    void Start()
     {
         if (agent == null)
             agent = GetComponent<NavMeshAgent>();
 
+        if (player == null)
+            player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
 
-        if (player == null)
-        {
-            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-            if (playerObj != null)
-                player = playerObj.transform;
-        }
-
         agent.speed = patrolSpeed;
-        SetPatrolDestination();
+        SetNewPatrolTarget();
+        PlayNormalAudio();
 
-        // Play normal ambient audio
-        if (audioSource != null && normalAudio != null)
+        if (showDebugLogs)
         {
-            audioSource.clip = normalAudio;
-            audioSource.loop = true;
-            audioSource.volume = audioVolume;
-            audioSource.Play();
+            Debug.Log("=== BOSS AI INITIALIZED ===");
+            Debug.Log($"Hearing Radius: {hearingRadius}, Vision Radius: {visionRadius}, Kill Radius: {killRadius}");
+            Debug.Log($"Player found: {player != null}, PlayerSoundProducer: {(player != null ? player.GetComponent<PlayerSoundProducer>() != null : false)}");
+            Debug.Log($"NavMeshAgent enabled: {agent.enabled}, isOnNavMesh: {agent.isOnNavMesh}");
+            Debug.Log($"Boss position: {transform.position}");
+
+            if (!agent.isOnNavMesh)
+            {
+                Debug.LogError("BOSS IS NOT ON NAVMESH! Please bake NavMesh or move boss to valid NavMesh area!");
+            }
         }
     }
 
-    private void Update()
+    void Update()
     {
-        if (agent == null || player == null)
-            return;
-
-        if (isAttacking)
-            return;
+        if (player == null) return;
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        // Check for kill range
-        if (distanceToPlayer <= killRadius && currentState == BossState.Chasing)
+        // Priority 1: Kill radius (instant kill)
+        if (distanceToPlayer <= killRadius)
         {
-            StartCoroutine(PerformInstantKill());
+            if (!isChargingKill)
+            {
+                StartKillCharge();
+            }
+            else
+            {
+                killChargeTimer -= Time.deltaTime;
+                if (killChargeTimer <= 0f)
+                {
+                    KillPlayer();
+                }
+            }
             return;
         }
+        else
+        {
+            isChargingKill = false;
+        }
 
-        // Check for vision range
+        // Priority 2: Vision radius (active chase)
         if (distanceToPlayer <= visionRadius)
         {
-            SetState(BossState.Chasing);
+            if (currentState != BossState.Chasing)
+            {
+                EnterChaseState();
+            }
             ChasePlayer();
             return;
         }
-
-        // Check for hearing range (investigate)
-        if (distanceToPlayer <= hearingRadius && IsPlayerMakingNoise())
+        else if (currentState == BossState.Chasing)
         {
-            // Update last heard position
-            lastHeardPosition = player.position;
+            // Lost sight of player
+            ExitChaseState();
+        }
 
-            if (currentState != BossState.Investigating && currentState != BossState.Chasing)
+        // Priority 3: Hearing radius (investigate sound)
+        PlayerSoundProducer soundProducer = player.GetComponent<PlayerSoundProducer>();
+        if (soundProducer != null && soundProducer.IsMakingSound() && distanceToPlayer <= hearingRadius)
+        {
+            // Only change state if not already investigating
+            if (currentState != BossState.Investigating)
             {
-                SetState(BossState.Investigating);
+                lastHeardPosition = player.position;
+                if (showDebugLogs) Debug.Log($"Boss heard player at {player.position}, distance: {distanceToPlayer:F2}");
+                EnterInvestigateState();
+            }
+            else
+            {
+                // Already investigating - update position periodically
+                lastHeardPosition = player.position;
             }
         }
 
-        // State machine
+        // Handle current state
         switch (currentState)
         {
+            case BossState.Investigating:
+                InvestigateSound();
+                break;
             case BossState.Patrolling:
                 Patrol();
                 break;
-
-            case BossState.Investigating:
-                Investigate();
-                break;
-
-            case BossState.Chasing:
-                // Lost sight of player, go back to investigating
-                if (distanceToPlayer > visionRadius)
-                {
-                    lastHeardPosition = player.position;
-                    SetState(BossState.Investigating);
-                }
-                break;
-
-            case BossState.MovingToCrow:
-                // Check if reached crow position
-                if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
-                {
-                    SetState(BossState.Patrolling);
-                }
-                break;
         }
-    }
-
-    /// Call this function to make the boss move to the crow's position
-    public void CallToCrowPosition()
-    {
-        if (crowPosition == null)
-        {
-            Debug.LogWarning("Crow position not assigned!");
-            return;
-        }
-
-        SetState(BossState.MovingToCrow);
-        agent.speed = chaseSpeed;
-        agent.SetDestination(crowPosition.position);
-        Debug.Log("Boss called to crow position!");
     }
 
     private void Patrol()
     {
         agent.speed = patrolSpeed;
 
-        if (isWaiting)
-        {
-            patrolWaitTimer += Time.deltaTime;
-            if (patrolWaitTimer >= patrolWaitTime)
-            {
-                isWaiting = false;
-                SetPatrolDestination();
-            }
-            return;
-        }
-
-        // Check if reached patrol destination
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
-            isWaiting = true;
-            patrolWaitTimer = 0f;
+            patrolWaitTimer -= Time.deltaTime;
+            if (patrolWaitTimer <= 0f)
+            {
+                SetNewPatrolTarget();
+            }
         }
     }
 
-    private void SetPatrolDestination()
+    private void SetNewPatrolTarget()
     {
         // Patrol on the same half of the map as the player
-        Vector3 basePosition = player.position;
-
-        // Generate random point around player's half
-        Vector2 randomCircle = Random.insideUnitCircle * patrolRange;
-        Vector3 randomPoint = new Vector3(
-            basePosition.x + randomCircle.x,
-            transform.position.y,
-            basePosition.z + randomCircle.y
-        );
-
-        // Sample on NavMesh
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(randomPoint, out hit, patrolRange, NavMesh.AllAreas))
+        if (player != null)
         {
-            patrolDestination = hit.position;
-            agent.SetDestination(patrolDestination);
+            float playerX = player.position.x;
+            float midpointX = (mapBoundsX.x + mapBoundsX.y) / 2f;
+
+            Vector2 xBounds;
+            if (playerX > midpointX)
+            {
+                // Player is on right half
+                xBounds = new Vector2(midpointX, mapBoundsX.y);
+            }
+            else
+            {
+                // Player is on left half
+                xBounds = new Vector2(mapBoundsX.x, midpointX);
+            }
+
+            float randomX = Random.Range(xBounds.x, xBounds.y);
+            float randomZ = Random.Range(mapBoundsZ.x, mapBoundsZ.y);
+            patrolTarget = new Vector3(randomX, player.position.y, randomZ);
         }
+        else
+        {
+            float randomX = Random.Range(mapBoundsX.x, mapBoundsX.y);
+            float randomZ = Random.Range(mapBoundsZ.x, mapBoundsZ.y);
+            patrolTarget = new Vector3(randomX, 0f, randomZ);
+        }
+
+        // Sample nearest valid position on NavMesh
+        UnityEngine.AI.NavMeshHit hit;
+        if (UnityEngine.AI.NavMesh.SamplePosition(patrolTarget, out hit, 10f, UnityEngine.AI.NavMesh.AllAreas))
+        {
+            agent.SetDestination(hit.position);
+            patrolTarget = hit.position; // Update to actual reachable position
+        }
+        else
+        {
+            if (showDebugLogs) Debug.LogWarning("Failed to find valid patrol position on NavMesh!");
+        }
+
+        patrolWaitTimer = patrolWaitTime;
     }
 
-    private void Investigate()
+    private void InvestigateSound()
     {
-        agent.speed = investigateSpeed;
+        agent.speed = hearingMoveSpeed;
+        agent.isStopped = false;
 
-        // Move to last heard position
-        agent.SetDestination(lastHeardPosition);
-
-        // If reached investigation point, go back to patrolling
-        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 1f)
+        // Sample nearest valid position on NavMesh
+        UnityEngine.AI.NavMeshHit hit;
+        if (UnityEngine.AI.NavMesh.SamplePosition(lastHeardPosition, out hit, 5f, UnityEngine.AI.NavMesh.AllAreas))
         {
-            SetState(BossState.Patrolling);
+            agent.SetDestination(hit.position);
+
+            if (showDebugLogs)
+            {
+                Debug.Log($"Boss moving to NavMesh position: {hit.position}, distance: {agent.remainingDistance:F2}, pathStatus: {agent.pathStatus}");
+            }
+        }
+        else
+        {
+            if (showDebugLogs) Debug.LogWarning($"No valid NavMesh position near {lastHeardPosition}!");
+        }
+
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            // Reached the sound location, return to patrol
+            if (showDebugLogs) Debug.Log("Boss reached investigation point, returning to patrol");
+            currentState = BossState.Patrolling;
+            SetNewPatrolTarget();
         }
     }
-
     private void ChasePlayer()
     {
+        agent.isStopped = false;
         agent.speed = chaseSpeed;
+        agent.SetDestination(player.position);
+    }
 
-        // Sample player position on NavMesh
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(player.position, out hit, 2.0f, NavMesh.AllAreas))
+    private void EnterInvestigateState()
+    {
+        currentState = BossState.Investigating;
+        agent.isStopped = false;
+        agent.speed = hearingMoveSpeed;
+
+        if (showDebugLogs)
+        {
+            Debug.Log($"Boss investigating sound at {lastHeardPosition}, distance: {Vector3.Distance(transform.position, lastHeardPosition):F2}");
+            Debug.Log($"Boss current position: {transform.position}");
+            Debug.Log($"Boss isOnNavMesh: {agent.isOnNavMesh}, hasPath: {agent.hasPath}");
+        }
+
+        // Use NavMesh sampling to ensure valid destination
+        UnityEngine.AI.NavMeshHit hit;
+        if (UnityEngine.AI.NavMesh.SamplePosition(lastHeardPosition, out hit, 5f, UnityEngine.AI.NavMesh.AllAreas))
         {
             agent.SetDestination(hit.position);
         }
         else
         {
-            agent.SetDestination(player.position);
+            Debug.LogError($"Cannot find valid NavMesh position near {lastHeardPosition}! Is NavMesh baked?");
         }
     }
-
-    private IEnumerator PerformInstantKill()
+    private void EnterChaseState()
     {
-        if (isAttacking)
-            yield break;
+        currentState = BossState.Chasing;
+        agent.isStopped = false;
+        PlayChaseAudio();
+        if (showDebugLogs) Debug.Log("Boss entering chase state!");
+    }
 
-        isAttacking = true;
-        SetState(BossState.Attacking);
+    private void ExitChaseState()
+    {
+        currentState = BossState.Patrolling;
+        agent.isStopped = false;
+        SetNewPatrolTarget();
+        PlayNormalAudio();
+        if (showDebugLogs) Debug.Log("Boss lost sight of player, returning to patrol");
+    }
 
+    private void StartKillCharge()
+    {
+        isChargingKill = true;
+        killChargeTimer = killChargeDelay;
+        currentState = BossState.Charging;
         agent.isStopped = true;
 
-        // Face the player
-        Vector3 direction = (player.position - transform.position).normalized;
-        direction.y = 0;
-        if (direction.sqrMagnitude > 0.001f)
+        // Optional: Add visual/audio feedback for charging
+        Debug.Log("Boss is charging kill attack!");
+    }
+
+    private void KillPlayer()
+    {
+        Debug.Log("Player killed by boss!");
+
+        // Trigger death - you can expand this with your death system
+        SimpleFPS fps = player.GetComponent<SimpleFPS>();
+        if (fps != null)
         {
-            transform.rotation = Quaternion.LookRotation(direction);
+            fps.canMove = false;
+            fps.canLook = false;
         }
 
-        Debug.Log("Boss charging attack...");
-
-        // Charge delay
-        yield return new WaitForSeconds(attackChargeDelay);
-
-        // Check if player is still in range
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        if (distanceToPlayer <= killRadius)
-        {
-            // Instant kill
-            Player playerScript = player.GetComponent<Player>();
-            if (playerScript != null)
-            {
-                Debug.Log("Boss insta killed you.");
-                playerScript.TakeDamage(9999); // Instant kill
-            }
-        }
-
-        yield return new WaitForSeconds(0.5f);
+        // Add your death handling here (reload scene, game over screen, etc.)
+        // Example: SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
         agent.isStopped = false;
-        isAttacking = false;
-
-        // Return to chasing
-        if (Vector3.Distance(transform.position, player.position) <= visionRadius)
-        {
-            SetState(BossState.Chasing);
-        }
-        else
-        {
-            SetState(BossState.Investigating);
-        }
+        isChargingKill = false;
     }
 
-    private bool IsPlayerMakingNoise()
+    // Called by crow scripts
+    public void OnCrowAlert(Vector3 playerPosition)
     {
-        // This will be checked by the player script
-        // For now, return true if player is moving
-        // Later, player script should set a flag or call a method when making noise
-
-        // Placeholder: assume player makes noise if they exist
-        // The actual implementation will check if player is crouched
-        return true;
+        lastHeardPosition = playerPosition;
+        if (showDebugLogs) Debug.Log($"Boss alerted by crow! Heading to position: {playerPosition}");
+        EnterInvestigateState();
     }
 
-    private void SetState(BossState newState)
+    private void PlayNormalAudio()
     {
-        if (currentState == newState)
-            return;
-
-        currentState = newState;
-        Debug.Log($"Boss state changed to: {newState}");
-
-        // Change audio based on state
-        if (audioSource != null)
+        if (audioSource != null && normalAudio != null && !hasPlayedChaseAudio)
         {
-            if (newState == BossState.Chasing || newState == BossState.Attacking)
-            {
-                if (chaseAudio != null && audioSource.clip != chaseAudio)
-                {
-                    audioSource.clip = chaseAudio;
-                    audioSource.loop = true;
-                    audioSource.Play();
-                }
-            }
-            else
-            {
-                if (normalAudio != null && audioSource.clip != normalAudio)
-                {
-                    audioSource.clip = normalAudio;
-                    audioSource.loop = true;
-                    audioSource.Play();
-                }
-            }
+            audioSource.clip = normalAudio;
+            audioSource.loop = true;
+            audioSource.Play();
+        }
+        hasPlayedChaseAudio = false;
+    }
+
+    private void PlayChaseAudio()
+    {
+        if (audioSource != null && chaseAudio != null)
+        {
+            audioSource.clip = chaseAudio;
+            audioSource.loop = true;
+            audioSource.Play();
+            hasPlayedChaseAudio = true;
         }
     }
 
+    // Visualization in editor - ALWAYS VISIBLE for testing
     private void OnDrawGizmos()
     {
-        if (!showDebugGizmos)
-            return;
-
-        // Hearing radius (yellow)
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, hearingRadius);
-
-        // Vision radius (orange)
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(transform.position, visionRadius);
-
         // Kill radius (red)
-        Gizmos.color = Color.red;
+        Gizmos.color = new Color(1f, 0f, 0f, 0.3f);
         Gizmos.DrawWireSphere(transform.position, killRadius);
 
-        // Last heard position
-        if (lastHeardPosition != Vector3.zero)
-        {
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawWireSphere(lastHeardPosition, 1f);
-            Gizmos.DrawLine(transform.position, lastHeardPosition);
-        }
+        // Vision radius (yellow)
+        Gizmos.color = new Color(1f, 1f, 0f, 0.3f);
+        Gizmos.DrawWireSphere(transform.position, visionRadius);
 
-        // Patrol destination
-        if (currentState == BossState.Patrolling && patrolDestination != Vector3.zero)
+        // Hearing radius (bright magenta/purple)
+        Gizmos.color = new Color(1f, 0f, 1f, 0.5f);
+        Gizmos.DrawWireSphere(transform.position, hearingRadius);
+
+        if (Application.isPlaying)
         {
+            // Current state indicator above boss
+            Gizmos.color = GetStateColor();
+            Vector3 statePos = transform.position + Vector3.up * 3f;
+            Gizmos.DrawWireCube(statePos, Vector3.one * 0.5f);
+
+            // Patrol target
             Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(patrolDestination, 0.5f);
+            Gizmos.DrawWireSphere(patrolTarget, 1f);
+            Gizmos.DrawLine(transform.position, patrolTarget);
+
+            // Last heard position - BRIGHT CYAN CUBE
+            if (currentState == BossState.Investigating)
+            {
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawWireCube(lastHeardPosition, Vector3.one * 1.5f);
+                Gizmos.DrawSphere(lastHeardPosition, 0.3f);
+
+                // Thick line to show where boss is heading
+                Gizmos.color = new Color(0f, 1f, 1f, 0.8f);
+                Gizmos.DrawLine(transform.position + Vector3.up, lastHeardPosition + Vector3.up);
+            }
+
+            // Line to player with distance label
+            if (player != null)
+            {
+                float dist = Vector3.Distance(transform.position, player.position);
+                Gizmos.color = dist <= killRadius ? Color.red :
+                              dist <= visionRadius ? Color.yellow :
+                              dist <= hearingRadius ? new Color(1f, 0f, 1f, 0.7f) : Color.gray;
+                Gizmos.DrawLine(transform.position, player.position);
+
+                // Draw player position marker
+                Gizmos.color = Color.white;
+                Gizmos.DrawWireSphere(player.position, 0.5f);
+            }
+
+            // NavMesh path visualization
+            if (agent != null && agent.hasPath)
+            {
+                Gizmos.color = Color.magenta;
+                Vector3[] corners = agent.path.corners;
+                for (int i = 0; i < corners.Length - 1; i++)
+                {
+                    Gizmos.DrawLine(corners[i], corners[i + 1]);
+                }
+            }
+        }
+    }
+
+    private Color GetStateColor()
+    {
+        switch (currentState)
+        {
+            case BossState.Patrolling: return Color.green;
+            case BossState.Investigating: return Color.cyan;
+            case BossState.Chasing: return Color.yellow;
+            case BossState.Charging: return Color.red;
+            default: return Color.white;
         }
     }
 }
