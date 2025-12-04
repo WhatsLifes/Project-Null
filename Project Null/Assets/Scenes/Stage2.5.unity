@@ -96291,6 +96291,22 @@ PrefabInstance:
       propertyPath: ringingAudioSource
       value: 
       objectReference: {fileID: 898998901}
+    - target: {fileID: 2770315884296941280, guid: 6a519e52df2b4e4449b7e547a2c49be5, type: 3}
+      propertyPath: randomSanityClips.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2770315884296941280, guid: 6a519e52df2b4e4449b7e547a2c49be5, type: 3}
+      propertyPath: 'randomSanityClips.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 3c98355740235e14a85432d27ac68bd2, type: 3}
+    - target: {fileID: 2770315884296941280, guid: 6a519e52df2b4e4449b7e547a2c49be5, type: 3}
+      propertyPath: 'randomSanityClips.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 5c7f2896bc33e5243a41368657a309bb, type: 3}
+    - target: {fileID: 2770315884296941280, guid: 6a519e52df2b4e4449b7e547a2c49be5, type: 3}
+      propertyPath: 'randomSanityClips.Array.data[2]'
+      value: 
+      objectReference: {fileID: 8300000, guid: e35e003427137734d822d19bc1dec9f6, type: 3}
     - target: {fileID: 4291127396165352753, guid: 6a519e52df2b4e4449b7e547a2c49be5, type: 3}
       propertyPath: isPickedUp
       value: 1
