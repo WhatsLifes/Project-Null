@@ -1,9 +1,4 @@
-using sc.terrain.proceduralpainter;
-using Unity.VisualScripting;
 using UnityEngine;
-using static Unity.Collections.AllocatorManager;
-using static UnityEngine.InputManagerEntry;
-using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 public class ShowObjectiveTrigger : MonoBehaviour
 {
