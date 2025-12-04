@@ -163,9 +163,10 @@ public class HUD : MonoBehaviour
     public void ShowObjective11() => ShowObjective("Pick up the flowers (1/2)");
     public void ShowObjective12() => ShowObjective("Continue to the next floor");
     public void ShowObjective13() => ShowObjective("Find the last flower");
-
-
-
+    public void ShowObjective14() => ShowObjective("Make the Tri-Flora Compound");
+    public void ShowObjective15() => ShowObjective("Turn on the generators (0/2)");
+    public void ShowObjective16() => ShowObjective("Turn on the generators (1/2)");
+    public void ShowObjective17() => ShowObjective("Return to the workstation & try again");
 
     public void ShowObjective(string objectiveMessage)
     {
