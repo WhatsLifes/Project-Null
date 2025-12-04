@@ -2741,6 +2741,58 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1052901659}
   m_CullTransparentMesh: 1
+--- !u!1 &1124341383
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1124341385}
+  - component: {fileID: 1124341384}
+  m_Layer: 0
+  m_Name: PlayerDataSaveForScenes
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1124341384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1124341383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c599258f553ba2342855f57e7998ea76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerHealth: 100
+  playerMaxHealth: 100
+  playerSanity: 0
+  playerMaxSanity: 100
+  flashlightBattery: 100
+  flashlightMaxBattery: 100
+  flashlightPickedUp: 0
+  holdingSyringe: 0
+--- !u!4 &1124341385
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1124341383}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 21.43151, y: 0.23385775, z: -1.353106}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1155681496
 GameObject:
   m_ObjectHideFlags: 0
@@ -5101,3 +5153,4 @@ SceneRoots:
   - {fileID: 688225300}
   - {fileID: 1227293835}
   - {fileID: 1249639036}
+  - {fileID: 1124341385}
