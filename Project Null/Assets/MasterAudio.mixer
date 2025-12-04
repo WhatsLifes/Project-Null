@@ -34,7 +34,7 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Ambience
+  m_Name: MusicVolume
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: fb762bb9d53ad43a6a2930b58a10b9d5
   m_Children: []
@@ -173,11 +173,11 @@ AudioMixerController:
   m_UpdateMode: 0
   m_ExposedParameters:
   - guid: 6ca68d84d618441ee8bf95f450188efc
-    name: AmbienceVolume
-  - guid: 87e943b96b63e49508848681f3a4a712
-    name: SpeakerFilter
+    name: AmbianceVolume
   - guid: a0724872e631542ed9b1a976990cee9d
     name: SFXVolume
+  - guid: 87e943b96b63e49508848681f3a4a712
+    name: SpeakerFilter
   m_AudioMixerGroupViews:
   - guids:
     - ea074f22edfa04625a2b719d92949553
