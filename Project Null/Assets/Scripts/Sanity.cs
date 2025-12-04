@@ -18,8 +18,6 @@ public class Sanity : MonoBehaviour
 
     [Header("Effects")]
     public Camera playerCamera;
-    public AudioClip ringingClip;
-    public AudioClip[] randomSanityClips;
     public Light[] lightsToFlicker;
 
     private float passiveDrainTimer = 0f;
@@ -27,9 +25,13 @@ public class Sanity : MonoBehaviour
     private bool[] lightStates;
     private float randomSoundTimer = 0f;
     private float ringingTimer = 0f;
-    private AudioSource ringingAudio;
-    private AudioSource sanityAudioSource;
     private Coroutine restoreCoroutine;
+
+    [Header("Audio")]
+    public AudioSource ringingAudioSource;
+    public AudioSource sanityAudioSource;
+    public AudioClip ringingClip;
+    public AudioClip[] randomSanityClips;
 
     [Header("Post Processing")] //Visual Effects
     public Volume postProcessVolume;
@@ -63,16 +65,14 @@ public class Sanity : MonoBehaviour
             lightStates[i] = true;
         }
 
-        ringingAudio = gameObject.AddComponent<AudioSource>();
-        ringingAudio.spatialBlend = 0f;
-        ringingAudio.loop = false;
-        ringingAudio.playOnAwake = false;
-        ringingAudio.volume = 0.2f;
+        ringingAudioSource.spatialBlend = 0f;
+        ringingAudioSource.loop = false;
+        ringingAudioSource.playOnAwake = false;
+        ringingAudioSource.volume = 0.2f;
 
         if (ringingClip != null)
-            ringingAudio.clip = ringingClip;
+            ringingAudioSource.clip = ringingClip;
 
-        sanityAudioSource = gameObject.AddComponent<AudioSource>();
         sanityAudioSource.playOnAwake = false;
         sanityAudioSource.spatialBlend = 0f;
         sanityAudioSource.loop = false;
@@ -253,16 +253,16 @@ public class Sanity : MonoBehaviour
         if (playerCamera != null)
             playerCamera.fieldOfView = Mathf.Lerp(40f, 60f, sanityPercent);
 
-        if (ringingAudio != null && ringingClip != null)
+        if (ringingAudioSource != null && ringingClip != null)
         {
             ringingTimer -= Time.deltaTime;
-            if (sanityPercent < 0.5f && !ringingAudio.isPlaying && ringingTimer <= 0f)
+            if (sanityPercent < 0.5f && !ringingAudioSource.isPlaying && ringingTimer <= 0f)
             {
                 float volume = Mathf.Lerp(0.1f, 0.8f, 1f - sanityPercent);
-                ringingAudio.volume = volume;
-                ringingAudio.panStereo = Random.Range(-0.5f, 0.5f);
+                ringingAudioSource.volume = volume;
+                ringingAudioSource.panStereo = Random.Range(-0.5f, 0.5f);
 
-                ringingAudio.Play();
+                ringingAudioSource.Play();
 
                 ringingTimer = Random.Range(
                     Mathf.Lerp(30f, 8f, 1f - sanityPercent),
