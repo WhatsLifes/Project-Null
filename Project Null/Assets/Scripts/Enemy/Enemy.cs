@@ -207,7 +207,6 @@ public class Enemy : MonoBehaviour
         playerInSightRange = distanceToPlayer <= sightRange;
         playerInAttackRange = distanceToPlayer <= attackRange;
 
-        // State machine
         if (!playerInSightRange)
         {
             Patrolling();
@@ -277,7 +276,6 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        // If no valid point found, try again next frame
         walkPointSet = false;
     }
 
