@@ -14,7 +14,11 @@ public class StartingRoomPickupManager : MonoBehaviour
 
     private HashSet<GameObject> collectedItems = new HashSet<GameObject>();
     private bool doorOpened = false; // Ensures door only opens once
+
+    [Header("HUD Settings")]
     [SerializeField] private HUD hud;
+    [Tooltip("Should this door opening trigger an objective change?")]
+    public bool changeObjectiveOnOpen = true;
 
     [Header("Door Delay Settings")]
     public float doorOpenDelay = 5f; // Seconds to wait before opening after last item
@@ -61,7 +65,6 @@ public class StartingRoomPickupManager : MonoBehaviour
     {
         Debug.Log($"All starting room items collected! Waiting {doorOpenDelay} seconds before opening the door...");
         yield return new WaitForSeconds(doorOpenDelay);
-
         OpenDoor();
     }
 
@@ -71,7 +74,13 @@ public class StartingRoomPickupManager : MonoBehaviour
         {
             door.OpenDoor();
             doorOpened = true;
-            hud.ShowObjective2();
+
+            // Only show objective if enabled
+            if (changeObjectiveOnOpen && hud != null)
+            {
+                hud.ShowObjective2();
+            }
+
             Debug.Log("All starting room items collected! Door opening!");
         }
         else
