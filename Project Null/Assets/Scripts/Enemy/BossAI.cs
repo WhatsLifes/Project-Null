@@ -1,8 +1,5 @@
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections;
-using System.Collections.Generic;
-
 
 public class BossAI : MonoBehaviour
 {
@@ -47,19 +44,10 @@ public class BossAI : MonoBehaviour
     private float killChargeTimer;
     private bool hasPlayedChaseAudio = false;
 
-    // Animations
-    private Animator animator;
-    private bool isCrawling = false;
-    public Transform modelRoot;
-
-
     void Start()
     {
         if (agent == null)
             agent = GetComponent<NavMeshAgent>();
-
-        if (animator == null)
-            animator = GetComponentInChildren<Animator>();
 
         if (player == null)
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
@@ -90,8 +78,6 @@ public class BossAI : MonoBehaviour
                 Debug.LogError("BOSS IS NOT ON NAVMESH! Please bake NavMesh or move boss to valid NavMesh area!");
             }
         }
-
-
     }
 
     void Update()
@@ -99,10 +85,6 @@ public class BossAI : MonoBehaviour
         if (player == null) return;
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-
-        // Set Movement State
-        bool isMoving = agent.velocity.sqrMagnitude > 0.1f;
-        animator.SetBool("isMoving", isMoving);
 
         // Priority 1: Kill radius (instant kill)
         if (distanceToPlayer <= killRadius)
@@ -158,19 +140,6 @@ public class BossAI : MonoBehaviour
             if (currentState != BossState.Chasing)
             {
                 EnterChaseState();
-
-                // Enter Crawl Posture
-                if (!isCrawling)
-                {
-                    animator.SetTrigger("Transition");
-                    isCrawling = true;
-
-                    // rotate 180 so crawl direction matches walking direction
-                    if (rotateCoroutine != null) StopCoroutine(rotateCoroutine);
-                    rotateCoroutine = StartCoroutine(RotateModelSmooth(180f, 0.3f));
-
-                }
-
             }
             ChasePlayer();
             return;
@@ -179,19 +148,6 @@ public class BossAI : MonoBehaviour
         {
             // Lost sight of player
             ExitChaseState();
-
-            // Exit Crawl Posture
-            if (isCrawling)
-            {
-                animator.SetTrigger("Transition");
-                isCrawling = false;
-
-                // rotate back to standing orientation
-                if (rotateCoroutine != null) StopCoroutine(rotateCoroutine);
-                rotateCoroutine = StartCoroutine(RotateModelSmooth(0f, 0.3f));
-
-            }
-
         }
 
         // Priority 3: Hearing radius (investigate sound)
@@ -407,12 +363,16 @@ public class BossAI : MonoBehaviour
     {
         Debug.Log("Player killed by boss!");
 
-        // Deal lethal damage to trigger proper death system
-        Player playerScript = player.GetComponent<Player>();
-        if (playerScript != null)
+        // Trigger death - you can expand this with your death system
+        SimpleFPS fps = player.GetComponent<SimpleFPS>();
+        if (fps != null)
         {
-            playerScript.TakeDamage(playerScript.Health); // Or just a large number like 9999
+            fps.canMove = false;
+            fps.canLook = false;
         }
+
+        // Add your death handling here (reload scene, game over screen, etc.)
+        // Example: SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
         agent.isStopped = false;
         isChargingKill = false;
@@ -561,24 +521,4 @@ public class BossAI : MonoBehaviour
             default: return Color.white;
         }
     }
-
-    private Coroutine rotateCoroutine;
-
-    IEnumerator RotateModelSmooth(float targetYRot, float duration)
-    {
-        Quaternion startRot = modelRoot.localRotation;
-        Quaternion endRot = Quaternion.Euler(0f, targetYRot, 0f);
-
-        float t = 0f;
-        while (t < duration)
-        {
-            t += Time.deltaTime;
-            float lerp = Mathf.Clamp01(t / duration);
-            modelRoot.localRotation = Quaternion.Slerp(startRot, endRot, lerp);
-            yield return null;
-        }
-
-        modelRoot.localRotation = endRot;
-    }
-
 }
