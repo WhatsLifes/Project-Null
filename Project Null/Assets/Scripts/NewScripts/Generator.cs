@@ -18,6 +18,9 @@ public class Generator : MonoBehaviour, InteractableScript
     [Header("HUD Settings")]
     [SerializeField] private HUD hud;
 
+    [Header("Safeguard")]
+    [SerializeField] private DialogueTrigger powerNotOffDialogue; // Optional: "The power isn't off yet"
+
     private Color originalLightColor;
     private float originalLightIntensity;
     private bool wasOn = false;
@@ -62,15 +65,30 @@ public class Generator : MonoBehaviour, InteractableScript
 
     public void InteractScript()
     {
-        if (isOn)
-        {
-            Debug.Log("Generator already on!");
-            return;
-        }
-
         if (machine == null)
         {
             Debug.LogError("Machine not assigned!");
+            return;
+        }
+
+        // SAFEGUARD: Check if power has been shut down
+        if (!machine.HasPowerShutdown())
+        {
+            Debug.Log("Cannot turn on generator - power hasn't been shut down yet!");
+            
+            // Optional: Play dialogue
+            if (powerNotOffDialogue != null)
+            {
+                powerNotOffDialogue.TriggerNow();
+            }
+            
+            return;
+        }
+
+        // Check if already on
+        if (isOn)
+        {
+            Debug.Log("Generator already on!");
             return;
         }
 

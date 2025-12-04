@@ -338,6 +338,12 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
         return generator2On;
     }
 
+    // NEW: Method for Generator safeguard
+    public bool HasPowerShutdown()
+    {
+        return hasShutdownPower;
+    }
+
     private void CheckGeneratorStatus()
     {
         if (BothGeneratorsOn() && hasShutdownPower)
