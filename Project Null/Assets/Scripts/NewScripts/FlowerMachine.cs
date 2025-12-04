@@ -11,38 +11,58 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
     [SerializeField] private bool generator1On = false;
     [SerializeField] private bool generator2On = false;
 
-    [Header("Lights (Turn Red When Power Off)")]
-    [SerializeField] private Light[] lightsToTurnRed;
-    [SerializeField] private Color originalLightColor = Color.white;
-    [SerializeField] private Color powerOffColor = Color.red;
-    [SerializeField] private float powerOffIntensity = 2f;
+    [Header("Amp Post Lights (Amber → Red)")]
+    [SerializeField] private Light[] ampPostLights;
+    [SerializeField] private Color ampPostOriginalColor = new Color(1f, 0.5f, 0f); // Amber/Orange
+    [SerializeField] private Color ampPostPowerOffColor = Color.red;
+    [SerializeField] private float ampPostPowerOffIntensity = 2f;
+
+    [Header("Generator Lights (Green → Red)")]
+    [SerializeField] private Light[] generatorLights;
+    [SerializeField] private Color generatorOriginalColor = Color.green;
+    [SerializeField] private Color generatorPowerOffColor = Color.red;
+    [SerializeField] private float generatorPowerOffIntensity = 2f;
 
     [Header("Machine State")]
-    [SerializeField] private bool hasShutdownPower = false; // Track if power has been shut down
+    [SerializeField] private bool hasShutdownPower = false;
     [SerializeField] private bool machineCompleted = false;
 
     [Header("Optional Dialogue")]
-    [SerializeField] private DialogueTrigger noFlowersDialogue; // "Need all 3 flowers"
-    [SerializeField] private DialogueTrigger powerShutdownDialogue; // "Power is shutting down!"
-    [SerializeField] private DialogueTrigger needPowerDialogue; // "Need to restore power"
-    [SerializeField] private DialogueTrigger machineStartDialogue; // "Machine is starting..."
+    [SerializeField] private DialogueTrigger noFlowersDialogue;
+    [SerializeField] private DialogueTrigger powerShutdownDialogue;
+    [SerializeField] private DialogueTrigger needPowerDialogue;
+    [SerializeField] private DialogueTrigger machineStartDialogue;
 
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs = true;
 
-    private float[] originalIntensities;
+    private float[] ampPostOriginalIntensities;
+    private float[] generatorOriginalIntensities;
 
     private void Start()
     {
-        // Store original light intensities
-        if (lightsToTurnRed != null && lightsToTurnRed.Length > 0)
+        // Store original intensities for amp post lights
+        if (ampPostLights != null && ampPostLights.Length > 0)
         {
-            originalIntensities = new float[lightsToTurnRed.Length];
-            for (int i = 0; i < lightsToTurnRed.Length; i++)
+            ampPostOriginalIntensities = new float[ampPostLights.Length];
+            for (int i = 0; i < ampPostLights.Length; i++)
             {
-                if (lightsToTurnRed[i] != null)
+                if (ampPostLights[i] != null)
                 {
-                    originalIntensities[i] = lightsToTurnRed[i].intensity;
+                    ampPostOriginalIntensities[i] = ampPostLights[i].intensity;
+                }
+            }
+        }
+
+        // Store original intensities for generator lights
+        if (generatorLights != null && generatorLights.Length > 0)
+        {
+            generatorOriginalIntensities = new float[generatorLights.Length];
+            for (int i = 0; i < generatorLights.Length; i++)
+            {
+                if (generatorLights[i] != null)
+                {
+                    generatorOriginalIntensities[i] = generatorLights[i].intensity;
                 }
             }
         }
@@ -114,44 +134,70 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
         // Play shutdown dialogue
         if (powerShutdownDialogue != null)
             powerShutdownDialogue.TriggerNow();
-
-        // You could add screen shake, sound effects, etc. here
     }
 
     private void TurnLightsRed()
     {
-        if (lightsToTurnRed == null || lightsToTurnRed.Length == 0)
-            return;
-
-        for (int i = 0; i < lightsToTurnRed.Length; i++)
+        // Turn amp post lights red
+        if (ampPostLights != null)
         {
-            if (lightsToTurnRed[i] != null)
+            for (int i = 0; i < ampPostLights.Length; i++)
             {
-                lightsToTurnRed[i].color = powerOffColor;
-                lightsToTurnRed[i].intensity = powerOffIntensity;
+                if (ampPostLights[i] != null)
+                {
+                    ampPostLights[i].color = ampPostPowerOffColor;
+                    ampPostLights[i].intensity = ampPostPowerOffIntensity;
+                }
+            }
+        }
+
+        // Turn generator lights red
+        if (generatorLights != null)
+        {
+            for (int i = 0; i < generatorLights.Length; i++)
+            {
+                if (generatorLights[i] != null)
+                {
+                    generatorLights[i].color = generatorPowerOffColor;
+                    generatorLights[i].intensity = generatorPowerOffIntensity;
+                }
             }
         }
 
         if (showDebugLogs)
-            Debug.Log($"Turned {lightsToTurnRed.Length} lights red!");
+            Debug.Log($"Turned {(ampPostLights?.Length ?? 0)} amp post lights and {(generatorLights?.Length ?? 0)} generator lights red!");
     }
 
     private void RestoreLights()
     {
-        if (lightsToTurnRed == null || lightsToTurnRed.Length == 0)
-            return;
-
-        for (int i = 0; i < lightsToTurnRed.Length; i++)
+        // Restore amp post lights to amber
+        if (ampPostLights != null)
         {
-            if (lightsToTurnRed[i] != null && originalIntensities != null)
+            for (int i = 0; i < ampPostLights.Length; i++)
             {
-                lightsToTurnRed[i].color = originalLightColor;
-                lightsToTurnRed[i].intensity = originalIntensities[i];
+                if (ampPostLights[i] != null && ampPostOriginalIntensities != null)
+                {
+                    ampPostLights[i].color = ampPostOriginalColor;
+                    ampPostLights[i].intensity = ampPostOriginalIntensities[i];
+                }
+            }
+        }
+
+        // Restore generator lights to green
+        if (generatorLights != null)
+        {
+            for (int i = 0; i < generatorLights.Length; i++)
+            {
+                if (generatorLights[i] != null && generatorOriginalIntensities != null)
+                {
+                    generatorLights[i].color = generatorOriginalColor;
+                    generatorLights[i].intensity = generatorOriginalIntensities[i];
+                }
             }
         }
 
         if (showDebugLogs)
-            Debug.Log("Lights restored to original color!");
+            Debug.Log("Lights restored to original colors!");
     }
 
     private void ActivateMachine()
@@ -167,15 +213,6 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
         // Play machine start dialogue
         if (machineStartDialogue != null)
             machineStartDialogue.TriggerNow();
-
-        // ===== ADD YOUR MACHINE COMPLETION LOGIC HERE =====
-        // Examples:
-        // - Play animation
-        // - Spawn object
-        // - Open door
-        // - Trigger cutscene
-        // - Update progress manager
-        // - etc.
 
         OnMachineComplete();
     }
@@ -227,38 +264,16 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
         {
             if (showDebugLogs)
                 Debug.Log("Both generators online! Power restored. Return to the machine!");
-
-            // Optionally restore lights immediately when generators come on
-            // RestoreLights();
         }
     }
 
-    // ===== EXTEND THIS METHOD FOR YOUR GAME LOGIC =====
     private void OnMachineComplete()
     {
-        // TODO: Add what happens when machine completes
-        // Examples:
-
-        // Open a door
-        // Door door = FindObjectOfType<Door>();
-        // if (door != null) door.Open();
-
-        // Update progress manager
-        // if (ProgressManager.Instance != null)
-        //     ProgressManager.Instance.machineCompleted = true;
-
-        // Spawn an object
-        // if (rewardPrefab != null)
-        //     Instantiate(rewardPrefab, spawnPoint.position, spawnPoint.rotation);
-
-        // Play a cutscene
-        // CutsceneManager.Instance.PlayCutscene("MachineComplete");
-
         if (showDebugLogs)
             Debug.Log("Machine completion logic goes here!");
     }
 
-    // ===== DEBUG HELPERS (Remove in final build) =====
+    // ===== DEBUG HELPERS =====
 
     [ContextMenu("Debug: Place All Flowers")]
     private void DebugPlaceAllFlowers()
