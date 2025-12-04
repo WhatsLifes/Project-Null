@@ -83,19 +83,17 @@ public class SimpleFPS : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
         }
 
-        // --- Crouching ---
-        if (Input.GetKey(KeyCode.LeftControl))
+        // --- Crouching (Toggle) ---
+        if (Input.GetKeyDown(KeyCode.LeftControl))
         {
-            isCrouching = true;
-        }
-        else if (isCrouching && CanStandUp())
-        {
-            isCrouching = false;
+            isCrouching = !isCrouching; // Toggle crouch on/off
         }
 
+        // Smoothly transition height
         float targetHeight = isCrouching ? crouchHeight : standHeight;
         controller.height = Mathf.MoveTowards(controller.height, targetHeight, Time.deltaTime * crouchTransitionSpeed);
 
+        // Smoothly move camera
         Vector3 camPos = Camera.localPosition;
         camPos.y = controller.height / 2f;
         Camera.localPosition = Vector3.MoveTowards(Camera.localPosition, camPos, Time.deltaTime * crouchTransitionSpeed);
@@ -118,16 +116,5 @@ public class SimpleFPS : MonoBehaviour
         isBeingForcedToLook = false;
         canLook = true;
         canMove = true;
-    }
-
-    private bool CanStandUp()
-    {
-        Vector3 basePos = controller.transform.position;
-        float crouchTop = basePos.y + crouchHeight;
-        float standTop = basePos.y + standHeight;
-        Vector3 start = new Vector3(basePos.x, crouchTop, basePos.z);
-        Vector3 end = new Vector3(basePos.x, standTop, basePos.z);
-        float radius = controller.radius * 0.9f;
-        return !Physics.CheckCapsule(start, end, radius, LayerMask.GetMask("Default"));
     }
 }
