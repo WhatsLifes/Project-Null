@@ -30,6 +30,10 @@ public class BossAI : MonoBehaviour
     public Vector2 mapBoundsX = new Vector2(-50f, 50f);
     public Vector2 mapBoundsZ = new Vector2(-50f, 50f);
 
+    [Header("Crow Settings")]
+    [Tooltip("Speed the boss uses when responding to a crow alert")]
+    public float crowInvestigateSpeed = 4f;
+
     [Header("Debug")]
     public bool showDebugLogs = true;
 
@@ -43,6 +47,7 @@ public class BossAI : MonoBehaviour
     private bool isChargingKill = false;
     private float killChargeTimer;
     private bool hasPlayedChaseAudio = false;
+    private bool investigatingFromCrow = false;
 
     void Start()
     {
@@ -250,7 +255,7 @@ public class BossAI : MonoBehaviour
 
     private void InvestigateSound()
     {
-        agent.speed = hearingMoveSpeed;
+        agent.speed = investigatingFromCrow ? crowInvestigateSpeed : hearingMoveSpeed;
         agent.isStopped = false;
 
         // Sample nearest valid position on NavMesh
@@ -274,6 +279,7 @@ public class BossAI : MonoBehaviour
             // Reached the sound location, return to patrol
             if (showDebugLogs) Debug.Log("Boss reached investigation point, returning to patrol");
             currentState = BossState.Patrolling;
+            investigatingFromCrow = false;
             SetNewPatrolTarget();
         }
     }
@@ -306,7 +312,7 @@ public class BossAI : MonoBehaviour
     {
         currentState = BossState.Investigating;
         agent.isStopped = false;
-        agent.speed = hearingMoveSpeed;
+        agent.speed = investigatingFromCrow ? crowInvestigateSpeed : hearingMoveSpeed;
 
         if (showDebugLogs)
         {
@@ -363,16 +369,12 @@ public class BossAI : MonoBehaviour
     {
         Debug.Log("Player killed by boss!");
 
-        // Trigger death - you can expand this with your death system
-        SimpleFPS fps = player.GetComponent<SimpleFPS>();
-        if (fps != null)
+        // Deal lethal damage to trigger proper death system
+        Player playerScript = player.GetComponent<Player>();
+        if (playerScript != null)
         {
-            fps.canMove = false;
-            fps.canLook = false;
+            playerScript.TakeDamage(playerScript.Health);
         }
-
-        // Add your death handling here (reload scene, game over screen, etc.)
-        // Example: SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
         agent.isStopped = false;
         isChargingKill = false;
@@ -418,7 +420,8 @@ public class BossAI : MonoBehaviour
     public void OnCrowAlert(Vector3 playerPosition)
     {
         lastHeardPosition = playerPosition;
-        if (showDebugLogs) Debug.Log($"Boss alerted by crow! Heading to position: {playerPosition}");
+        investigatingFromCrow = true;
+        if (showDebugLogs) Debug.Log($"Boss alerted by crow! Heading to position: {playerPosition} at speed {crowInvestigateSpeed}");
         EnterInvestigateState();
     }
 
