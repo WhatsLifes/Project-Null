@@ -2,33 +2,22 @@ using UnityEngine;
 
 public class FlowerPickup : MonoBehaviour, InteractableScript
 {
-    public enum FlowerType { Son, Daughter, Mom }
-
-    [SerializeField] private FlowerType flowerType;
-    [SerializeField] private FlowerMachine machine;
+    [SerializeField] private FlowerPlacement momFlowerPlacement;
 
     public void InteractScript()
     {
-        if (machine == null)
+        if (momFlowerPlacement == null)
         {
-            Debug.LogError("Machine not assigned!");
+            Debug.LogError("Mom Flower Placement not assigned!");
             return;
         }
 
-        switch (flowerType)
-        {
-            case FlowerType.Son:
-                machine.PlaceSonFlower();
-                break;
-            case FlowerType.Daughter:
-                machine.PlaceDaughterFlower();
-                break;
-            case FlowerType.Mom:
-                machine.PlaceMomFlower();
-                break;
-        }
+        // Mark mom flower as picked up
+        momFlowerPlacement.MarkFlowerAsPickedUp();
 
-        // Hide the flower
+        Debug.Log("Picked up Mom's flower!");
+
+        // Hide the flower pickup
         gameObject.SetActive(false);
     }
 }
