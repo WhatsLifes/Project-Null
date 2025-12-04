@@ -53,6 +53,10 @@ public class EndingManager : MonoBehaviour
     [SerializeField] private float buttonFadeInDelay = 2f; // Delay before showing button after text
     [SerializeField] private float buttonFadeInDuration = 1f;
 
+    [Header("Ending Dialogue")]
+    [SerializeField] private DialogueSequence endingDialogue;
+
+
     [Header("Ending Text")]
     [SerializeField] private string titleText = "THE END";
     [SerializeField] private string messageText = "Thank you for playing";
@@ -139,6 +143,25 @@ public class EndingManager : MonoBehaviour
             hud.HideAllHUD();
             hud.enabled = false;
         }
+    // ▶️ Start Dialogue Sequence First
+    if (endingDialogue != null)
+    {
+        var dm = DialogueManager.Instance;
+        if (dm != null)
+        {
+            dm.StartDialogue(endingDialogue);
+
+            // ⏳ WAIT UNTIL DIALOGUE FINISHES
+            while (dm.IsPlaying)
+            {
+               yield return null;
+            }
+        }
+    }
+    else
+    {
+        Debug.LogWarning("EndingManager has no EndingDialogue assigned!");
+    }
 
         // Play ending music
         if (audioSource != null && endingMusic != null)

@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ac8fbc885c7d704baad501dfad8b7ea, type: 3}
+  m_Name: EndingDialogue
+  m_EditorClassIdentifier: 
+  sequenceName: 
+  lines:
+  - isDoctor: 1
+    voiceClip: {fileID: 8300000, guid: 1e3e4d32bf7075d49b394c38b6be1e10, type: 3}
+    playerText: 
+    delayBeforeNext: 0
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: I can't.....
+    delayBeforeNext: 2
+  - isDoctor: 0
+    voiceClip: {fileID: 0}
+    playerText: breathe
+    delayBeforeNext: 2
+  - isDoctor: 0
+    voiceClip: {fileID: 8300000, guid: 061ae5fe5008aed46b549e927ce1dee5, type: 3}
+    playerText: 
+    delayBeforeNext: 0
+  - isDoctor: 0
+    voiceClip: {fileID: 8300000, guid: 5c4fdc35dbcb3264e867d83995aa36b7, type: 3}
+    playerText: 
+    delayBeforeNext: 0
