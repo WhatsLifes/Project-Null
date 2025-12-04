@@ -18,6 +18,8 @@ public class BossAI : MonoBehaviour
     [Header("Hearing Settings")]
     public float hearingRadius = 15f;
     public float hearingMoveSpeed = 3.5f;
+    [Tooltip("Cooldown in seconds between hearing pings while player is making noise")]
+    public float hearingPingCooldown = 1.5f;
 
     [Header("Vision Settings")]
     public float visionRadius = 8f;
@@ -50,6 +52,7 @@ public class BossAI : MonoBehaviour
     private bool isChargingKill = false;
     private float killChargeTimer;
     private bool hasPlayedChaseAudio = false;
+    private float hearingPingTimer = 0f;
     private bool investigatingFromCrow = false;
 
     // Animations
@@ -101,6 +104,10 @@ public class BossAI : MonoBehaviour
         if (player == null) return;
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        // tick down timers
+        if (hearingPingTimer > 0f)
+            hearingPingTimer -= Time.deltaTime;
 
         // Set Movement State
         bool isMoving = agent.velocity.sqrMagnitude > 0.1f;
@@ -197,17 +204,22 @@ public class BossAI : MonoBehaviour
         PlayerSoundProducer soundProducer = player.GetComponent<PlayerSoundProducer>();
         if (soundProducer != null && soundProducer.IsMakingSound() && distanceToPlayer <= hearingRadius)
         {
-            // Only change state if not already investigating
-            if (currentState != BossState.Investigating)
+            // Respect hearing ping cooldown so boss goes to general area instead of tracking every frame
+            if (hearingPingTimer <= 0f)
             {
                 lastHeardPosition = player.position;
-                if (showDebugLogs) Debug.Log($"Boss heard player at {player.position}, distance: {distanceToPlayer:F2}");
-                EnterInvestigateState();
-            }
-            else
-            {
-                // Already investigating - update position periodically
-                lastHeardPosition = player.position;
+                hearingPingTimer = hearingPingCooldown;
+
+                if (currentState != BossState.Investigating)
+                {
+                    if (showDebugLogs) Debug.Log($"Boss heard player at {player.position} (cooldown {hearingPingCooldown:F2}s), distance: {distanceToPlayer:F2}");
+                    EnterInvestigateState();
+                }
+                else
+                {
+                    // Already investigating: refresh target at cooldown interval
+                    if (showDebugLogs) Debug.Log($"Boss refreshing investigation target: {lastHeardPosition}");
+                }
             }
         }
 
