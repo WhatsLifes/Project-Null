@@ -92,7 +92,7 @@ public class CrowAlert : MonoBehaviour
         visualIndicator.SetActive(false);
     }
 
-    // Visualization in editor - ALWAYS VISIBLE for testing
+    // Visualization in editor - for testing
     private void OnDrawGizmos()
     {
         // Detection radius - RED if alerted, CYAN if ready

@@ -55,7 +55,13 @@ public class BossAI : MonoBehaviour
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
 
+        // Agent baseline configuration to avoid unintended stops
         agent.speed = patrolSpeed;
+        agent.autoBraking = false;           // keep moving instead of slowing near destinations
+        agent.updatePosition = true;
+        agent.updateRotation = true;
+        agent.angularSpeed = Mathf.Max(agent.angularSpeed, 120f);
+        agent.acceleration = Mathf.Max(agent.acceleration, 16f);
         SetNewPatrolTarget();
         PlayNormalAudio();
 
@@ -99,7 +105,33 @@ public class BossAI : MonoBehaviour
         }
         else
         {
-            isChargingKill = false;
+            // If we were charging but player left the kill radius, abort charge
+            if (isChargingKill)
+            {
+                isChargingKill = false;
+                // Make sure agent can move again
+                if (agent != null)
+                {
+                    agent.isStopped = false;
+                    agent.ResetPath();
+                }
+
+                // If we were in Charging state, move back to chase if player is visible, otherwise patrol
+                if (currentState == BossState.Charging)
+                {
+                    if (distanceToPlayer <= visionRadius)
+                    {
+                        if (showDebugLogs) Debug.Log("Charge aborted: player still in vision. Resuming chase.");
+                        EnterChaseState();
+                    }
+                    else
+                    {
+                        currentState = BossState.Patrolling;
+                        if (showDebugLogs) Debug.Log("Charge aborted: player out of vision. Returning to patrol.");
+                        SetNewPatrolTarget();
+                    }
+                }
+            }
         }
 
         // Priority 2: Vision radius (active chase)
@@ -145,6 +177,14 @@ public class BossAI : MonoBehaviour
             case BossState.Patrolling:
                 Patrol();
                 break;
+        }
+
+        // Safety: if something (animation/other script) stopped the agent while we should be chasing, force resume
+        if (currentState == BossState.Chasing && agent != null && agent.isStopped)
+        {
+            agent.isStopped = false;
+            if (showDebugLogs) Debug.Log("Agent was stopped during chase; forcing resume and re-issuing destination.");
+            ChasePlayer();
         }
     }
 
@@ -239,9 +279,27 @@ public class BossAI : MonoBehaviour
     }
     private void ChasePlayer()
     {
+        // Continuously pursue player's current position
         agent.isStopped = false;
         agent.speed = chaseSpeed;
-        agent.SetDestination(player.position);
+
+        // If path is marked complete but we're not at the player, rebuild it
+        if (agent.pathStatus == NavMeshPathStatus.PathComplete && agent.remainingDistance > agent.stoppingDistance)
+        {
+            agent.ResetPath();
+        }
+
+        // Sample player position on NavMesh to avoid invalid targets
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(player.position, out hit, 3f, NavMesh.AllAreas))
+        {
+            agent.SetDestination(hit.position);
+        }
+        else
+        {
+            // Fallback: directly try player's position
+            agent.SetDestination(player.position);
+        }
     }
 
     private void EnterInvestigateState()
@@ -272,6 +330,11 @@ public class BossAI : MonoBehaviour
     {
         currentState = BossState.Chasing;
         agent.isStopped = false;
+        // Ensure agent is actively pursuing the player
+        agent.ResetPath();
+        agent.speed = chaseSpeed;
+        if (player != null)
+            agent.SetDestination(player.position);
         PlayChaseAudio();
         if (showDebugLogs) Debug.Log("Boss entering chase state!");
     }
@@ -313,6 +376,42 @@ public class BossAI : MonoBehaviour
 
         agent.isStopped = false;
         isChargingKill = false;
+    }
+
+    // Animation Events Integration
+    // Call this from the attack animation at the start of the lunge
+    public void OnAttackStart()
+    {
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
+        currentState = BossState.Charging;
+        if (showDebugLogs) Debug.Log("OnAttackStart: agent stopped and path reset.");
+    }
+
+    // Call this from the attack animation at the end of the lunge
+    public void OnAttackFinished()
+    {
+        isChargingKill = false;
+        if (agent != null)
+        {
+            agent.isStopped = false;
+        }
+
+        float distanceToPlayer = player != null ? Vector3.Distance(transform.position, player.position) : Mathf.Infinity;
+        if (player != null && distanceToPlayer <= visionRadius)
+        {
+            if (showDebugLogs) Debug.Log("OnAttackFinished: player in vision, resuming chase.");
+            EnterChaseState();
+        }
+        else
+        {
+            if (showDebugLogs) Debug.Log("OnAttackFinished: player not in vision, returning to patrol.");
+            currentState = BossState.Patrolling;
+            SetNewPatrolTarget();
+        }
     }
 
     // Called by crow scripts

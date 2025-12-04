@@ -582,15 +582,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -31.2
+      value: -23.84
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7
+      value: 5.75
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 16.865
+      value: 29.74
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
       propertyPath: m_LocalRotation.w
@@ -624,6 +624,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: crow
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -631,6 +635,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 830301991}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 830301992}
   m_SourcePrefab: {fileID: 100100000, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
 --- !u!1 &375273090
 GameObject:
@@ -904,7 +911,7 @@ Transform:
   m_GameObject: {fileID: 375273090}
   serializedVersion: 2
   m_LocalRotation: {x: 0.0020401187, y: -0.91802454, z: -0.0049183, w: 0.3964878}
-  m_LocalPosition: {x: -6.72, y: 0.66, z: 29.45}
+  m_LocalPosition: {x: -6.45, y: 0.76, z: 20.34}
   m_LocalScale: {x: 0.7000001, y: 0.7, z: 0.7000001}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6494,12 +6501,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 830301987}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e86499bdaece24d1a8a3cd42fe3f55f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boss: {fileID: 1935777960}
+  boss: {fileID: 0}
   triggerRadius: 10
   lifetime: 30
   audioSource: {fileID: 0}
@@ -6508,6 +6515,29 @@ MonoBehaviour:
   crowModel: {fileID: 830301987}
   destroyAfterTrigger: 0
   showDebugGizmos: 1
+  hasTriggered: 0
+  player: {fileID: 0}
+  lifetimeTimer: 0
+--- !u!114 &830301992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 830301987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78fb2044900f54228b58434eb5f21002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bossAI: {fileID: 1935777965}
+  player: {fileID: 375273103}
+  detectionRadius: 7
+  audioSource: {fileID: 0}
+  crowAlertSound: {fileID: 0}
+  alertCooldown: 10
+  visualIndicator: {fileID: 0}
+  indicatorDuration: 1
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -7298,7 +7328,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c78ca0cf108df854880d008f4cad78a7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 6.33
+      value: -11
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c78ca0cf108df854880d008f4cad78a7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -7923,7 +7953,7 @@ PrefabInstance:
       addedObject: {fileID: 1935777961}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c78ca0cf108df854880d008f4cad78a7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1935777960}
+      addedObject: {fileID: 1935777965}
   m_SourcePrefab: {fileID: 100100000, guid: c78ca0cf108df854880d008f4cad78a7, type: 3}
 --- !u!1 &1505538370 stripped
 GameObject:
@@ -8421,7 +8451,6 @@ GameObject:
   - component: {fileID: 1867080875}
   - component: {fileID: 1867080874}
   - component: {fileID: 1867080878}
-  - component: {fileID: 1867080879}
   m_Layer: 7
   m_Name: Plane
   m_TagString: Untagged
@@ -8551,60 +8580,11 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 21f013db30a542c42a96e432e745c761, type: 2}
   m_BuildHeightMesh: 0
---- !u!114 &1867080879
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1867080873}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 680db7251351d4563b73a1377fddae1c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  crowPrefab: {fileID: 0}
-  player: {fileID: 375273103}
-  boss: {fileID: 0}
-  spawnInterval: 10
-  minSpawnDistance: 2
-  maxSpawnDistance: 5
-  spawnHeight: 0.5
-  maxActiveCrows: 15
-  spawnAllAround: 1
 --- !u!1 &1935777959 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: c78ca0cf108df854880d008f4cad78a7, type: 3}
   m_PrefabInstance: {fileID: 1472656506}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1935777960
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1935777959}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f515faeef34b4b8990211746226bf1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  agent: {fileID: 1935777963}
-  player: {fileID: 375273103}
-  audioSource: {fileID: 0}
-  normalAudio: {fileID: 0}
-  chaseAudio: {fileID: 0}
-  audioVolume: 1
-  hearingRadius: 30
-  visionRadius: 15
-  killRadius: 2
-  patrolSpeed: 2
-  investigateSpeed: 3.5
-  chaseSpeed: 3
-  attackChargeDelay: 0.5
-  patrolWaitTime: 3
-  patrolRange: 20
-  showDebugGizmos: 1
 --- !u!136 &1935777961
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -8677,6 +8657,34 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &1935777965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1935777959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f515faeef34b4b8990211746226bf1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 375273103}
+  agent: {fileID: 1935777963}
+  audioSource: {fileID: 0}
+  normalAudio: {fileID: 0}
+  chaseAudio: {fileID: 0}
+  hearingRadius: 20
+  hearingMoveSpeed: 3.5
+  visionRadius: 8
+  chaseSpeed: 6
+  killRadius: 2
+  killChargeDelay: 0.5
+  patrolSpeed: 2
+  patrolWaitTime: 3
+  mapBoundsX: {x: -50, y: 50}
+  mapBoundsZ: {x: -50, y: 50}
+  showDebugLogs: 1
 --- !u!1001 &1945649502
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8921,7 +8929,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2043111876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8929,20 +8937,22 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2043111875}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 680db7251351d4563b73a1377fddae1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   crowPrefab: {fileID: 919132149155446097, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
   player: {fileID: 375273103}
-  boss: {fileID: 1935777960}
+  boss: {fileID: 0}
   spawnInterval: 2
   minSpawnDistance: 2
   maxSpawnDistance: 5
   spawnHeight: 5
   maxActiveCrows: 15
   spawnAllAround: 1
+  spawnTimer: 0
+  activeCrowCount: 0
 --- !u!195 &2043111877
 NavMeshAgent:
   m_ObjectHideFlags: 0
