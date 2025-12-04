@@ -1,8 +1,11 @@
+using System.Collections;
 using UnityEngine;
 
 public class TriggerCollider : MonoBehaviour
 {
     [SerializeField] private InteractableObject interactableObject;
+    public AudioSource audioSource;
+    public AudioClip audioClip;
     
     // when you enter the collider
     private void OnTriggerEnter(Collider other)
@@ -13,6 +16,10 @@ public class TriggerCollider : MonoBehaviour
             interactableObject.SetPlayerNearby(true);  // set us nearby
             interactableObject.ShowWhiteDot();   // show the white dot
             PlayerInteraction.instance.AddNearbyObject(interactableObject);  // adds the object to nearby list
+            
+            // trigger air disperser sounds
+            audioSource.clip = audioClip;
+            StartCoroutine(FadeIn());
         }
     }
 
@@ -26,8 +33,42 @@ public class TriggerCollider : MonoBehaviour
             interactableObject.HideWhiteDot();  // hide the white dot
             interactableObject.HidePrompt();  // make sure we dont see the prompt
             PlayerInteraction.instance.RemoveNearbyObject(interactableObject);  // remove the object from nearby list
+        
+            // stop air disperser sounds
+            StartCoroutine(FadeOut());
         }
     }
-    
+
+    // audio fade effects
+    IEnumerator FadeIn()
+    {
+        audioSource.Play();
+        float t = 0;
+
+        while (t < 1.5f)
+        {
+            audioSource.volume = Mathf.Lerp(0, 1.0f, t / 1.5f);
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        audioSource.volume = 1.0f;
+    }
+
+    IEnumerator FadeOut()
+    {
+        float t = 0;
+        float startVol = audioSource.volume;
+
+        while (t < 1.5f)
+        {
+            audioSource.volume = Mathf.Lerp(startVol, 0, t / 1.5f);
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        audioSource.volume = 0;
+        audioSource.Stop();
+    }
 }
 
