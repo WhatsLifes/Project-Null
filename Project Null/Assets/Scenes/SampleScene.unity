@@ -296,6 +296,7 @@ MonoBehaviour:
   playerInAttackRange: 0
   isChasingPlayer: 0
   canBeKilled: 1
+  audioSource: {fileID: 0}
   hitSound: {fileID: 0}
   volume: 1
   attackConeAngle: 45
@@ -700,14 +701,16 @@ MonoBehaviour:
   passiveDrainPerMinute: 5
   restoreRatePerSecond: 5
   playerCamera: {fileID: 1608460210}
-  ringingClip: {fileID: 8300000, guid: 732483f1b27898e42b2ce86ad0ef25ed, type: 3}
-  randomSanityClips: []
   lightsToFlicker:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  ringingAudioSource: {fileID: 0}
+  sanityAudioSource: {fileID: 0}
+  ringingClip: {fileID: 8300000, guid: 732483f1b27898e42b2ce86ad0ef25ed, type: 3}
+  randomSanityClips: []
   postProcessVolume: {fileID: 0}
   shakeAmount: 1
   shakeSpeed: 30
@@ -6506,18 +6509,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e86499bdaece24d1a8a3cd42fe3f55f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boss: {fileID: 0}
-  triggerRadius: 10
-  lifetime: 30
-  audioSource: {fileID: 0}
-  crowCallSound: {fileID: 0}
-  volume: 1
-  crowModel: {fileID: 830301987}
-  destroyAfterTrigger: 0
-  showDebugGizmos: 1
-  hasTriggered: 0
-  player: {fileID: 0}
-  lifetimeTimer: 0
 --- !u!114 &830301992
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6772,6 +6763,72 @@ Transform:
   - {fileID: 94987509}
   m_Father: {fileID: 2038689679}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &932982837
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 260929495587089844, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -8.235937
+      objectReference: {fileID: 0}
+    - target: {fileID: 260929495587089844, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.04
+      objectReference: {fileID: 0}
+    - target: {fileID: 260929495587089844, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -6.797337
+      objectReference: {fileID: 0}
+    - target: {fileID: 260929495587089844, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 260929495587089844, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 260929495587089844, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 260929495587089844, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 260929495587089844, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 260929495587089844, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 260929495587089844, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1535625047217351380, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: modelRoot
+      value: 
+      objectReference: {fileID: 969309858}
+    - target: {fileID: 7057832816108259927, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: m_Name
+      value: WIFE
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+--- !u!4 &969309858 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3997394550920381627, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+  m_PrefabInstance: {fileID: 932982837}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1042881329 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: c78ca0cf108df854880d008f4cad78a7, type: 3}
@@ -7087,6 +7144,7 @@ MonoBehaviour:
   playerInAttackRange: 0
   isChasingPlayer: 0
   canBeKilled: 1
+  audioSource: {fileID: 0}
   hitSound: {fileID: 0}
   volume: 1
   attackConeAngle: 90
@@ -7677,6 +7735,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: c78ca0cf108df854880d008f4cad78a7, type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c78ca0cf108df854880d008f4cad78a7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: c78ca0cf108df854880d008f4cad78a7, type: 3}
       propertyPath: m_TagString
@@ -8289,7 +8351,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!195 &1856781494
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -8436,6 +8498,7 @@ MonoBehaviour:
   playerInAttackRange: 0
   isChasingPlayer: 0
   canBeKilled: 1
+  audioSource: {fileID: 0}
   hitSound: {fileID: 0}
   volume: 1
 --- !u!1 &1867080873
@@ -8684,7 +8747,9 @@ MonoBehaviour:
   patrolWaitTime: 3
   mapBoundsX: {x: -50, y: 50}
   mapBoundsZ: {x: -50, y: 50}
+  crowInvestigateSpeed: 4
   showDebugLogs: 1
+  modelRoot: {fileID: 0}
 --- !u!1001 &1945649502
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8942,17 +9007,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 680db7251351d4563b73a1377fddae1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crowPrefab: {fileID: 919132149155446097, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
-  player: {fileID: 375273103}
-  boss: {fileID: 0}
-  spawnInterval: 2
-  minSpawnDistance: 2
-  maxSpawnDistance: 5
-  spawnHeight: 5
-  maxActiveCrows: 15
-  spawnAllAround: 1
-  spawnTimer: 0
-  activeCrowCount: 0
 --- !u!195 &2043111877
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -9085,3 +9139,4 @@ SceneRoots:
   - {fileID: 736331225}
   - {fileID: 277236837}
   - {fileID: 1945649502}
+  - {fileID: 932982837}
