@@ -492,6 +492,7 @@ public class BossAI : MonoBehaviour
         {
             audioSource.clip = chaseAudio;
             audioSource.loop = true;
+            audioSource.volume = 0.8f;
             audioSource.Play();
             hasPlayedChaseAudio = true;
         }

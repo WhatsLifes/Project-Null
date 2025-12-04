@@ -47,12 +47,12 @@ public class TriggerCollider : MonoBehaviour
 
         while (t < 1.5f)
         {
-            audioSource.volume = Mathf.Lerp(0, 1.0f, t / 1.5f);
+            audioSource.volume = Mathf.Lerp(0, 0.45f, t / 1.5f);
             t += Time.deltaTime;
             yield return null;
         }
 
-        audioSource.volume = 1.0f;
+        audioSource.volume = 0.45f;
     }
 
     IEnumerator FadeOut()
