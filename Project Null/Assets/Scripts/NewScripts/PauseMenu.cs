@@ -78,7 +78,7 @@ public class PauseMenu : MonoBehaviour
         if (slider == null) return;
         
         slider.minValue = 0.0001f;
-        slider.maxValue = 2f;
+        slider.maxValue = 1f;
 
         float db;
         if (audioMixer.GetFloat(param, out db))

@@ -13,6 +13,10 @@ public Light lightToTurnOff1;
 public Light lightToTurnOff2;
 public Light lightToTurnOff3;
 
+[Header("Audio")]
+public AudioSource audioSource;
+public AudioClip audioClip;
+
 [Header("Settings")]
 [SerializeField] private float delayBeforeSwitch = 1f; // set in inspector
 
@@ -38,6 +42,8 @@ private IEnumerator SwitchRoutine()
     if (lightToTurnOff1 != null) lightToTurnOff1.enabled = false;
     if (lightToTurnOff2 != null) lightToTurnOff2.enabled = false;
     if (lightToTurnOff3 != null) lightToTurnOff3.enabled = false;
+
+    audioSource.PlayOneShot(audioClip);
 
     hasSwitched = true;
 
