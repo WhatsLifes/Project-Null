@@ -173,7 +173,7 @@ AudioMixerController:
   m_UpdateMode: 0
   m_ExposedParameters:
   - guid: 6ca68d84d618441ee8bf95f450188efc
-    name: AmbianceVolume
+    name: AmbienceVolume
   - guid: a0724872e631542ed9b1a976990cee9d
     name: SFXVolume
   - guid: 87e943b96b63e49508848681f3a4a712
