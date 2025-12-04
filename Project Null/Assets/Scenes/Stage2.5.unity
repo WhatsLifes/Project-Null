@@ -96283,6 +96283,14 @@ PrefabInstance:
       propertyPath: postProcessVolume
       value: 
       objectReference: {fileID: 707303096}
+    - target: {fileID: 2770315884296941280, guid: 6a519e52df2b4e4449b7e547a2c49be5, type: 3}
+      propertyPath: sanityAudioSource
+      value: 
+      objectReference: {fileID: 898998901}
+    - target: {fileID: 2770315884296941280, guid: 6a519e52df2b4e4449b7e547a2c49be5, type: 3}
+      propertyPath: ringingAudioSource
+      value: 
+      objectReference: {fileID: 898998901}
     - target: {fileID: 4291127396165352753, guid: 6a519e52df2b4e4449b7e547a2c49be5, type: 3}
       propertyPath: isPickedUp
       value: 1
