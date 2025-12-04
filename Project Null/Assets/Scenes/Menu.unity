@@ -1772,7 +1772,7 @@ MonoBehaviour:
   sfxSlider: {fileID: 1326995035}
   dialogueSlider: {fileID: 846519310}
   audioMixer: {fileID: 24100000, guid: bc6eb985ef8d44b0e8c82dc34356625a, type: 2}
-  musicParam: AmbianceVolume
+  musicParam: AmbienceVolume
   sfxParam: SFXVolume
   dialogueParam: SpeakerFilter
 --- !u!1 &705438164
