@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
+using UnityEngine.InputSystem.HID;
 
 public class FlowerMachine : MonoBehaviour, InteractableScript
 {
@@ -33,6 +35,15 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
     [SerializeField] private DialogueTrigger needPowerDialogue;
     [SerializeField] private DialogueTrigger machineStartDialogue;
 
+    [Header("HUD")]
+    [SerializeField] private HUD hud;
+
+    [Header("Win Condition (Ending)")]
+    [SerializeField] private EndingManager endingManager;
+    [SerializeField] private AudioSource machineAudioSource;
+    [SerializeField] private AudioClip machineSuccessSound;
+    [SerializeField] private float delayBeforeEnding = 5f;
+
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs = true;
 
@@ -65,6 +76,18 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
                     generatorOriginalIntensities[i] = generatorLights[i].intensity;
                 }
             }
+        }
+
+        // Auto-find HUD
+        if (hud == null)
+        {
+            hud = FindObjectOfType<HUD>();
+        }
+
+        // Auto-find ending manager
+        if (endingManager == null)
+        {
+            endingManager = FindObjectOfType<EndingManager>();
         }
     }
 
@@ -134,6 +157,13 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
         // Play shutdown dialogue
         if (powerShutdownDialogue != null)
             powerShutdownDialogue.TriggerNow();
+
+        // Show objective to turn on generators
+        if (hud != null)
+        {
+            hud.ShowObjective15(); // "Turn on the generators (0/2)"
+            Debug.Log("Power shutdown - Objective 15 shown");
+        }
     }
 
     private void TurnLightsRed()
@@ -223,7 +253,38 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
         if (machineStartDialogue != null)
             machineStartDialogue.TriggerNow();
 
-        OnMachineComplete();
+        // Start the ending sequence
+        StartCoroutine(MachineSuccessSequence());
+    }
+
+    private IEnumerator MachineSuccessSequence()
+    {
+        // Play success sound
+        if (machineAudioSource != null && machineSuccessSound != null)
+        {
+            machineAudioSource.PlayOneShot(machineSuccessSound);
+            if (showDebugLogs)
+                Debug.Log("Playing machine success sound...");
+        }
+
+        // Wait for the delay
+        if (showDebugLogs)
+            Debug.Log($"Waiting {delayBeforeEnding} seconds before triggering ending...");
+
+        yield return new WaitForSeconds(delayBeforeEnding);
+
+        // Trigger ending instead of death
+        if (endingManager != null)
+        {
+            if (showDebugLogs)
+                Debug.Log("🎬 TRIGGERING ENDING SEQUENCE!");
+
+            endingManager.TriggerEnding();
+        }
+        else
+        {
+            Debug.LogError("EndingManager not found! Cannot trigger ending.");
+        }
     }
 
     // ===== PUBLIC METHODS TO CALL FROM OTHER SCRIPTS =====
@@ -267,6 +328,16 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
         CheckGeneratorStatus();
     }
 
+    public bool IsGenerator1On()
+    {
+        return generator1On;
+    }
+
+    public bool IsGenerator2On()
+    {
+        return generator2On;
+    }
+
     private void CheckGeneratorStatus()
     {
         if (BothGeneratorsOn() && hasShutdownPower)
@@ -277,12 +348,6 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
             if (showDebugLogs)
                 Debug.Log("Both generators online! Power restored. Amp post lights restored to amber!");
         }
-    }
-
-    private void OnMachineComplete()
-    {
-        if (showDebugLogs)
-            Debug.Log("Machine completion logic goes here!");
     }
 
     // ===== DEBUG HELPERS =====
@@ -301,7 +366,7 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
     {
         generator1On = true;
         generator2On = true;
-        CheckGeneratorStatus(); // Add this to trigger light restoration
+        CheckGeneratorStatus();
         Debug.Log("DEBUG: All generators on!");
     }
 

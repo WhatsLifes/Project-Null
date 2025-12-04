@@ -15,9 +15,12 @@ public class Generator : MonoBehaviour, InteractableScript
     [SerializeField] private GameObject onVisual;
     [SerializeField] private GameObject offVisual;
 
+    [Header("HUD Settings")]
+    [SerializeField] private HUD hud;
+
     private Color originalLightColor;
     private float originalLightIntensity;
-    private bool wasOn = false; // Track previous state
+    private bool wasOn = false;
 
     private void Start()
     {
@@ -26,6 +29,12 @@ public class Generator : MonoBehaviour, InteractableScript
         {
             originalLightColor = generatorLight.color;
             originalLightIntensity = generatorLight.intensity;
+        }
+
+        // Auto-find HUD if not assigned
+        if (hud == null)
+        {
+            hud = FindObjectOfType<HUD>();
         }
 
         wasOn = isOn;
@@ -83,12 +92,37 @@ public class Generator : MonoBehaviour, InteractableScript
                     machine.SetGenerator2On();
                     break;
             }
+
+            // Update objective based on how many generators are on
+            UpdateObjective();
         }
 
         // Turn on visuals
         TurnOnVisuals();
 
         Debug.Log($"{generatorNumber} turned ON!");
+    }
+
+    private void UpdateObjective()
+    {
+        if (hud == null || machine == null) return;
+
+        // Check how many generators are on
+        int generatorsOn = 0;
+        if (machine.IsGenerator1On()) generatorsOn++;
+        if (machine.IsGenerator2On()) generatorsOn++;
+
+        // Update objective based on count
+        if (generatorsOn == 1)
+        {
+            hud.ShowObjective16(); // "Turn on the generators (1/2)"
+            Debug.Log("First generator on - Objective 16 shown");
+        }
+        else if (generatorsOn == 2)
+        {
+            hud.ShowObjective17(); // "Return to the workstation & try again"
+            Debug.Log("Both generators on - Objective 17 shown");
+        }
     }
 
     private void TurnOnVisuals()
