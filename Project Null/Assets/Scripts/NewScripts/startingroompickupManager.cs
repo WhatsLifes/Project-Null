@@ -20,6 +20,11 @@ public class StartingRoomPickupManager : MonoBehaviour
     [Tooltip("Should this door opening trigger an objective change?")]
     public bool changeObjectiveOnOpen = true;
 
+    [Header("Timer Settings (Scene 3 Only)")]
+    [Tooltip("Should opening this door start the stage timer? (Enable for Scene 3)")]
+    public bool startTimerOnOpen = false;
+    [SerializeField] private StageTimer stageTimer;
+
     [Header("Door Delay Settings")]
     public float doorOpenDelay = 5f; // Seconds to wait before opening after last item
 
@@ -31,6 +36,15 @@ public class StartingRoomPickupManager : MonoBehaviour
             return;
         }
         Instance = this;
+    }
+
+    private void Start()
+    {
+        // Auto-find timer if not assigned and we need it
+        if (startTimerOnOpen && stageTimer == null)
+        {
+            stageTimer = FindObjectOfType<StageTimer>();
+        }
     }
 
     // Call this method when an item is picked up
@@ -79,6 +93,13 @@ public class StartingRoomPickupManager : MonoBehaviour
             if (changeObjectiveOnOpen && hud != null)
             {
                 hud.ShowObjective2();
+            }
+
+            // Start timer if enabled (Scene 3 only)
+            if (startTimerOnOpen && stageTimer != null)
+            {
+                stageTimer.StartTimer();
+                Debug.Log("Door opened - Stage timer started!");
             }
 
             Debug.Log("All starting room items collected! Door opening!");

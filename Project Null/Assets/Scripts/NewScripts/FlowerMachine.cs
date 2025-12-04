@@ -168,7 +168,7 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
             Debug.Log($"Turned {(ampPostLights?.Length ?? 0)} amp post lights and {(generatorLights?.Length ?? 0)} generator lights red!");
     }
 
-    private void RestoreLights()
+    private void RestoreAmpPostLights()
     {
         // Restore amp post lights to amber
         if (ampPostLights != null)
@@ -182,6 +182,15 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
                 }
             }
         }
+
+        if (showDebugLogs)
+            Debug.Log("Amp post lights restored to amber!");
+    }
+
+    private void RestoreLights()
+    {
+        // Restore amp post lights to amber
+        RestoreAmpPostLights();
 
         // Restore generator lights to green
         if (generatorLights != null)
@@ -197,7 +206,7 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
         }
 
         if (showDebugLogs)
-            Debug.Log("Lights restored to original colors!");
+            Debug.Log("All lights restored to original colors!");
     }
 
     private void ActivateMachine()
@@ -262,8 +271,11 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
     {
         if (BothGeneratorsOn() && hasShutdownPower)
         {
+            // Restore amp post lights when both generators are on
+            RestoreAmpPostLights();
+
             if (showDebugLogs)
-                Debug.Log("Both generators online! Power restored. Return to the machine!");
+                Debug.Log("Both generators online! Power restored. Amp post lights restored to amber!");
         }
     }
 
@@ -289,6 +301,7 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
     {
         generator1On = true;
         generator2On = true;
+        CheckGeneratorStatus(); // Add this to trigger light restoration
         Debug.Log("DEBUG: All generators on!");
     }
 

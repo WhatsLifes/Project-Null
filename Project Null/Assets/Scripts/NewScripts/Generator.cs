@@ -9,14 +9,15 @@ public class Generator : MonoBehaviour, InteractableScript
     [SerializeField] private bool isOn = false;
 
     [Header("Visual Feedback")]
-    [SerializeField] private Light generatorLight; // The light that should turn green
+    [SerializeField] private Light generatorLight;
     [SerializeField] private Color onColor = Color.green;
     [SerializeField] private float onIntensity = 5f;
-    [SerializeField] private GameObject onVisual; // Optional: particles, etc.
-    [SerializeField] private GameObject offVisual; // Optional: smoke, sparks, etc.
+    [SerializeField] private GameObject onVisual;
+    [SerializeField] private GameObject offVisual;
 
     private Color originalLightColor;
     private float originalLightIntensity;
+    private bool wasOn = false; // Track previous state
 
     private void Start()
     {
@@ -25,6 +26,28 @@ public class Generator : MonoBehaviour, InteractableScript
         {
             originalLightColor = generatorLight.color;
             originalLightIntensity = generatorLight.intensity;
+        }
+
+        wasOn = isOn;
+
+        // Apply initial state
+        if (isOn)
+        {
+            TurnOnVisuals();
+        }
+    }
+
+    private void Update()
+    {
+        // Check if isOn was toggled in Inspector during runtime
+        if (isOn != wasOn)
+        {
+            wasOn = isOn;
+
+            if (isOn)
+            {
+                TurnOnGenerator();
+            }
         }
     }
 
@@ -43,18 +66,33 @@ public class Generator : MonoBehaviour, InteractableScript
         }
 
         isOn = true;
+        TurnOnGenerator();
+    }
 
-        // Turn on the generator in the machine
-        switch (generatorNumber)
+    private void TurnOnGenerator()
+    {
+        // Notify the machine
+        if (machine != null)
         {
-            case GeneratorNumber.Generator1:
-                machine.SetGenerator1On();
-                break;
-            case GeneratorNumber.Generator2:
-                machine.SetGenerator2On();
-                break;
+            switch (generatorNumber)
+            {
+                case GeneratorNumber.Generator1:
+                    machine.SetGenerator1On();
+                    break;
+                case GeneratorNumber.Generator2:
+                    machine.SetGenerator2On();
+                    break;
+            }
         }
 
+        // Turn on visuals
+        TurnOnVisuals();
+
+        Debug.Log($"{generatorNumber} turned ON!");
+    }
+
+    private void TurnOnVisuals()
+    {
         // Turn this generator's light green
         if (generatorLight != null)
         {
@@ -68,7 +106,5 @@ public class Generator : MonoBehaviour, InteractableScript
 
         if (offVisual != null)
             offVisual.SetActive(false);
-
-        Debug.Log($"{generatorNumber} turned ON!");
     }
 }

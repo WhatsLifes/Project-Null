@@ -434,6 +434,22 @@ Transform:
   - {fileID: 1147878981}
   m_Father: {fileID: 2038689679}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!195 &196127304 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 6700880335838156623, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+  m_PrefabInstance: {fileID: 932982837}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &196127305 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1535625047217351380, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+  m_PrefabInstance: {fileID: 932982837}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f515faeef34b4b8990211746226bf1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &207746566
 GameObject:
   m_ObjectHideFlags: 0
@@ -818,12 +834,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eaf8d572d54b0af439b3a04ca5170a6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 6
+  speed: 7.5
   mouseSensitivity: 2
   Camera: {fileID: 1608460213}
   crouchHeight: 1
   standHeight: 2
-  crouchSpeed: 2.5
+  crouchSpeed: 3.5
   crouchTransitionSpeed: 6
   canMove: 1
   canLook: 1
@@ -6521,7 +6537,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78fb2044900f54228b58434eb5f21002, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bossAI: {fileID: 1935777965}
+  bossAI: {fileID: 196127305}
   player: {fileID: 375273103}
   detectionRadius: 7
   audioSource: {fileID: 0}
@@ -6812,9 +6828,37 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1535625047217351380, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: agent
+      value: 
+      objectReference: {fileID: 196127304}
+    - target: {fileID: 1535625047217351380, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 375273103}
+    - target: {fileID: 1535625047217351380, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
       propertyPath: modelRoot
       value: 
       objectReference: {fileID: 969309858}
+    - target: {fileID: 1535625047217351380, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: chaseSpeed
+      value: 5.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1535625047217351380, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: visionRadius
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1535625047217351380, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: hearingMoveSpeed
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1535625047217351380, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: hearingPingCooldown
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1535625047217351380, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
+      propertyPath: crowInvestigateSpeed
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 7057832816108259927, guid: 5e1c04ac3a3681b428ba578979ff1e30, type: 3}
       propertyPath: m_Name
       value: WIFE
@@ -8737,10 +8781,11 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   normalAudio: {fileID: 0}
   chaseAudio: {fileID: 0}
-  hearingRadius: 20
-  hearingMoveSpeed: 3.5
-  visionRadius: 8
-  chaseSpeed: 6
+  hearingRadius: 30
+  hearingMoveSpeed: 4
+  hearingPingCooldown: 2.5
+  visionRadius: 10
+  chaseSpeed: 5.15
   killRadius: 2
   killChargeDelay: 0.5
   patrolSpeed: 2

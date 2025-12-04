@@ -25,14 +25,20 @@ public class HUD : MonoBehaviour
 
     [Header("Inventory Display")]
     [SerializeField] private Image syringeImage;
-    [SerializeField] private CanvasGroup syringeGroup; // NEW: Separate group for just the syringe image
-    [SerializeField] private CanvasGroup inventoryGroup; // This is for the slot (border, background, text)
+    [SerializeField] private CanvasGroup syringeGroup;
+    [SerializeField] private CanvasGroup inventoryGroup;
     [SerializeField] private Inventory inventory;
 
     [Header("Sanity Display")]
     [SerializeField] private Sanity sanity;
     [SerializeField] private Slider sanityBar;
     [SerializeField] private CanvasGroup sanityGroup;
+
+    [Header("Timer Display")]
+    [SerializeField] private TMP_Text timerText;
+    [SerializeField] private TMP_Text timerTitleText;
+    [SerializeField] private CanvasGroup timerGroup;
+    [SerializeField] private StageTimer stageTimer;
 
     [Header("Animation Settings")]
     [SerializeField] private float fadeInDuration = 0.5f;
@@ -76,7 +82,6 @@ public class HUD : MonoBehaviour
             batteryGroup.gameObject.SetActive(false);
         }
 
-        // Hide both inventory slot and syringe at start
         if (inventoryGroup != null)
         {
             inventoryGroup.alpha = 0f;
@@ -94,12 +99,19 @@ public class HUD : MonoBehaviour
             sanityGroup.alpha = 0f;
             sanityGroup.gameObject.SetActive(false);
         }
+
+        if (timerGroup != null)
+        {
+            timerGroup.alpha = 0f;
+            timerGroup.gameObject.SetActive(false);
+        }
     }
 
     private void Update()
     {
         HandleBatteryDisplay();
         HandleInventoryDisplay();
+        HandleTimerDisplay();
     }
 
     private void UpdateHealthDisplay(int current, int max)
@@ -201,7 +213,6 @@ public class HUD : MonoBehaviour
             batteryGroup.gameObject.SetActive(true);
             StartCoroutine(FadeInCanvasGroup(batteryGroup));
 
-            // Update the text to show current battery percentage in intervals of 5
             float percent = Mathf.Clamp01(flashlightToggle.currentBattery / flashlightToggle.maxBattery) * 100f;
             int roundedPercent = Mathf.RoundToInt(percent / 5f) * 5;
             batteryText.text = $"Battery: {roundedPercent}%";
@@ -219,7 +230,6 @@ public class HUD : MonoBehaviour
         if (flashlightToggle == null || batteryText == null || batteryGroup == null)
             return;
 
-        // Only show battery display if flashlight is picked up
         if (flashlightToggle.isPickedUp)
         {
             if (!batteryGroup.gameObject.activeSelf)
@@ -228,22 +238,19 @@ public class HUD : MonoBehaviour
                 StartCoroutine(FadeInCanvasGroup(batteryGroup));
             }
 
-            // Update the text to show current battery percentage in intervals of 5
             float percent = Mathf.Clamp01(flashlightToggle.currentBattery / flashlightToggle.maxBattery) * 100f;
             int roundedPercent = Mathf.RoundToInt(percent / 5f) * 5;
             batteryText.text = $"Battery: {roundedPercent}%";
         }
         else
         {
-            // Hide the battery display if flashlight not yet picked up
             if (batteryGroup.gameObject.activeSelf)
                 StartCoroutine(FadeOutCanvasGroup(batteryGroup));
         }
     }
 
-    // =====    INVENTORY DISPLAY      =====
+    // ===== INVENTORY DISPLAY =====
 
-    // NEW: Show the inventory slot (border, background, text) - call this early in the game
     public void ShowInventorySlot()
     {
         if (inventoryGroup != null)
@@ -253,33 +260,28 @@ public class HUD : MonoBehaviour
         }
     }
 
-    // NEW: Hide the inventory slot if needed
     public void HideInventorySlot()
     {
         if (inventoryGroup != null)
             StartCoroutine(FadeOutCanvasGroup(inventoryGroup));
     }
 
-    // DEPRECATED: Kept for backwards compatibility, but consider using ShowInventorySlot instead
     public void ShowInventoryDisplay()
     {
         ShowInventorySlot();
     }
 
-    // DEPRECATED: Kept for backwards compatibility
     public void HideInventoryDisplay()
     {
         HideInventorySlot();
     }
 
-    // UPDATED: Now handles only the syringe image fading in/out
     public void HandleInventoryDisplay()
     {
         if (inventory == null || syringeGroup == null || syringeImage == null) return;
 
         if (inventory.holdingSyringe)
         {
-            // Show the syringe image
             if (!syringeGroup.gameObject.activeSelf)
             {
                 syringeGroup.gameObject.SetActive(true);
@@ -288,16 +290,80 @@ public class HUD : MonoBehaviour
         }
         else
         {
-            // Hide the syringe image
             if (syringeGroup.gameObject.activeSelf)
                 StartCoroutine(FadeOutCanvasGroup(syringeGroup));
+        }
+    }
+
+    // ===== TIMER DISPLAY HANDLING =====
+
+    public void ShowTimer()
+    {
+        if (timerGroup != null)
+        {
+            timerGroup.gameObject.SetActive(true);
+            StartCoroutine(FadeInCanvasGroup(timerGroup));
+        }
+    }
+
+    public void HideTimer()
+    {
+        if (timerGroup != null)
+            StartCoroutine(FadeOutCanvasGroup(timerGroup));
+    }
+
+    public void HandleTimerDisplay()
+    {
+        if (stageTimer == null || timerText == null || timerGroup == null)
+            return;
+
+        // Show timer if it's active
+        if (stageTimer.IsTimerActive())
+        {
+            if (!timerGroup.gameObject.activeSelf)
+            {
+                timerGroup.gameObject.SetActive(true);
+                StartCoroutine(FadeInCanvasGroup(timerGroup));
+
+                // Set timer title (only needs to be set once)
+                if (timerTitleText != null)
+                {
+                    timerTitleText.text = "POISON TIMER";
+                }
+            }
+
+            // Update timer text
+            float timeRemaining = stageTimer.GetTimeRemaining();
+            int minutes = Mathf.FloorToInt(timeRemaining / 60f);
+            int seconds = Mathf.FloorToInt(timeRemaining % 60f);
+
+            timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+
+            // Color code based on time remaining
+            if (timeRemaining <= 10f)
+            {
+                timerText.color = Color.red;
+            }
+            else if (timeRemaining <= 60f)
+            {
+                timerText.color = Color.yellow;
+            }
+            else
+            {
+                timerText.color = Color.white;
+            }
+        }
+        else
+        {
+            // Hide timer if not active
+            if (timerGroup.gameObject.activeSelf)
+                StartCoroutine(FadeOutCanvasGroup(timerGroup));
         }
     }
 
     // ===== HIDE ALL HUD ELEMENTS =====
     public void HideAllHUD()
     {
-        // Immediately hide all HUD elements without fading
         if (healthGroup != null)
         {
             healthGroup.alpha = 0f;
@@ -332,6 +398,12 @@ public class HUD : MonoBehaviour
         {
             syringeGroup.alpha = 0f;
             syringeGroup.gameObject.SetActive(false);
+        }
+
+        if (timerGroup != null)
+        {
+            timerGroup.alpha = 0f;
+            timerGroup.gameObject.SetActive(false);
         }
     }
 
