@@ -12,6 +12,10 @@ public class stage2_interactableOBJ : MonoBehaviour
     [Header("UI Elements")] 
     [SerializeField] public Canvas whiteDotCanvas;  
     [SerializeField] public Canvas promptCanvas;  
+    
+    [Header("Audio Elements")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip interactSound;
 
     private bool isPLayerNearby = false;
    
@@ -34,6 +38,9 @@ public class stage2_interactableOBJ : MonoBehaviour
 
         // call the interact script 
         TheInteractScript.InteractScript();
+        
+        // play interaction sound
+        audioSource.PlayOneShot(interactSound); 
     }
 
     public void ShowPrompt()
