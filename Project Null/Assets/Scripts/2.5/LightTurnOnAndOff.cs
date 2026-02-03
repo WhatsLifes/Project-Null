@@ -43,6 +43,7 @@ private IEnumerator SwitchRoutine()
     if (lightToTurnOff2 != null) lightToTurnOff2.enabled = false;
     if (lightToTurnOff3 != null) lightToTurnOff3.enabled = false;
 
+    audioSource.volume = 1.5f;
     audioSource.PlayOneShot(audioClip);
 
     hasSwitched = true;
