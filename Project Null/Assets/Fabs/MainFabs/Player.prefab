@@ -1555,7 +1555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50f0b32f7ead94410be94c7b0d5c3ecb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  footstep: {fileID: 4004816996968813981}
+  footstepsObj: {fileID: 4004816996968813981}
 --- !u!1 &8732358538893683803
 GameObject:
   m_ObjectHideFlags: 0
