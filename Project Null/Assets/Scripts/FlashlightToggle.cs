@@ -28,6 +28,13 @@ public class FlashlightToggle : MonoBehaviour
     [Tooltip("Minimum battery level required to turn on flashlight")]
     public float minimumBatteryToTurnOn = 5f;
 
+    [Header("Battery Pickup Settings")]
+    [Tooltip("Amount of battery restored per pickup (percentage)")]
+    [Range(0f, 100f)]
+    public float batteryPickupAmount = 25f;
+    [Tooltip("Should battery pickup fill to max or add a fixed amount?")]
+    public bool fillToMax = false;
+
     [Header("Flicker Settings")]
     [Tooltip("Battery level below which flickering starts")]
     public float flickerThreshold = 50f;
@@ -225,5 +232,66 @@ public class FlashlightToggle : MonoBehaviour
     public void Pickup()
     {
         isPickedUp = true;
+    }
+
+    /// <summary>
+    /// Recharges the battery by a fixed amount or to full capacity
+    /// Call this method when player picks up a battery
+    /// </summary>
+    /// <param name="amount">Optional: specific amount to recharge (overrides default)</param>
+    /// <returns>True if battery was recharged, false if already full</returns>
+    public bool RechargeBattery(float amount = -1f)
+    {
+        // Check if battery is already full
+        if (currentBattery >= maxBattery)
+        {
+            Debug.Log("Battery is already full!");
+            return false;
+        }
+
+        // Use custom amount if provided, otherwise use default
+        float rechargeAmount = (amount > 0) ? amount : batteryPickupAmount;
+
+        if (fillToMax)
+        {
+            // Fill to maximum capacity
+            currentBattery = maxBattery;
+            Debug.Log($"Battery fully recharged to {maxBattery}%");
+        }
+        else
+        {
+            // Add fixed amount
+            float oldBattery = currentBattery;
+            currentBattery += rechargeAmount;
+            currentBattery = Mathf.Min(currentBattery, maxBattery); // Cap at max
+
+            Debug.Log($"Battery recharged: {oldBattery:F1}% → {currentBattery:F1}%");
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Get current battery percentage (0-100)
+    /// </summary>
+    public float GetBatteryPercentage()
+    {
+        return (currentBattery / maxBattery) * 100f;
+    }
+
+    /// <summary>
+    /// Check if battery is below a certain threshold
+    /// </summary>
+    public bool IsBatteryLow(float threshold = 20f)
+    {
+        return currentBattery <= threshold;
+    }
+
+    /// <summary>
+    /// Set battery to a specific value (useful for debugging or special events)
+    /// </summary>
+    public void SetBattery(float amount)
+    {
+        currentBattery = Mathf.Clamp(amount, 0f, maxBattery);
     }
 }
