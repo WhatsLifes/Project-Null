@@ -48,6 +48,10 @@ public class FlashlightToggle : MonoBehaviour
     [Range(0f, 1f)]
     public float flickerIntensityMultiplier = 0.3f;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip toggleSound;
+
     private bool isOn = false;
     private float nextFlickerTime = 0f;
     private float flickerEndTime = 0f;
@@ -80,6 +84,7 @@ public class FlashlightToggle : MonoBehaviour
     {
         if (Input.GetKeyDown(toggleKey))
         {
+            audioSource.PlayOneShot(toggleSound);       // plays every time F is pressed
             if (!isOn && currentBattery >= minimumBatteryToTurnOn)
             {
                 // Turn on
