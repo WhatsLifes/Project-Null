@@ -96914,8 +96914,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   whiteDotCanvas: {fileID: 914792148}
   promptCanvas: {fileID: 1516226615}
-  audioSource: {fileID: 0}
-  interactSound: {fileID: 0}
+  audioSource: {fileID: 898998901}
+  interactSound: {fileID: 8300000, guid: 2468da23b0c7e40d38dcd482589a69fa, type: 3}
 --- !u!1001 &858165169
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -98041,8 +98041,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   whiteDotCanvas: {fileID: 1342922510}
   promptCanvas: {fileID: 280006567}
-  audioSource: {fileID: 0}
-  interactSound: {fileID: 0}
+  audioSource: {fileID: 898998901}
+  interactSound: {fileID: 8300000, guid: 6bd06a8a4403e49bc94c978a14b4860e, type: 3}
 --- !u!4 &1050276777 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 89101866fc715254e9f18859fb1891cf, type: 3}
@@ -101030,8 +101030,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   whiteDotCanvas: {fileID: 2126404113}
   promptCanvas: {fileID: 1621668345}
-  audioSource: {fileID: 0}
-  interactSound: {fileID: 0}
+  audioSource: {fileID: 898998901}
+  interactSound: {fileID: 8300000, guid: a3f413fa389da4675914229d1baa9434, type: 3}
 --- !u!1001 &1826798420
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -102025,8 +102025,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   whiteDotCanvas: {fileID: 341630404}
   promptCanvas: {fileID: 773333397}
-  audioSource: {fileID: 0}
-  interactSound: {fileID: 0}
+  audioSource: {fileID: 898998901}
+  interactSound: {fileID: 8300000, guid: a3f413fa389da4675914229d1baa9434, type: 3}
 --- !u!1 &1950522484
 GameObject:
   m_ObjectHideFlags: 0
