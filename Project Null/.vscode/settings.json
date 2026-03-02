@@ -66,5 +66,6 @@
     "explorer.fileNesting.patterns": {
         "*.sln": "*.csproj",
     },
-    "dotnet.defaultSolution": "Project Null.sln"
+    "dotnet.defaultSolution": "Project Null.sln",
+    "FSharp.suggestGitignore": false
 }

@@ -9,7 +9,9 @@ public class Inventory : MonoBehaviour
    [Header("Things in Inventory")]
    public bool holdingSyringe;
    public int pictureCount;
-   
+   [Header("Audio")]
+   public AudioSource audioSource;
+   public AudioClip injectSyringe;
    
 
    void Start()
@@ -36,6 +38,7 @@ public class Inventory : MonoBehaviour
    void useSyringe()
    {
       if (!holdingSyringe) return;
+      audioSource.PlayOneShot(injectSyringe);
       Debug.Log("using syringe");
       sanity.RestoreSanity(100f);
       holdingSyringe = false;

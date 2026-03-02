@@ -9,6 +9,10 @@ public class DoorController : MonoBehaviour
     public float openSpeed = 2f;
     public bool startsOpen = true;   // does door start open?
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip openSound;
+
     private Quaternion closedRot;
     private Quaternion openRot;
     private bool isOpen = false;
@@ -53,6 +57,7 @@ public class DoorController : MonoBehaviour
         float t = 0f;
         Quaternion startRot = transform.rotation;
 
+        audioSource.PlayOneShot(openSound);
         while (t < 1f)
         {
             t += Time.deltaTime * openSpeed;
