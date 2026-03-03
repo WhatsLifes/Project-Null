@@ -4,47 +4,65 @@ public class HeadBob : MonoBehaviour
 {
     [Header("Bobbing Settings")]
     [Tooltip("How fast the bob cycle runs (lower = heavier feel)")]
-    public float bobFrequency = 4.5f;
+    public float bobFrequency = 5f;
 
-    [Tooltip("Vertical head movement amount")]
-    public float bobAmplitude = 0.022f;
+    [Tooltip("Vertical tilt amount in degrees")]
+    public float bobAmplitude = 2f;
 
-    [Tooltip("Side-to-side movement amount")]
-    public float horizontalAmplitude = 0.012f;
+    [Tooltip("Side-to-side tilt amount in degrees")]
+    public float horizontalAmplitude = 1.2f;
 
-    [Tooltip("How quickly the camera moves toward its target position")]
-    public float smoothSpeed = 10f;
+    [Tooltip("How quickly the bob interpolates")]
+    public float smoothSpeed = 8f;
+
+    [Tooltip("Minimum speed to trigger bobbing (prevents micro-jitter)")]
+    public float movementThreshold = 0.1f;
 
     [Header("References")]
     public CharacterController controller;
 
     private float timer;
-    private Vector3 startPosition;
+    private float currentTiltX;
+    private float currentTiltZ;
 
-    void Start()
+    void LateUpdate()
     {
-        startPosition = transform.localPosition;
-    }
-
-    void Update()
-    {
-        if (controller == null)
+        if (controller == null || !controller.enabled)
+        {
+            timer = 0f;
+            currentTiltX = Mathf.Lerp(currentTiltX, 0f, Time.deltaTime * smoothSpeed);
+            currentTiltZ = Mathf.Lerp(currentTiltZ, 0f, Time.deltaTime * smoothSpeed);
+            ApplyBob();
             return;
+        }
 
         float speed = controller.velocity.magnitude;
+
+        if (speed < movementThreshold)
+        {
+            timer = 0f;
+            currentTiltX = Mathf.Lerp(currentTiltX, 0f, Time.deltaTime * smoothSpeed);
+            currentTiltZ = Mathf.Lerp(currentTiltZ, 0f, Time.deltaTime * smoothSpeed);
+            ApplyBob();
+            return;
+        }
+
         float movementAmount = Mathf.Clamp01(speed);
 
         timer += Time.deltaTime * bobFrequency;
 
-        float bobOffsetY = Mathf.Sin(timer) * bobAmplitude * movementAmount;
-        float bobOffsetX = Mathf.Cos(timer * 0.5f) * horizontalAmplitude * movementAmount;
+        float targetTiltX = Mathf.Sin(timer) * bobAmplitude * movementAmount;
+        float targetTiltZ = Mathf.Cos(timer * 0.5f) * horizontalAmplitude * movementAmount;
 
-        Vector3 targetPosition = startPosition + new Vector3(bobOffsetX, bobOffsetY, 0f);
+        currentTiltX = Mathf.Lerp(currentTiltX, targetTiltX, Time.deltaTime * smoothSpeed);
+        currentTiltZ = Mathf.Lerp(currentTiltZ, targetTiltZ, Time.deltaTime * smoothSpeed);
 
-        transform.localPosition = Vector3.Lerp(
-            transform.localPosition,
-            targetPosition,
-            Time.deltaTime * smoothSpeed
-        );
+        ApplyBob();
+    }
+
+    private void ApplyBob()
+    {
+        // Layer the bob ON TOP of whatever rotation the mouse look already set this frame
+        transform.localRotation *= Quaternion.Euler(currentTiltX, 0f, currentTiltZ);
     }
 }
