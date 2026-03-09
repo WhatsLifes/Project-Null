@@ -26,7 +26,6 @@ Material:
   m_ModifiedSerializedProperties: 18
   m_ValidKeywords:
   - _ENVIRONMENTREFLECTIONS_OFF
-  - _METALLICSPECGLOSSMAP
   - _NORMALMAP
   - _OCCLUSIONMAP
   - _PARALLAXMAP
@@ -70,17 +69,17 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
-        m_Texture: {fileID: 2800000, guid: bfdabb4ab22f42042b01233bf97ae564, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _EnvironmentReflections: 0
     - _Metallic: 0.207
-    - _OcclusionStrength: 0.467
-    - _Parallax: 0.04
+    - _OcclusionStrength: 1
+    - _Parallax: 0.08
     - _QueueOffset: 6
-    - _Smoothness: 0.158
+    - _Smoothness: 0.481
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _WorkflowMode: 0
@@ -88,5 +87,6 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SpecColor: {r: 0.5754717, g: 0.4750356, b: 0.4750356, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
