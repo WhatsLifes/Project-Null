@@ -18,8 +18,11 @@ public class TriggerCollider : MonoBehaviour
             PlayerInteraction.instance.AddNearbyObject(interactableObject);  // adds the object to nearby list
             
             // trigger air disperser sounds
-            audioSource.clip = audioClip;
-            StartCoroutine(FadeIn());
+            if (audioSource != null)
+            {
+                audioSource.clip = audioClip;
+                StartCoroutine(FadeIn());
+            }
         }
     }
 
@@ -35,7 +38,8 @@ public class TriggerCollider : MonoBehaviour
             PlayerInteraction.instance.RemoveNearbyObject(interactableObject);  // remove the object from nearby list
         
             // stop air disperser sounds
-            StartCoroutine(FadeOut());
+            if (audioSource != null)
+                StartCoroutine(FadeOut());
         }
     }
 

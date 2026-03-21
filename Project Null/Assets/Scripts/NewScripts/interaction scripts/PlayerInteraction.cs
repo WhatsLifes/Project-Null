@@ -14,13 +14,13 @@ public class PlayerInteraction : MonoBehaviour
 
     [SerializeField] private List<InteractableObject> nearbyObjects = new List<InteractableObject>();
     private InteractableObject currentTarget;
-    
+
     public static PlayerInteraction instance;
-    
+
     [SerializeField] private PlayerHold playerHold;
     [SerializeField] private HUD hud;
     private bool obj4Shown = false;
-    
+
     // WAKE UP
     public void Awake()
     {
@@ -31,11 +31,11 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (playerHold == null)
             playerHold = GetComponent<PlayerHold>();
-        
+
         if (playerHold == null)
             Debug.LogError("PlayerInteraction could not find PlayerHold script!");
     }
-    
+
     // add nearby objects to the nearby object list
     public void AddNearbyObject(InteractableObject obj)
     {
@@ -48,12 +48,12 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (nearbyObjects.Contains(obj))
             nearbyObjects.Remove(obj);
-        
+
         // specifically takes a object out after interacting
         if (currentTarget == obj)
             ClearCurrentTarget();
     }
-    
+
     private void Update()
     {
         UpdateInteractions();
@@ -78,11 +78,11 @@ public class PlayerInteraction : MonoBehaviour
     private void UpdateInteractions()
     {
         bool foundTarget = false;
-        
-        if (playerHold == null) return; 
+
+        if (playerHold == null) return;
 
         InteractableObject directHitTarget = null;
-        
+
         // find what we are directly looking at
         foreach (var obj in nearbyObjects)
         {
@@ -92,15 +92,15 @@ public class PlayerInteraction : MonoBehaviour
                 break;
             }
         }
-        
+
         // now find that object
         foreach (var obj in nearbyObjects)
         {
             if (obj == directHitTarget)
             {
                 obj.HideWhiteDot();
-                foundTarget = true; 
-                
+                foundTarget = true;
+
                 // special stuff for dealing with the chair and dolls
                 bool shouldShow = true;
                 if (obj.TryGetComponent<InteractableDoll>(out _))
@@ -129,8 +129,8 @@ public class PlayerInteraction : MonoBehaviour
                 else
                 {
                     // show its interactable but not right now
-                    obj.ShowWhiteDot(); 
-                    if (currentTarget == obj) 
+                    obj.ShowWhiteDot();
+                    if (currentTarget == obj)
                         ClearCurrentTarget();
                 }
             }
@@ -138,7 +138,7 @@ public class PlayerInteraction : MonoBehaviour
             {
                 // not looking at
                 obj.HidePrompt();
-                
+
                 Vector3 directionToObj = obj.transform.position - cameraTransform.position;
                 float angleCheck = Vector3.Dot(cameraTransform.forward, directionToObj.normalized);
                 if (angleCheck > generalDirectionAngle)
