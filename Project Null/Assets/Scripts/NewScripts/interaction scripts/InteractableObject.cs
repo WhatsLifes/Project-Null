@@ -19,6 +19,7 @@ public class InteractableObject : MonoBehaviour
 
    private bool isPLayerNearby = false;
 
+   public bool keep = false;
    public bool IsPLayerNearby => isPLayerNearby;
 
    // turns off the prompts 
@@ -32,9 +33,12 @@ public class InteractableObject : MonoBehaviour
    {
       // gets the object we are trying to interact with
       InteractableScript TheInteractScript = gameObject.GetComponent<InteractableScript>();
-      PlayerInteraction.instance.RemoveNearbyObject(this);  // take the object out of the nearby interact list
       HidePrompt();  // hide prompt
       HideWhiteDot();  // hide dot
+      if (!keep)
+      {
+         PlayerInteraction.instance.RemoveNearbyObject(this); // take the object out of the nearby interact list
+      }
 
       // call the interact script 
       TheInteractScript.InteractScript();
