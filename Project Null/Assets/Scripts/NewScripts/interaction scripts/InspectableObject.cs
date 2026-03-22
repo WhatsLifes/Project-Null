@@ -79,6 +79,10 @@ public class InspectableObject : MonoBehaviour, InteractableScript
 
         isBeingHeld = true;
         justPickedUp = true;
+
+        if (inspectPromptCanvas != null)
+            inspectPromptCanvas.gameObject.SetActive(true);
+
         PlayerHold.Instance.Pickup(gameObject);
     }
 
@@ -92,7 +96,10 @@ public class InspectableObject : MonoBehaviour, InteractableScript
 
         if (!isBeingHeld) return;
 
-        if (justPickedUp) { justPickedUp = false; return; }
+        if (justPickedUp) { 
+            justPickedUp = false; 
+            return; 
+        }
 
         if (isInspecting)
         {
@@ -170,7 +177,7 @@ public class InspectableObject : MonoBehaviour, InteractableScript
         }
 
         if (inspectPromptCanvas != null)
-            inspectPromptCanvas.gameObject.SetActive(true);
+            inspectPromptCanvas.gameObject.SetActive(false);
     }
 
     private void ExitInspect()
@@ -185,13 +192,16 @@ public class InspectableObject : MonoBehaviour, InteractableScript
         }
 
         if (inspectPromptCanvas != null)
-            inspectPromptCanvas.gameObject.SetActive(false);
+            inspectPromptCanvas.gameObject.SetActive(true);
     }
 
     private void ResetHeldState()
     {
         if (isInspecting) ExitInspect();
         isBeingHeld = false;
+
+        if (inspectPromptCanvas != null)
+            inspectPromptCanvas.gameObject.SetActive(false);
 
         //transform.position = originalWorldPosition;
         //transform.rotation = originalWorldRotation;
