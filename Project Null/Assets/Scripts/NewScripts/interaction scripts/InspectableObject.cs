@@ -32,6 +32,11 @@ public class InspectableObject : MonoBehaviour, InteractableScript
     private Vector3 originalWorldPosition;
     private Quaternion originalWorldRotation;
 
+    private Vector3 frozenCamPos;
+    private Vector3 frozenCamForward;
+    private Vector3 frozenCamUp;
+    private Vector3 frozenCamRight;
+
     private void Start()
     {
         ResolveCamera();
@@ -39,13 +44,15 @@ public class InspectableObject : MonoBehaviour, InteractableScript
 
     private void ResolveCamera()
     {
+        // Always try to find the player controller so canLook/canMove can be toggled
+        playerController = FindObjectOfType<SimpleFPS>();
+
         if (cameraOverride != null)
         {
             cameraTransform = cameraOverride;
             return;
         }
 
-        playerController = FindObjectOfType<SimpleFPS>();
         if (playerController != null && playerController.Camera != null)
         {
             cameraTransform = playerController.Camera;
@@ -93,13 +100,14 @@ public class InspectableObject : MonoBehaviour, InteractableScript
             float mouseY = Input.GetAxis("Mouse Y");
             if (mouseX != 0 || mouseY != 0)
             {
+                // Rotate the object independently of the camera
                 inspectRotation = Quaternion.AngleAxis(-mouseX * rotationSpeed * Time.deltaTime, Vector3.up) * inspectRotation;
-                inspectRotation = Quaternion.AngleAxis(mouseY * rotationSpeed * Time.deltaTime, cameraTransform.right) * inspectRotation;
+                inspectRotation = Quaternion.AngleAxis(mouseY * rotationSpeed * Time.deltaTime, Vector3.right) * inspectRotation;
             }
 
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             if (scroll != 0)
-                currentScrollOffset = Mathf.Clamp(currentScrollOffset + scroll * scrollSpeed, scrollMin, scrollMax);
+                inspectPositionOffset.z = Mathf.Clamp(inspectPositionOffset.z - scroll * scrollSpeed, scrollMin, scrollMax); // Adjust zoom by modifying z-offset
 
             if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Escape))
                 ExitInspect();
@@ -120,16 +128,19 @@ public class InspectableObject : MonoBehaviour, InteractableScript
 
         if (isInspecting)
         {
+            // Use the frozen camera basis so the object stays fixed in front of where
+            // the camera was when the player pressed R — camera does not move or rotate.
             transform.position =
-                  cameraTransform.position
-                + cameraTransform.forward * inspectPositionOffset.z
-                + cameraTransform.up * (inspectPositionOffset.y + currentScrollOffset)
-                + cameraTransform.right * inspectPositionOffset.x;
+                  frozenCamPos
+                + frozenCamForward * inspectPositionOffset.z
+                + frozenCamUp * inspectPositionOffset.y
+                + frozenCamRight * inspectPositionOffset.x;
 
             transform.rotation = inspectRotation;
         }
         else
         {
+            // Position the object relative to the camera when holding, but do not move the camera
             transform.position =
                   cameraTransform.position
                 + cameraTransform.forward * holdPositionOffset.z
@@ -145,6 +156,12 @@ public class InspectableObject : MonoBehaviour, InteractableScript
         isInspecting = true;
         inspectRotation = transform.rotation;
         currentScrollOffset = 0f;
+
+        // Snapshot the camera's world basis so it stays locked for the duration of inspect
+        frozenCamPos = cameraTransform.position;
+        frozenCamForward = cameraTransform.forward;
+        frozenCamUp = cameraTransform.up;
+        frozenCamRight = cameraTransform.right;
 
         if (playerController != null)
         {
