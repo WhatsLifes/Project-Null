@@ -7,7 +7,7 @@ public class DoorController : MonoBehaviour
     public float closedAngle = 0f;  // relative rotation for closed state
     public float openAngle = 90f;   // relative rotation for open state
     public float openSpeed = 2f;
-    public bool startsOpen = true;   // does door start open?
+    public bool startsOpen = false;   // does door start open?
 
     [Header("Audio")]
     public AudioSource audioSource;
