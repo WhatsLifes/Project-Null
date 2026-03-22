@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BatteryPickup : MonoBehaviour, InteractableScript
+public class BatteryPickup : MonoBehaviour, InteractableScript, stage2_InteractableScript
 {
     [Header("Battery Settings")]
     [Tooltip("Amount of battery this pickup restores")]
