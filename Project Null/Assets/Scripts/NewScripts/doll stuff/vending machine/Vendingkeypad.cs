@@ -24,6 +24,7 @@ public class Vendingkeypad : MonoBehaviour, InteractableScript
     [SerializeField] private AudioClip successfulCode; // sounds for successful codes
     [SerializeField] private AudioClip buttonInteract; // sound for pressing buttons
     [SerializeField] private AudioClip unsuccessfulCode;
+    [SerializeField] private AudioClip machineDoorOpenClose; // sound for vending machine door sliding open/close
 
     [Header("Item Spawned")] 
     [SerializeField] private bool Syringe_Spawned = false;
@@ -85,6 +86,7 @@ public class Vendingkeypad : MonoBehaviour, InteractableScript
     IEnumerator timer(float duration)
     {
         yield return new WaitForSeconds(duration);
+        audioSource.PlayOneShot(machineDoorOpenClose);
         IsOpen = false;
     }
     
@@ -191,6 +193,7 @@ public class Vendingkeypad : MonoBehaviour, InteractableScript
             vendingport.Open();
             // play the sound
             audioSource.PlayOneShot(successfulCode);
+            audioSource.PlayOneShot(machineDoorOpenClose);
             IsOpen = true;
             Resume();
             // start timer to close the receptacle
