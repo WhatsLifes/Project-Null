@@ -193,7 +193,7 @@ public class InspectableObject : MonoBehaviour, InteractableScript
         if (isInspecting) ExitInspect();
         isBeingHeld = false;
 
-        transform.position = originalWorldPosition;
-        transform.rotation = originalWorldRotation;
+        //transform.position = originalWorldPosition;
+        //transform.rotation = originalWorldRotation;
     }
 }
