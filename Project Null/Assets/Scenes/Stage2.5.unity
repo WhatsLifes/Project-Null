@@ -96711,6 +96711,10 @@ PrefabInstance:
       propertyPath: rechargeRate
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4291127396165352753, guid: 6a519e52df2b4e4449b7e547a2c49be5, type: 3}
+      propertyPath: minimumBatteryToTurnOn
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 8243479265316723902, guid: 6a519e52df2b4e4449b7e547a2c49be5, type: 3}
       propertyPath: m_Name
       value: Player
@@ -96776,6 +96780,7 @@ MonoBehaviour:
   promptCanvas: {fileID: 675954863}
   audioSource: {fileID: 0}
   interactSound: {fileID: 0}
+  keep: 0
 --- !u!1001 &846495532
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -96916,6 +96921,7 @@ MonoBehaviour:
   promptCanvas: {fileID: 1516226615}
   audioSource: {fileID: 898998901}
   interactSound: {fileID: 8300000, guid: 2468da23b0c7e40d38dcd482589a69fa, type: 3}
+  keep: 0
 --- !u!1001 &858165169
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -98043,6 +98049,7 @@ MonoBehaviour:
   promptCanvas: {fileID: 280006567}
   audioSource: {fileID: 898998901}
   interactSound: {fileID: 8300000, guid: 6bd06a8a4403e49bc94c978a14b4860e, type: 3}
+  keep: 0
 --- !u!4 &1050276777 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 89101866fc715254e9f18859fb1891cf, type: 3}
@@ -101034,6 +101041,7 @@ MonoBehaviour:
   promptCanvas: {fileID: 1621668345}
   audioSource: {fileID: 898998901}
   interactSound: {fileID: 8300000, guid: a3f413fa389da4675914229d1baa9434, type: 3}
+  keep: 0
 --- !u!1001 &1826798420
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -102029,6 +102037,7 @@ MonoBehaviour:
   promptCanvas: {fileID: 773333397}
   audioSource: {fileID: 898998901}
   interactSound: {fileID: 8300000, guid: a3f413fa389da4675914229d1baa9434, type: 3}
+  keep: 0
 --- !u!1 &1950522484
 GameObject:
   m_ObjectHideFlags: 0
@@ -102484,6 +102493,7 @@ MonoBehaviour:
   promptCanvas: {fileID: 1226463140}
   audioSource: {fileID: 0}
   interactSound: {fileID: 0}
+  keep: 0
 --- !u!4 &2123841579 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 715587245780454481, guid: 2302d903e0c0095408ad51a10fc4a785, type: 3}
