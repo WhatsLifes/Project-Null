@@ -1,10 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class PlankManager : MonoBehaviour
 {
     [Header("All plank GameObjects in scene")]
     public GameObject[] allPlanks;
+
+    [Header("Audio")]
+    public AudioSource sfxAudioSource;          // sfx audio source for buzzer
+    public AudioClip buzzerSFX;                 // buzzer sound to stop music
+    public AudioClip goSFX;                     // ding sound to play music again
+    public GameObject speaker;                  // speaker where doll theme music will come from
 
     [Range(0f, 1f)]
     [Tooltip("Fraction of planks that disappear on red light (e.g., 0.4 = 40%)")]
@@ -14,6 +21,10 @@ public class PlankManager : MonoBehaviour
 
     public void OnRedLight()
     {
+        sfxAudioSource.PlayOneShot(buzzerSFX);
+        AudioSource green_music = speaker.GetComponent<AudioSource>();
+        green_music.Pause();
+
         RestoreAll();
 
         List<GameObject> shuffled = new List<GameObject>(allPlanks);
@@ -35,6 +46,10 @@ public class PlankManager : MonoBehaviour
 
     public void OnGreenLight()
     {
+        sfxAudioSource.PlayOneShot(goSFX);
+        AudioSource green_music = speaker.GetComponent<AudioSource>();
+        green_music.Play();
+
         RestoreAll();
     }
 
