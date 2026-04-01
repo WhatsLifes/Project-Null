@@ -25,6 +25,9 @@ public class Vendingkeypad : MonoBehaviour, InteractableScript
     [SerializeField] private AudioClip buttonInteract; // sound for pressing buttons
     [SerializeField] private AudioClip unsuccessfulCode;
     [SerializeField] private AudioClip machineDoorOpenClose; // sound for vending machine door sliding open/close
+    [SerializeField] private AudioClip doll;
+    [SerializeField] private AudioClip syringe;
+    [SerializeField] private AudioClip batteries;
 
     [Header("Item Spawned")] 
     [SerializeField] private bool Syringe_Spawned = false;
@@ -139,6 +142,7 @@ public class Vendingkeypad : MonoBehaviour, InteractableScript
                 case "A12":
                     if (!Doll_XT)
                     {
+                        audioSource.PlayOneShot(doll);
                         DollEye_XT.transform.localPosition = Doll_position;
                         DollEye_XT.transform.localRotation = Quaternion.Euler(Doll_rotation);
                         Doll_XT = true;
@@ -147,6 +151,7 @@ public class Vendingkeypad : MonoBehaviour, InteractableScript
                 case "B74":
                     if (!Doll_TS)
                     {
+                        audioSource.PlayOneShot(doll);
                         DollEye_OX.transform.localPosition = Doll_position;
                         DollEye_OX.transform.localRotation = Quaternion.Euler(Doll_rotation);
                         Doll_OX = true;
@@ -155,6 +160,7 @@ public class Vendingkeypad : MonoBehaviour, InteractableScript
                 case "B49":
                     if (!Doll_OX)
                     {
+                        audioSource.PlayOneShot(doll);
                         DollEye_TS.transform.localPosition = Doll_position;
                         DollEye_TS.transform.localRotation = Quaternion.Euler(Doll_rotation);
                         Doll_TS = true;
@@ -167,6 +173,7 @@ public class Vendingkeypad : MonoBehaviour, InteractableScript
                     // teleports hostile doll 1
                     if (random == 1 && !HostileDoll1)
                     {
+                        audioSource.PlayOneShot(doll);
                         Hostile_Doll1.transform.localPosition = Doll_position;
                         Hostile_Doll1.transform.localRotation = Quaternion.Euler(Doll_rotation);
                         HostileDoll1 = true;
@@ -174,12 +181,14 @@ public class Vendingkeypad : MonoBehaviour, InteractableScript
                     // teleports syringe
                     else if (random == 2 && !Syringe_Spawned)
                     {
+                        audioSource.PlayOneShot(syringe);
                         Syringe.transform.localPosition = syringe_position;
                         Syringe_Spawned = true;
                     }
                     // teleports hostile doll 2
                     else if (random == 3 && !HostileDoll2)
                     {
+                        audioSource.PlayOneShot(doll);
                         Hostile_Doll2.transform.localPosition = Doll_position;
                         Hostile_Doll2.transform.localRotation = Quaternion.Euler(Doll_rotation);
                         HostileDoll2 = true;
