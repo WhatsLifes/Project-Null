@@ -23,7 +23,7 @@ Material:
   m_Name: FloorTrimMat
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_Parent: {fileID: 2100000, guid: ac3671c881ac10248971c9147c8c23aa, type: 2}
-  m_ModifiedSerializedProperties: 4
+  m_ModifiedSerializedProperties: 12
   m_ValidKeywords:
   - _NORMALMAP
   - _OCCLUSIONMAP
@@ -31,7 +31,7 @@ Material:
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
-  m_DoubleSidedGI: 0
+  m_DoubleSidedGI: 1
   m_CustomRenderQueue: -1
   stringTagMap:
     RenderType: Opaque
@@ -43,16 +43,16 @@ Material:
     m_TexEnvs:
     - _BaseMap:
         m_Texture: {fileID: 2800000, guid: 6378b7bbe77b1c24e9c6b2cd1f7aaa7c, type: 3}
-        m_Scale: {x: -0.75, y: 0.5}
-        m_Offset: {x: -0.07, y: -0.24}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: -0.18, y: -0.24}
     - _BumpMap:
         m_Texture: {fileID: 2800000, guid: 3251842e881be284db25d2016562c108, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 6378b7bbe77b1c24e9c6b2cd1f7aaa7c, type: 3}
-        m_Scale: {x: -0.75, y: 0.5}
-        m_Offset: {x: -0.07, y: -0.24}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: -0.18, y: -0.24}
     - _OcclusionMap:
         m_Texture: {fileID: 2800000, guid: 38c6257c0f87ea54f86a45130c429915, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -68,15 +68,16 @@ Material:
     m_Ints: []
     m_Floats:
     - _BumpScale: 1
+    - _Cull: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _Metallic: 0
-    - _OcclusionStrength: 0
-    - _Parallax: 0.0528
-    - _Smoothness: 0.5
+    - _OcclusionStrength: 1
+    - _Parallax: 0.0137
+    - _Smoothness: 0
     m_Colors:
-    - _BaseColor: {r: 0.335849, g: 0.18440008, b: 0.18440008, a: 1}
-    - _Color: {r: 0.33584896, g: 0.18440005, b: 0.18440005, a: 1}
+    - _BaseColor: {r: 0.11320752, g: 0.05318816, b: 0.01655393, a: 1}
+    - _Color: {r: 0.1132075, g: 0.053188138, b: 0.01655393, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
