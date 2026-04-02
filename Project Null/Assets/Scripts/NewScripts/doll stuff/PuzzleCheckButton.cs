@@ -70,7 +70,7 @@ public class PuzzleCheckButton : MonoBehaviour, InteractableScript
         if (DollPuzzleManager.Instance != null)
         {
             DollPuzzleManager.Instance.CheckPuzzle();
-            bool isCorrect = DollPuzzleManager.Instance.lastPuzzleResult; // ✅ read result
+            bool isCorrect = DollPuzzleManager.Instance.lastPuzzleResult; //  read result
 
             Debug.Log("Puzzle check complete! Result: " + (isCorrect ? "CORRECT" : "WRONG"));
 
