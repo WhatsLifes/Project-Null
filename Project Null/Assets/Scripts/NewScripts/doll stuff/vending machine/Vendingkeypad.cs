@@ -149,7 +149,7 @@ public class Vendingkeypad : MonoBehaviour, InteractableScript
                     }
                     break;
                 case "B74":
-                    if (!Doll_TS)
+                    if (!Doll_OX)
                     {
                         audioSource.PlayOneShot(doll);
                         DollEye_OX.transform.localPosition = Doll_position;
@@ -158,7 +158,7 @@ public class Vendingkeypad : MonoBehaviour, InteractableScript
                     }
                     break;
                 case "B49":
-                    if (!Doll_OX)
+                    if (!Doll_TS)
                     {
                         audioSource.PlayOneShot(doll);
                         DollEye_TS.transform.localPosition = Doll_position;
