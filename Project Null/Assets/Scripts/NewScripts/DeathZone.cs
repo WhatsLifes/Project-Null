@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class DeathZone : MonoBehaviour
 {
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
             LifeManager.Instance.PlayerDied();
         }

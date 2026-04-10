@@ -101,6 +101,14 @@ public class DeathManager : MonoBehaviour
         StartCoroutine(DeathSequence());
     }
 
+    public void TriggerDeath()
+    {
+        if (isDead) return;
+
+        isDead = true;
+        StartCoroutine(DeathSequence());
+    }
+
     private IEnumerator DeathSequence()
     {
         // Disable player controls

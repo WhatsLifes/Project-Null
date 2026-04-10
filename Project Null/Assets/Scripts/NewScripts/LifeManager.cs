@@ -22,6 +22,9 @@ public class LifeManager : MonoBehaviour
     [Header("References")]
     public MonitorController monitorController;
 
+    [Header("Death Manager")]
+    public DeathManager deathManager;
+
     public static System.Action<int> OnLivesChanged;
 
     private bool isDying = false;
@@ -72,7 +75,15 @@ public class LifeManager : MonoBehaviour
     {
         yield return StartCoroutine(FadeTo(1f));
         yield return new WaitForSeconds(1f);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        
+        if(deathManager != null)
+        {
+            deathManager.TriggerDeath();
+        }
+        else
+        {
+            Debug.Log("DeathManager not assigned in LifeManager!");
+        }
     }
 
     private IEnumerator FadeTo(float targetAlpha)
