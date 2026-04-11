@@ -84,6 +84,10 @@ public class LifeManager : MonoBehaviour
         {
             Debug.Log("DeathManager not assigned in LifeManager!");
         }
+
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(FadeTo(0f));
+        SetBlackScreen(0f);
     }
 
     private IEnumerator FadeTo(float targetAlpha)
