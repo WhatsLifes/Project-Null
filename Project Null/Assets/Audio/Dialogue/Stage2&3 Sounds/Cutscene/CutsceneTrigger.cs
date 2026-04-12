@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Rendering;
@@ -48,6 +49,11 @@ public class CutsceneTrigger : MonoBehaviour
     public bool playOnlyOnce = true;
 
     private bool hasPlayed = false;
+
+    [Header("Audio")]
+    public AudioSource mainLabAudioSource;
+    public AudioSource animationAudioSource;
+    public AudioClip audioclip;
 
     private void Start()
     {
@@ -127,6 +133,8 @@ public class CutsceneTrigger : MonoBehaviour
 
             timeline.Play();
             hasPlayed = true;
+            mainLabAudioSource.Pause();
+            animationAudioSource.PlayOneShot(audioclip);
         }
     }
 
@@ -196,6 +204,9 @@ public class CutsceneTrigger : MonoBehaviour
         // Optional wake-up animation trigger
         if (playerAnimator != null)
             playerAnimator.SetTrigger("WakeUp");
+
+        // resume main lab ambience
+        mainLabAudioSource.UnPause();
 
         // Enable player control AFTER everything
         if (playerController != null)
