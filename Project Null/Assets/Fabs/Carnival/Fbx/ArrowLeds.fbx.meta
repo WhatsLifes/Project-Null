@@ -3,7 +3,77 @@ guid: 37257e523049aca4ebadc4aef0b40dfe
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.003
+    second: {fileID: 2100000, guid: d108cdca9214da8488b0e1f73ce8d859, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.005
+    second: {fileID: 2100000, guid: 236a2639171083a4dab1edb35400279a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.006
+    second: {fileID: 2100000, guid: 58b566a222043cd45a46d7a980c8093b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.007
+    second: {fileID: 2100000, guid: a543a02dcc3f48e438269c87e2143714, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.008
+    second: {fileID: 2100000, guid: a12cdd9bd599eb247978757f4bb62f7a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.009
+    second: {fileID: 2100000, guid: 811fa97a71bdf0d49bc9272e41e7070f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.010
+    second: {fileID: 2100000, guid: 8054a8a856704ee4dad1e523a5853f50, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.011
+    second: {fileID: 2100000, guid: d9591c72430666f43934308ad8d76b3a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: RedLights
+    second: {fileID: 2100000, guid: 9099205a742dff349a8cd7aaa67a91f8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: RedLights.002
+    second: {fileID: 2100000, guid: 5ddcf9bbfb0aa2b4499d81d8e1d4180d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: RedLights.003
+    second: {fileID: 2100000, guid: 0071e4be168159e43948191a8beb2d48, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TransparentForm
+    second: {fileID: 2100000, guid: 44ff916c10d539c4591d19f1f50557ee, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TransparentForm.002
+    second: {fileID: 2100000, guid: 84a2328e5a8a9dc43b6bc89bd2ff12f0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TransparentForm.003
+    second: {fileID: 2100000, guid: 917943def2d2ab94480d58d8862cd7bc, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

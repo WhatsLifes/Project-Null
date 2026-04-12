@@ -75,7 +75,7 @@ Material:
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.0137
-    - _Smoothness: 0
+    - _Smoothness: 1
     m_Colors:
     - _BaseColor: {r: 0.11320752, g: 0.05318816, b: 0.01655393, a: 1}
     - _Color: {r: 0.1132075, g: 0.053188138, b: 0.01655393, a: 1}
