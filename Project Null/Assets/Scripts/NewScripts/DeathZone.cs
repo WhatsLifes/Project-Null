@@ -9,4 +9,12 @@ public class DeathZone : MonoBehaviour
             LifeManager.Instance.PlayerDied();
         }
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
+        {
+            LifeManager.Instance.PlayerDied();
+        }
+    }
 }

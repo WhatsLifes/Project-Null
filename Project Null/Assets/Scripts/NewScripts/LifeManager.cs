@@ -65,7 +65,7 @@ public class LifeManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         player.transform.position = respawnPoint.position;
-        player.transform.position = respawnPoint.position;
+        player.transform.rotation = respawnPoint.rotation;
 
         yield return StartCoroutine(FadeTo(0f));
         isDying = false;
@@ -88,6 +88,7 @@ public class LifeManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(FadeTo(0f));
         SetBlackScreen(0f);
+        isDying = false;
     }
 
     private IEnumerator FadeTo(float targetAlpha)
