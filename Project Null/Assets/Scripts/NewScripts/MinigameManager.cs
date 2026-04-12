@@ -5,8 +5,7 @@ using UnityEngine.Rendering.Universal;
 public class MinigameManager : MonoBehaviour
 {
     [Header("Light Objects")]
-    public Light redLight;
-    public Light greenLight;
+    public Light[] lights;
 
     [Header("Timing")]
     public float redLightDuration = 3f;
@@ -43,7 +42,9 @@ public class MinigameManager : MonoBehaviour
 
     private void SetLight(bool isRed)
     {
-        redLight.enabled = isRed;
-        greenLight.enabled = !isRed;
+        foreach (Light l in lights)
+        {
+            l.color = isRed ? Color.red : Color.green;
+        }
     }
 }
