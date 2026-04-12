@@ -26,7 +26,7 @@ public class SlidingDoorController : MonoBehaviour
         float direction = (transform.position.x >= 0f) ? 1f : -1f;
 
         // Move along WORLD X only (horizontal)
-        openPosition = closedPosition + new Vector3(slideDistance * direction, 0f, 0f);
+        openPosition = closedPosition + new Vector3(0f, 0f, slideDistance * direction);
     }
 
     public void OpenDoor()
