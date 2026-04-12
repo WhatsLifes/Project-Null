@@ -73,13 +73,13 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Metallic: 0.694
+    - _Metallic: 0.009
     - _OcclusionStrength: 1
     - _Parallax: 0.08
     - _Smoothness: 1
     - _SpecularHighlights: 0
     m_Colors:
-    - _BaseColor: {r: 0.11320752, g: 0.05318816, b: 0.01655393, a: 1}
-    - _Color: {r: 0.1132075, g: 0.053188138, b: 0.01655393, a: 1}
+    - _BaseColor: {r: 0.27072075, g: 0.3301887, b: 0.16665184, a: 1}
+    - _Color: {r: 0.27072072, g: 0.33018863, b: 0.16665182, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
