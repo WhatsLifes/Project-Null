@@ -22,6 +22,10 @@ public class LifeManager : MonoBehaviour
     [Header("References")]
     public MonitorController monitorController;
 
+    [Header("Ballpit Death Audio")]
+    public AudioSource audiosource;
+    public AudioClip audioClip;
+
     [Header("Death Manager")]
     public DeathManager deathManager;
 
@@ -97,6 +101,8 @@ public class LifeManager : MonoBehaviour
         float startAlpha = blackScreenImage.color.a;
         float elapsed = 0f;
 
+        audiosource.PlayOneShot(audioClip);
+        
         while (elapsed < fadeDuration)
         {
             elapsed += Time.deltaTime;
