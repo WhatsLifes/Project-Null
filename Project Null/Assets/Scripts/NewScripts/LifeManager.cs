@@ -88,6 +88,7 @@ public class LifeManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(FadeTo(0f));
         SetBlackScreen(0f);
+        blackScreenImage.enabled = false;
         isDying = false;
     }
 
