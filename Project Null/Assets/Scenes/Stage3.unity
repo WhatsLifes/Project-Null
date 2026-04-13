@@ -3675,7 +3675,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.083333336
+  m_VoxelSize: 0.2
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 7a5e84700804f2444826aa1b962cfedc, type: 2}
   m_BuildHeightMesh: 0
@@ -4865,7 +4865,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 386780187}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4874,7 +4874,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -274, y: 155}
+  m_AnchoredPosition: {x: -274.00003, y: 154.99998}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &386780189
@@ -14112,9 +14112,9 @@ RectTransform:
   - {fileID: 241353556}
   m_Father: {fileID: 1770287966}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -50, y: -81.0975}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 50, y: -50}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1357257336 stripped
@@ -15088,7 +15088,7 @@ MonoBehaviour:
   - {fileID: 1239221707}
   hud: {fileID: 1770287965}
   changeObjectiveOnOpen: 0
-  startTimerOnOpen: 0
+  startTimerOnOpen: 1
   stageTimer: {fileID: 1891996890}
   doorOpenDelay: 15
 --- !u!4 &1438328101
@@ -18422,6 +18422,10 @@ PrefabInstance:
       propertyPath: timerGroup
       value: 
       objectReference: {fileID: 1356289392}
+    - target: {fileID: 3169291569945849887, guid: 450e7be0716528743a18358bb76bef7e, type: 3}
+      propertyPath: timerTitleText
+      value: 
+      objectReference: {fileID: 241353557}
     - target: {fileID: 3169291569945849887, guid: 450e7be0716528743a18358bb76bef7e, type: 3}
       propertyPath: flashlightToggle
       value: 
@@ -44391,7 +44395,7 @@ MonoBehaviour:
   sanityDrainMultiplier: 1.5
   player: {fileID: 790336827}
   sanitySystem: {fileID: 790336822}
-  timerText: {fileID: 0}
+  timerText: {fileID: 386780190}
   warningPanel: {fileID: 0}
   warningFlashSpeed: 2
   warningStartTime: 60
