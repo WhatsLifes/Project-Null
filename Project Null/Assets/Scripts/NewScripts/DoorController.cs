@@ -3,70 +3,59 @@ using System.Collections;
 
 public class DoorController : MonoBehaviour
 {
-    [Header("Door Settings")]
-    public float closedAngle = 0f;  // relative rotation for closed state
-    public float openAngle = 90f;   // relative rotation for open state
+    public float closedAngle = 0f;
+    public float openAngle = 90f;
     public float openSpeed = 2f;
-    public bool startsOpen = false;   // does door start open?
+    public bool startsOpen = false;
 
-    [Header("Audio")]
     public AudioSource audioSource;
     public AudioClip openSound;
-
+    private bool isAnimating = false;
+    private Quaternion baseRotation;
     private Quaternion closedRot;
     private Quaternion openRot;
-    private bool isOpen = false;
-    private bool isAnimating = false;
 
     void Start()
     {
-        // Record the current rotation as the "closed" rotation
-        closedRot = transform.rotation * Quaternion.Euler(0f, closedAngle, 0f);
-        openRot = transform.rotation * Quaternion.Euler(0f, openAngle, 0f);
+        // Store the ORIGINAL rotation as the base
+        baseRotation = transform.localRotation;
 
-        // Set starting rotation
-        if (startsOpen)
-        {
-            transform.rotation = openRot;
-            isOpen = true;
-        }
-        else
-        {
-            transform.rotation = closedRot;
-            isOpen = false;
-        }
+        closedRot = baseRotation * Quaternion.Euler(0f, closedAngle, 0f);
+        openRot   = baseRotation * Quaternion.Euler(0f, openAngle, 0f);
+
+        transform.localRotation = startsOpen ? openRot : closedRot;
     }
 
     public void OpenDoor()
     {
-        if (isOpen || isAnimating) return;
-        isOpen = true;
-        StartCoroutine(RotateDoor(openRot));
+        if (!isAnimating)
+            StartCoroutine(RotateDoor(openRot));
     }
 
     public void CloseDoor()
     {
-        if (!isOpen || isAnimating) return;
-        isOpen = false;
-        StartCoroutine(RotateDoor(closedRot));
+        if (!isAnimating)
+            StartCoroutine(RotateDoor(closedRot));
     }
 
     private IEnumerator RotateDoor(Quaternion targetRot)
     {
         isAnimating = true;
-        float t = 0f;
-        Quaternion startRot = transform.rotation;
 
-        audioSource.PlayOneShot(openSound);
+        Quaternion startRot = transform.localRotation;
+        float t = 0f;
+
+        if (audioSource != null && openSound != null)
+            audioSource.PlayOneShot(openSound);
+
         while (t < 1f)
         {
             t += Time.deltaTime * openSpeed;
-            transform.rotation = Quaternion.Slerp(startRot, targetRot, t);
+            transform.localRotation = Quaternion.Slerp(startRot, targetRot, t);
             yield return null;
         }
 
-        transform.rotation = targetRot;
+        transform.localRotation = targetRot;
         isAnimating = false;
-        Debug.Log(isOpen ? "Door opened!" : "Door closed!");
     }
 }
