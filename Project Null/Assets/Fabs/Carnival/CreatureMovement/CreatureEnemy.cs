@@ -4,7 +4,7 @@ using UnityEngine.AI;
 
 public class CreatureEnemy : Enemy
 {
-    [Header("Roaming Settings")]
+    [Header("Roaming Settings")] 
     public float roamSpeed = 2f;
     public float startDelay = 0.5f;
 
@@ -13,7 +13,7 @@ public class CreatureEnemy : Enemy
     protected override void Awake()
     {
         base.Awake();
-
+    
         // Ensure agent exists
         if (agent == null)
         {
@@ -24,11 +24,11 @@ public class CreatureEnemy : Enemy
                 return;
             }
         }
-
+    
         // Disable combat completely
         sightRange = 0f;
         attackRange = 0f;
-
+    
         initialized = true;
     }
 
@@ -61,15 +61,15 @@ public class CreatureEnemy : Enemy
         }
 
         agent.speed = roamSpeed;
-        agent.stoppingDistance = 0f;
+        agent.stoppingDistance = .5f;
         agent.isStopped = false;
 
         isActive = true;
 
-        Debug.Log($"{gameObject.name} started roaming.");
+        Debug.Log($"{gameObject.name} started roaming from CreatureEnemy.cs");
     }
 
-    private new void Update()
+    private void Update()
     {
         if (!initialized || !isActive) return;
         if (agent == null || !agent.enabled) return;
@@ -91,11 +91,8 @@ public class CreatureEnemy : Enemy
         }
 
         // PURE roaming only
-        Patrolling();
+        if(isActive)
+            Patrolling();
     }
 
-    // Hard disable all combat logic
-    protected override void ChasePlayer() { }
-    public override void AttackPlayer() { }
-    
 }
