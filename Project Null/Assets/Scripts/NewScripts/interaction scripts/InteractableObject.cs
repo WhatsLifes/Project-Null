@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 
+// think of this like a struct, but anything with this must implement whats in here
 interface InteractableScript
 {
    public void InteractScript();
@@ -8,9 +9,11 @@ interface InteractableScript
 
 public class InteractableObject : MonoBehaviour
 {
+   [Header("UI Elements")]
    [SerializeField] private Canvas whiteDotCanvas;
    [SerializeField] private Canvas promptCanvas;
 
+   [Header("Audio Elements")]
    [SerializeField] private AudioSource audioSource;
    [SerializeField] private AudioClip interactSound;
 
@@ -19,41 +22,29 @@ public class InteractableObject : MonoBehaviour
    public bool keep = false;
    public bool IsPLayerNearby => isPLayerNearby;
 
-   void Awake()
-   {
-      DontDestroyOnLoad(gameObject);
-   }
-
+   // turns off the prompts 
    private void Start()
    {
-      if (audioSource == null)
-         audioSource = GetComponent<AudioSource>();
-
       SetCanvasState(whiteDotCanvas, false);
       SetCanvasState(promptCanvas, false);
    }
 
    public virtual void InteractItem()
    {
+      // gets the object we are trying to interact with
       InteractableScript TheInteractScript = gameObject.GetComponent<InteractableScript>();
-
-      if (TheInteractScript == null)
-         return;
-
-      HidePrompt();
-      HideWhiteDot();
-
-      if (!keep && PlayerInteraction.instance != null)
+      HidePrompt();  // hide prompt
+      HideWhiteDot();  // hide dot
+      if (!keep)
       {
-         PlayerInteraction.instance.RemoveNearbyObject(this);
+         PlayerInteraction.instance.RemoveNearbyObject(this); // take the object out of the nearby interact list
       }
 
+      // call the interact script 
       TheInteractScript.InteractScript();
 
-      if (audioSource != null && interactSound != null)
-      {
-         audioSource.PlayOneShot(interactSound);
-      }
+      // play interaction sound
+      audioSource.PlayOneShot(interactSound);
    }
 
    public void ShowPrompt()
@@ -70,7 +61,6 @@ public class InteractableObject : MonoBehaviour
    public void SetPlayerNearby(bool isNearby)
    {
       isPLayerNearby = isNearby;
-
       if (!isNearby)
       {
          HidePrompt();
@@ -88,10 +78,11 @@ public class InteractableObject : MonoBehaviour
       if (isPLayerNearby)
          SetCanvasState(whiteDotCanvas, true);
    }
-
    void SetCanvasState(Canvas canvas, bool state)
    {
       if (canvas != null && canvas.gameObject.activeSelf != state)
          canvas.gameObject.SetActive(state);
    }
+
 }
+
