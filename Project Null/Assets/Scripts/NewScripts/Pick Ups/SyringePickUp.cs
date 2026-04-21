@@ -1,18 +1,24 @@
-using System;
 using UnityEngine;
 
 public class SyringePickUp : MonoBehaviour, InteractableScript, stage2_InteractableScript
 {
     [SerializeField] public Inventory inventory;
 
-    public void Awake()
+    void Start()
     {
-        inventory = GameObject.Find("Player").GetComponent<Inventory>();
+        if (inventory == null)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+                inventory = player.GetComponent<Inventory>();
+        }
     }
 
     public void InteractScript()
     {
-        if(!inventory.holdingSyringe)
+        if (inventory == null) return;
+
+        if (!inventory.holdingSyringe)
         {
             inventory.pickUpSyringe();
             Destroy(gameObject);
