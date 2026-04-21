@@ -236,7 +236,7 @@ public class Enemy : MonoBehaviour
         if (walkPointSet)
         {
             // Only set destination if we're not already going there
-            if ((agent.destination - walkPoint).sqrMagnitude > 0.1f)
+            if ((agent.destination - walkPoint).sqrMagnitude > .5f)
             {
                 agent.SetDestination(walkPoint);
             }
