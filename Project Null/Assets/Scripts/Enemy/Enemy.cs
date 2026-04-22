@@ -243,8 +243,9 @@ public class Enemy : MonoBehaviour
         }
 
         Vector3 distanceToWalkPoint = transform.position - walkPoint;
+        distanceToWalkPoint.y = 0f;
 
-        if (distanceToWalkPoint.magnitude < 1f)
+        if (distanceToWalkPoint.sqrMagnitude < 1f * 1f)
             walkPointSet = false;
     }
 
