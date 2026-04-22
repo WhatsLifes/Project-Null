@@ -170,7 +170,8 @@ public class FlashlightToggle : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, freezeDistance, mannequinLayer))
         {
-            MannequinEnemy mannequin = hit.collider.GetComponent<MannequinEnemy>();
+
+            MannequinEnemy mannequin = hit.collider.GetComponentInParent<MannequinEnemy>();
 
             if (mannequin != null)
             {

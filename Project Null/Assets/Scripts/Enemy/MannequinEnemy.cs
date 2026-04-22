@@ -37,12 +37,11 @@ public class MannequinEnemy : Enemy
     private bool isAttacking = false;
     private bool isFrozenByFlashlight = false;
     private float freezeEndTime = 0f;
-    private bool useAttack1 = true; // Track which attack to use next
+    private bool useAttack1 = true;
 
     protected override void Awake()
     {
         base.Awake();
-       
 
         if (player == null)
         {
@@ -95,10 +94,7 @@ public class MannequinEnemy : Enemy
 
     private void Update()
     {
-        if (agent == null || player == null || !agent.enabled || !agent.isOnNavMesh)
-            return;
 
-        // Check if freeze duration has expired
         if (isFrozenByFlashlight && Time.time >= freezeEndTime)
         {
             isFrozenByFlashlight = false;
@@ -107,6 +103,7 @@ public class MannequinEnemy : Enemy
             {
                 agent.isStopped = false;
             }
+
             if (animator != null)
             {
                 animator.speed = 1f;
@@ -115,13 +112,14 @@ public class MannequinEnemy : Enemy
             Debug.Log($"{gameObject.name} unfrozen - freeze duration expired");
         }
 
-        // If still frozen, do nothing
         if (isFrozenByFlashlight)
+            return;
+
+        if (agent == null || player == null || !agent.enabled || !agent.isOnNavMesh)
             return;
 
         float distance = Vector3.Distance(transform.position, player.position);
 
-        // If not hostile yet, patrol and check for player in vision cone
         if (!isActive)
         {
             Patrolling();
@@ -134,7 +132,6 @@ public class MannequinEnemy : Enemy
             return;
         }
 
-        // Hostile - use cone vision for tracking
         bool canSeePlayer = CanSeePlayer() && distance <= sightRange;
 
         if (canSeePlayer)
@@ -224,8 +221,7 @@ public class MannequinEnemy : Enemy
     {
         if (isFrozenByFlashlight)
         {
-            float remainingTime = freezeEndTime - Time.time;
-            Debug.Log($"{gameObject.name} flashlight moved away - will unfreeze in {remainingTime:F1}s");
+            freezeEndTime = Time.time + freezeDuration;
         }
     }
 
@@ -237,9 +233,7 @@ public class MannequinEnemy : Enemy
         float angle = Vector3.Angle(transform.forward, dirToPlayer);
 
         if (angle > attackConeAngle / 2f)
-        {
             return false;
-        }
 
         Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
 
@@ -261,20 +255,7 @@ public class MannequinEnemy : Enemy
 
         if (Physics.Raycast(eyePos, directionToTarget, out RaycastHit hit, sightRayDistance, layerMask))
         {
-#if UNITY_EDITOR
-            Debug.DrawRay(eyePos, directionToTarget * hit.distance,
-                hit.collider.CompareTag("Player") ? Color.green : Color.red, 0.1f);
-#endif
-
-            if (hit.collider.CompareTag("Player"))
-            {
-                return true;
-            }
-            else
-            {
-                Debug.DrawRay(eyePos, directionToTarget * hit.distance, Color.yellow, 0.1f);
-                return false;
-            }
+            return hit.collider.CompareTag("Player");
         }
 
         return false;
@@ -296,13 +277,9 @@ public class MannequinEnemy : Enemy
         {
             NavMeshHit hit;
             if (NavMesh.SamplePosition(player.position, out hit, 2.0f, NavMesh.AllAreas))
-            {
                 agent.SetDestination(hit.position);
-            }
             else
-            {
                 agent.SetDestination(player.position);
-            }
         }
         else
         {
@@ -323,7 +300,6 @@ public class MannequinEnemy : Enemy
             agent.velocity = Vector3.zero;
         }
 
-        // Face the player
         agent.updateRotation = false;
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
         directionToPlayer.y = 0;
@@ -338,33 +314,19 @@ public class MannequinEnemy : Enemy
 
         if (distance <= attackRange + attackDistanceBuffer && Time.time >= lastAttackTime + attackCooldown)
         {
-            // Set attack type parameter (0 or 1 for different attacks)
             if (animator != null)
             {
-                // Set which attack animation to use
                 if (!string.IsNullOrEmpty(attackTypeParameter))
-                {
                     animator.SetBool(attackTypeParameter, useAttack1);
-                }
 
-                // Trigger the attack (uses "isAttacking" from base Enemy class)
                 animator.SetTrigger("isAttacking");
-
-                Debug.Log($"{gameObject.name} triggered attack - Using {(useAttack1 ? "Attack1" : "Attack2")}");
-
-                // Toggle for next attack
                 useAttack1 = !useAttack1;
             }
 
-            // Deal damage
-            Debug.Log($"{gameObject.name} attacks the player for {damage} damage!");
             THEMC.TakeDamage(damage);
 
-            // Camera Shake trigger effect
             if (Sanity.Instance != null)
-            {
                 Sanity.Instance.TakeSanityDamage(damage, true);
-            }
 
             lastAttackTime = Time.time;
         }
@@ -378,97 +340,14 @@ public class MannequinEnemy : Enemy
 
     private void SetState(EnemyState newState)
     {
-        if (currentState != newState)
+        currentState = newState;
+
+        if (agent != null && agent.isOnNavMesh)
         {
-            if (currentState != EnemyState.Chasing && newState == EnemyState.Chasing)
-            {
-                if (ChaseAudioManager.Instance != null) ChaseAudioManager.Instance.EnemeyStartedChasing(this);
-
-            }
-            else if (currentState == EnemyState.Chasing && newState != EnemyState.Chasing)
-            {
-                if (ChaseAudioManager.Instance != null) ChaseAudioManager.Instance.EnemyStoppedChasing(this);
-            }
-
-            currentState = newState;
-
-            if (agent != null && agent.isOnNavMesh)
-            {
-                if (newState == EnemyState.Patrolling)
-                {
-                    agent.speed = patrolSpeed;
-                }
-                else if (newState == EnemyState.Chasing || newState == EnemyState.Attacking)
-                {
-                    agent.speed = chaseSpeed;
-                }
-            }
-
-            Debug.Log($"[{gameObject.name}] switched to {newState} state.");
+            if (newState == EnemyState.Patrolling)
+                agent.speed = patrolSpeed;
+            else
+                agent.speed = chaseSpeed;
         }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (!agent.enabled || !agent.isOnNavMesh) return;
-
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            if (isActive)
-            {
-                agent.isStopped = true;
-                agent.ResetPath();
-                agent.velocity = Vector3.zero;
-            }
-        }
-        else if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
-        {
-            Vector3 pushDirection = (transform.position - collision.transform.position).normalized;
-            pushDirection.y = 0;
-
-            if (pushDirection.sqrMagnitude > 0.01f)
-            {
-                transform.position += pushDirection * 0.1f;
-            }
-        }
-    }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        if (!agent.enabled || !agent.isOnNavMesh) return;
-
-        if (collision.gameObject.CompareTag("Player") && isActive)
-        {
-            agent.velocity = Vector3.zero;
-        }
-        else if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
-        {
-            Vector3 pushDirection = (transform.position - collision.transform.position).normalized;
-            pushDirection.y = 0;
-
-            if (pushDirection.sqrMagnitude > 0.01f)
-            {
-                transform.position += pushDirection * 0.05f * Time.deltaTime;
-            }
-        }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        if (!showDebugGizmos) return;
-
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawLine(transform.position + Vector3.up * eyeHeight,
-                        transform.position + Vector3.up * eyeHeight + transform.forward * sightRayDistance);
-
-        Gizmos.color = Color.yellow;
-        Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
-        Vector3 right = Quaternion.Euler(0, attackConeAngle / 2f, 0) * transform.forward;
-        Vector3 left = Quaternion.Euler(0, -attackConeAngle / 2f, 0) * transform.forward;
-        Gizmos.DrawLine(eyePos, eyePos + right * sightRayDistance);
-        Gizmos.DrawLine(eyePos, eyePos + left * sightRayDistance);
-
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange + attackDistanceBuffer);
     }
 }
