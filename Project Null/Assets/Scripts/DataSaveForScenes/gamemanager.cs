@@ -4,7 +4,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    [Header("Persistent Player Data")]
     public int playerHealth = 100;
     public int playerMaxHealth = 100;
     public float playerSanity = 100f;
@@ -16,7 +15,6 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        // Singleton pattern - only one instance exists
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -27,7 +25,6 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    // Save current game state from scene objects
     public void SavePlayerState(Player player, Sanity sanity, FlashlightToggle flashlight, Inventory inventory)
     {
         if (player != null)
@@ -53,25 +50,19 @@ public class GameManager : MonoBehaviour
         {
             holdingSyringe = inventory.holdingSyringe;
         }
-
-        Debug.Log("Player state saved to GameManager");
     }
 
-    // Load saved state into scene objects
     public void LoadPlayerState(Player player, Sanity sanity, FlashlightToggle flashlight, Inventory inventory)
     {
         if (player != null)
         {
             player.MaxHealth = playerMaxHealth;
             player.Health = playerHealth;
-            // Use Heal(0) to trigger the OnHealthChanged event
             player.Heal(0);
         }
 
         if (sanity != null)
         {
-            // Use SetSanityValues method if it exists, otherwise just set the values
-            // You'll need to add SetSanityValues method to your Sanity class (see Sanity_AddTheseMethods.cs)
             sanity.SetSanityValues(playerSanity, playerMaxSanity);
         }
 
@@ -86,11 +77,8 @@ public class GameManager : MonoBehaviour
         {
             inventory.holdingSyringe = holdingSyringe;
         }
-
-        Debug.Log("Player state loaded from GameManager");
     }
 
-    // Optional: Reset game data (for new game)
     public void ResetGameData()
     {
         playerHealth = 100;
@@ -101,6 +89,5 @@ public class GameManager : MonoBehaviour
         flashlightMaxBattery = 100f;
         flashlightPickedUp = false;
         holdingSyringe = false;
-        Debug.Log("Game data reset");
     }
 }

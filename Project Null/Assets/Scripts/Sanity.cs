@@ -49,11 +49,6 @@ public class Sanity : MonoBehaviour
 
     public event System.Action<float, float> OnSanityChanged; // (current, max)
 
-    private void Awake()
-    {
-        Instance = this;
-    }
-
     private void Start()
     {
         flickerTimers = new float[lightsToFlicker.Length];

@@ -5,8 +5,7 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    //  HUD subscribers will listen to this
-    public event Action<int, int> OnHealthChanged; // (current, max)
+    public event Action<int, int> OnHealthChanged;
     public event Action OnDeath;
 
     [Header("Player Settings")]
@@ -14,11 +13,8 @@ public class Player : MonoBehaviour
     public int Health = 100;
 
     [Header("Health Regeneration")]
-    [Tooltip("Enable health regeneration")]
     public bool enableRegen = true;
-    [Tooltip("Health points restored per second")]
     public float regenRate = 20f;
-    [Tooltip("Delay in seconds after taking damage before regeneration starts")]
     public float regenDelay = 1f;
 
     [Header("UI References")]
@@ -31,23 +27,34 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        // Clamp & sync starting values
         Health = Mathf.Clamp(Health, 0, MaxHealth);
         OnHealthChanged?.Invoke(Health, MaxHealth);
 
-        // Ensure the bloody screen starts invisible
         if (bloodyScreenImage != null)
         {
-            Color color = bloodyScreenImage.color;
-            color.a = 0f;
-            bloodyScreenImage.color = color;
+            Color c = bloodyScreenImage.color;
+            c.a = 0f;
+            bloodyScreenImage.color = c;
             bloodyScreenImage.enabled = false;
         }
 
-        // Start regeneration coroutine if enabled
         if (enableRegen)
         {
             regenCR = StartCoroutine(RegenerateHealth());
+        }
+
+        StartCoroutine(PostSpawnFix());
+    }
+
+    private IEnumerator PostSpawnFix()
+    {
+        yield return null;
+
+        CharacterController cc = GetComponent<CharacterController>();
+        if (cc != null)
+        {
+            cc.enabled = false;
+            cc.enabled = true;
         }
     }
 
@@ -55,17 +62,11 @@ public class Player : MonoBehaviour
     {
         if (Health <= 0) return;
 
-        // Subtract & clamp
         Health = Mathf.Clamp(Health - Mathf.Max(0, damage), 0, MaxHealth);
-        Debug.Log($"Player took {damage} damage. Remaining Health: {Health}");
-
-        // Record time of damage for regeneration delay
         lastDamageTime = Time.time;
 
-        // Notify HUD
         OnHealthChanged?.Invoke(Health, MaxHealth);
 
-        // Trigger bloody screen effect
         if (bloodCR != null) StopCoroutine(bloodCR);
         bloodCR = StartCoroutine(BloodyScreenEffect());
 
@@ -83,7 +84,7 @@ public class Player : MonoBehaviour
 
     private IEnumerator RegenerateHealth()
     {
-        float accumulatedRegen = 0f;
+        float acc = 0f;
 
         while (true)
         {
@@ -91,60 +92,29 @@ public class Player : MonoBehaviour
 
             if (enableRegen && Health > 0 && Health < MaxHealth)
             {
-                float timeSinceLastDamage = Time.time - lastDamageTime;
-
-                if (timeSinceLastDamage >= regenDelay)
+                if (Time.time - lastDamageTime >= regenDelay)
                 {
-                    // Accumulate regeneration
-                    accumulatedRegen += regenRate * Time.deltaTime;
+                    acc += regenRate * Time.deltaTime;
 
-                    // Apply when we've accumulated at least 1 HP
-                    if (accumulatedRegen >= 1f)
+                    if (acc >= 1f)
                     {
-                        int hpToAdd = Mathf.FloorToInt(accumulatedRegen);
-                        accumulatedRegen -= hpToAdd;
+                        int hp = Mathf.FloorToInt(acc);
+                        acc -= hp;
 
-                        Health = Mathf.Clamp(Health + hpToAdd, 0, MaxHealth);
+                        Health = Mathf.Clamp(Health + hp, 0, MaxHealth);
                         OnHealthChanged?.Invoke(Health, MaxHealth);
                     }
                 }
                 else
                 {
-                    // Reset accumulated regen while waiting
-                    accumulatedRegen = 0f;
+                    acc = 0f;
                 }
             }
             else
             {
-                // Reset accumulated regen
-                accumulatedRegen = 0f;
+                acc = 0f;
             }
         }
-    }
-
-    public void SetRegenerationEnabled(bool enabled)
-    {
-        enableRegen = enabled;
-
-        if (enabled && regenCR == null)
-        {
-            regenCR = StartCoroutine(RegenerateHealth());
-        }
-        else if (!enabled && regenCR != null)
-        {
-            StopCoroutine(regenCR);
-            regenCR = null;
-        }
-    }
-
-    public void SetRegenRate(float newRate)
-    {
-        regenRate = Mathf.Max(0f, newRate);
-    }
-
-    public void SetRegenDelay(float newDelay)
-    {
-        regenDelay = Mathf.Max(0f, newDelay);
     }
 
     private void PlayerDeath()
@@ -152,16 +122,12 @@ public class Player : MonoBehaviour
         var fps = GetComponent<SimpleFPS>();
         if (fps != null) fps.enabled = false;
 
-        // Stop regeneration on death
         if (regenCR != null)
         {
             StopCoroutine(regenCR);
             regenCR = null;
         }
 
-        Debug.Log("Player died");
-
-        // Trigger the death event
         OnDeath?.Invoke();
     }
 
@@ -169,43 +135,40 @@ public class Player : MonoBehaviour
     {
         if (bloodyScreenImage == null) yield break;
 
-        isShowingBlood = true;
         bloodyScreenImage.enabled = true;
 
-        // Fade in
-        float fadeInTime = 0.1f;
-        float elapsed = 0f;
-        while (elapsed < fadeInTime)
+        float t = 0f;
+        while (t < 0.1f)
         {
-            float alpha = Mathf.Lerp(0f, 1f, elapsed / fadeInTime);
-            var c = bloodyScreenImage.color; c.a = alpha; bloodyScreenImage.color = c;
-            elapsed += Time.deltaTime;
+            float a = Mathf.Lerp(0f, 1f, t / 0.1f);
+            Color c = bloodyScreenImage.color;
+            c.a = a;
+            bloodyScreenImage.color = c;
+            t += Time.deltaTime;
             yield return null;
         }
 
         yield return new WaitForSeconds(0.3f);
 
-        // Fade out
-        float fadeOutTime = 1.5f;
-        elapsed = 0f;
-        while (elapsed < fadeOutTime)
+        t = 0f;
+        while (t < 1.5f)
         {
-            float alpha = Mathf.Lerp(1f, 0f, elapsed / fadeOutTime);
-            var c = bloodyScreenImage.color; c.a = alpha; bloodyScreenImage.color = c;
-            elapsed += Time.deltaTime;
+            float a = Mathf.Lerp(1f, 0f, t / 1.5f);
+            Color c = bloodyScreenImage.color;
+            c.a = a;
+            bloodyScreenImage.color = c;
+            t += Time.deltaTime;
             yield return null;
         }
 
         bloodyScreenImage.enabled = false;
-        isShowingBlood = false;
-        bloodCR = null;
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Enemy"))
         {
-            var enemy = other.gameObject.GetComponent<TestEnemy>();
+            var enemy = other.GetComponent<TestEnemy>();
             if (enemy != null) TakeDamage(enemy.damage);
         }
     }
@@ -214,5 +177,14 @@ public class Player : MonoBehaviour
     {
         if (bloodCR != null) StopCoroutine(bloodCR);
         if (regenCR != null) StopCoroutine(regenCR);
+    }
+    public void SetRegenerationEnabled(bool enabled)
+    {
+        enableRegen = enabled;
+
+        if (enabled)
+        {
+            lastDamageTime = Time.time;
+        }
     }
 }

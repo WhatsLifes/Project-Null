@@ -42,6 +42,14 @@ public class MannequinEnemy : Enemy
     protected override void Awake()
     {
         base.Awake();
+       
+
+        if (player == null)
+        {
+            GameObject p = GameObject.FindGameObjectWithTag("Player");
+            if (p != null)
+                player = p.transform;
+        }
 
         if (agent == null)
         {
@@ -85,7 +93,7 @@ public class MannequinEnemy : Enemy
         Debug.Log($"{gameObject.name} started patrolling (not hostile yet)");
     }
 
-    private new void Update()
+    private void Update()
     {
         if (agent == null || player == null || !agent.enabled || !agent.isOnNavMesh)
             return;
