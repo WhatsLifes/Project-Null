@@ -24,6 +24,7 @@ public class InspectableObject : MonoBehaviour, InteractableScript
     private bool isInspecting = false;
     private bool justPickedUp = false;
     private Quaternion inspectRotation;
+    private Quaternion holdRotationOffset = Quaternion.identity;
     private float currentScrollOffset = 0f;
 
     private Transform cameraTransform;
@@ -69,7 +70,8 @@ public class InspectableObject : MonoBehaviour, InteractableScript
 
     public void InteractScript()
     {
-        if (PlayerHold.Instance == null || PlayerHold.Instance.IsHoldingObject()) return;
+        if (PlayerHold.Instance == null) { Debug.LogError("InspectableObject: PlayerHold.Instance is null — add PlayerHold to the Player GameObject."); return; }
+        if (PlayerHold.Instance.IsHoldingObject()) return;
 
         if (cameraTransform == null) ResolveCamera();
         if (cameraTransform == null) return;
@@ -77,12 +79,9 @@ public class InspectableObject : MonoBehaviour, InteractableScript
         originalWorldPosition = transform.position;
         originalWorldRotation = transform.rotation;
 
+        holdRotationOffset = Quaternion.identity;
         isBeingHeld = true;
         justPickedUp = true;
-
-        if (inspectPromptCanvas != null)
-            inspectPromptCanvas.gameObject.SetActive(true);
-
         PlayerHold.Instance.Pickup(gameObject);
     }
 
@@ -96,10 +95,7 @@ public class InspectableObject : MonoBehaviour, InteractableScript
 
         if (!isBeingHeld) return;
 
-        if (justPickedUp) { 
-            justPickedUp = false; 
-            return; 
-        }
+        if (justPickedUp) { justPickedUp = false; return; }
 
         if (isInspecting)
         {
@@ -135,8 +131,6 @@ public class InspectableObject : MonoBehaviour, InteractableScript
 
         if (isInspecting)
         {
-            // Use the frozen camera basis so the object stays fixed in front of where
-            // the camera was when the player pressed R — camera does not move or rotate.
             transform.position =
                   frozenCamPos
                 + frozenCamForward * inspectPositionOffset.z
@@ -147,14 +141,14 @@ public class InspectableObject : MonoBehaviour, InteractableScript
         }
         else
         {
-            // Position the object relative to the camera when holding, but do not move the camera
+            // Position the object relative to the camera when holding, but dont move camera
             transform.position =
                   cameraTransform.position
                 + cameraTransform.forward * holdPositionOffset.z
                 + cameraTransform.up * holdPositionOffset.y
                 + cameraTransform.right * holdPositionOffset.x;
 
-            transform.rotation = cameraTransform.rotation;
+            transform.rotation = cameraTransform.rotation * holdRotationOffset;
         }
     }
 
@@ -177,13 +171,14 @@ public class InspectableObject : MonoBehaviour, InteractableScript
         }
 
         if (inspectPromptCanvas != null)
-            inspectPromptCanvas.gameObject.SetActive(false);
+            inspectPromptCanvas.gameObject.SetActive(true);
     }
 
     private void ExitInspect()
     {
         isInspecting = false;
         currentScrollOffset = 0f;
+        holdRotationOffset = Quaternion.Inverse(cameraTransform.rotation) * inspectRotation;
 
         if (playerController != null)
         {
@@ -192,7 +187,7 @@ public class InspectableObject : MonoBehaviour, InteractableScript
         }
 
         if (inspectPromptCanvas != null)
-            inspectPromptCanvas.gameObject.SetActive(true);
+            inspectPromptCanvas.gameObject.SetActive(false);
     }
 
     private void ResetHeldState()
@@ -200,10 +195,8 @@ public class InspectableObject : MonoBehaviour, InteractableScript
         if (isInspecting) ExitInspect();
         isBeingHeld = false;
 
-        if (inspectPromptCanvas != null)
-            inspectPromptCanvas.gameObject.SetActive(false);
-
-        //transform.position = originalWorldPosition;
-        //transform.rotation = originalWorldRotation;
+        // Removed resetting to original position and rotation to retain final orientation
+        // transform.position = originalWorldPosition;
+        // transform.rotation = originalWorldRotation;
     }
 }
