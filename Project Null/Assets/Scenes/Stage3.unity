@@ -4834,7 +4834,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bossAI: {fileID: 410620545}
   player: {fileID: 320232091}
-  detectionRadius: 2.5
+  detectionRadius: 7
   audioSource: {fileID: 1391800064}
   crowAlertSound: {fileID: 8300000, guid: dfe6fd4b85cc9402b887cb763e28a3d3, type: 3}
   alertCooldown: 10
@@ -5782,7 +5782,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bossAI: {fileID: 410620545}
   player: {fileID: 320232091}
-  detectionRadius: 2.5
+  detectionRadius: 7
   audioSource: {fileID: 1391800064}
   crowAlertSound: {fileID: 8300000, guid: dfe6fd4b85cc9402b887cb763e28a3d3, type: 3}
   alertCooldown: 10
@@ -17482,7 +17482,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bossAI: {fileID: 410620545}
   player: {fileID: 320232091}
-  detectionRadius: 2.5
+  detectionRadius: 7
   audioSource: {fileID: 1391800064}
   crowAlertSound: {fileID: 8300000, guid: dfe6fd4b85cc9402b887cb763e28a3d3, type: 3}
   alertCooldown: 10
