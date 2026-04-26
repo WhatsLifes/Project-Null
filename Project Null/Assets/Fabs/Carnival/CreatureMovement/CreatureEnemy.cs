@@ -2,13 +2,30 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
+
 public class CreatureEnemy : Enemy
 {
-    [Header("Roaming Settings")] 
+    private enum EnemyState { Idle, Patrolling, Stalking, Chasing, Attacking }
+    
+    [Header("Current State")]
+    [SerializeField] private EnemyState currentState = EnemyState.Patrolling;
+    
+    [Header("Patrolling Settings")] 
     public float roamSpeed = 2f;
     public float startDelay = 0.5f;
 
+    [Header("Stalking Settings")]
+    public float stalkSpeed = 1f;
+    public float stalkDelay = 3f;
+    
+    [Header("Chasing Settings")]
+    public float chaseSpeed = 30f;
+    public float chaseDuration = 5f;
+    
+    
+    
     private bool initialized = false;
+    
 
     protected override void Awake()
     {
@@ -26,8 +43,6 @@ public class CreatureEnemy : Enemy
         }
     
         // Disable combat completely
-        sightRange = 0f;
-        attackRange = 0f;
     
         initialized = true;
     }
@@ -89,10 +104,60 @@ public class CreatureEnemy : Enemy
                 return;
             }
         }
+        
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        // PURE roaming only
-        if(isActive)
-            Patrolling();
+        playerInSightRange = distanceToPlayer <= sightRange;
+        playerInAttackRange = distanceToPlayer <= attackRange;
+
+        if (isActive)
+        {
+            if (playerInSightRange && stalkingRoutine == null)
+            {
+                currentState = EnemyState.Stalking;
+                stalkingRoutine = StartCoroutine(Stalking());
+            }
+
+            if (currentState == EnemyState.Patrolling)
+            {
+                //if no other state, default to patrolling
+                StartPatrolling();
+            }
+        }
+        
+        
+    }
+    private Coroutine stalkingRoutine;
+    IEnumerator Stalking()
+    {
+        agent.speed = stalkSpeed;
+        transform.LookAt(new Vector3(player.position.x, transform.position.y, player.position.z));
+        //wait stalkDelay seconds before attacking.    
+        yield return new WaitForSeconds(stalkDelay);
+        
+        //If player is still in radius attack otherwise return to patrolling.
+        if (playerInSightRange)
+        {
+            currentState = EnemyState.Chasing;
+            StartChase();
+
+        }
+        else
+        {
+            currentState = EnemyState.Patrolling;
+        }
+    }
+
+    private void StartPatrolling()
+    {
+        agent.speed = roamSpeed;
+        Patrolling();
+    }
+
+    private void StartChase()
+    {
+        agent.speed = chaseSpeed;
+        ChasePlayer();
     }
 
 }
