@@ -2,162 +2,320 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-
 public class CreatureEnemy : Enemy
 {
-    private enum EnemyState { Idle, Patrolling, Stalking, Chasing, Attacking }
-    
-    [Header("Current State")]
-    [SerializeField] private EnemyState currentState = EnemyState.Patrolling;
-    
-    [Header("Patrolling Settings")] 
-    public float roamSpeed = 2f;
-    public float startDelay = 0.5f;
+    private enum EnemyState
+    {
+        Patrol,
+        Stalk,
+        Chase
+    }
 
-    [Header("Stalking Settings")]
+    [Header("State")]
+    [SerializeField] private EnemyState state;
+
+    private float stateTimer;
+    private bool canStalk = true;
+    private float stalkCooldownTimer;
+    private float playerLookTimer;
+
+    [Header("Senses")]
+    public LayerMask LineOfSightMask;
+
+    [Header("Settings")]
+    public float roamSpeed = 2f;
     public float stalkSpeed = 1f;
-    public float stalkDelay = 3f;
-    
-    [Header("Chasing Settings")]
-    public float chaseSpeed = 30f;
-    public float chaseDuration = 5f;
-    
-    
-    
-    private bool initialized = false;
-    
+    public float chaseSpeed = 6f;
+    public float stalkCooldownTime = 15f;
+    public float stopChaseDistance = 2f;
+
+    [Header("Crawl Audio (Patrol / Chase)")]
+    [SerializeField] private AudioSource crawlAudio;
+    [SerializeField] private AudioClip crawlClip;
+    [SerializeField] private float crawlVolume = 0.5f;
+
+    [Header("Stalk Audio (Decision Layer)")]
+    [SerializeField] private AudioSource stalkAudio;
+    [SerializeField] private AudioClip stalkIdleClip;
+    [SerializeField] private AudioClip stalkTenseClip;
+    [SerializeField] private AudioClip stalkBreakClip;
+
+    private bool initialized;
+
+    // ---------------- INIT ----------------
 
     protected override void Awake()
     {
         base.Awake();
-    
-        // Ensure agent exists
+
         if (agent == null)
-        {
             agent = GetComponent<NavMeshAgent>();
-            if (agent == null)
-            {
-                Debug.LogError($"{gameObject.name}: Missing NavMeshAgent!");
-                return;
-            }
-        }
-    
-        // Disable combat completely
-    
-        initialized = true;
+
+        agent.enabled = true;
+
+        // Crawl audio setup
+        if (crawlAudio == null)
+            crawlAudio = gameObject.AddComponent<AudioSource>();
+
+        crawlAudio.clip = crawlClip;
+        crawlAudio.loop = true;
+        crawlAudio.spatialBlend = 1f;
+        crawlAudio.volume = 0f;
+        crawlAudio.Play();
+
+        // Stalk audio setup
+        if (stalkAudio == null)
+            stalkAudio = gameObject.AddComponent<AudioSource>();
+
+        stalkAudio.loop = true;
+        stalkAudio.spatialBlend = 1f;
+        stalkAudio.volume = 1f;
+        stalkAudio.pitch = .4f;
     }
 
     private void Start()
     {
-        if (!initialized) return;
-        StartCoroutine(InitRoaming());
+        StartCoroutine(InitSafe());
     }
 
-    private IEnumerator InitRoaming()
+    private IEnumerator InitSafe()
     {
-        yield return new WaitForSeconds(startDelay);
-
-        if (agent == null) yield break;
-
-        agent.enabled = true;
+        yield return null;
 
         if (!agent.isOnNavMesh)
         {
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(transform.position, out hit, 5f, NavMesh.AllAreas))
-            {
+            if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 5f, NavMesh.AllAreas))
                 agent.Warp(hit.position);
-            }
             else
             {
-                Debug.LogWarning($"{gameObject.name}: Could not place on NavMesh.");
+                Debug.LogWarning("Creature could not be placed on NavMesh.");
                 yield break;
             }
         }
 
-        agent.speed = roamSpeed;
-        agent.stoppingDistance = .5f;
         agent.isStopped = false;
+        agent.speed = roamSpeed;
 
         isActive = true;
-
-        Debug.Log($"{gameObject.name} started roaming from CreatureEnemy.cs");
+        initialized = true;
     }
+
+    // ---------------- UPDATE ----------------
 
     private void Update()
     {
-        if (!initialized || !isActive) return;
-        if (agent == null || !agent.enabled) return;
+        if (!initialized || !isActive || player == null || !agent.enabled || !agent.isOnNavMesh)
+            return;
 
-        if (!agent.isOnNavMesh)
+        UpdateCooldown();
+
+        float dist = Vector3.Distance(transform.position, player.position);
+
+        bool inSight = dist <= sightRange && HasLineOfSight();
+        bool looking = IsPlayerLookingAtCreature(15f);
+
+        switch (state)
         {
-            // Try recovery
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(transform.position, out hit, 5f, NavMesh.AllAreas))
-            {
-                agent.Warp(hit.position);
-            }
-            else
-            {
-                Debug.LogWarning($"{gameObject.name}: Lost NavMesh, disabling.");
-                enabled = false;
-                return;
-            }
+            case EnemyState.Patrol:
+                if (inSight && canStalk)
+                    SetState(EnemyState.Stalk);
+                else
+                {
+                    agent.speed = roamSpeed;
+                    Patrolling();
+                }
+                break;
+
+            case EnemyState.Stalk:
+                StalkLogic(inSight, looking);
+                break;
+
+            case EnemyState.Chase:
+                ChaseLogic();
+                break;
         }
-        
+
+        UpdateCrawlAudio(dist);
+        UpdateStalkAudio(looking);
+    }
+
+    // ---------------- STATES ----------------
+
+    private void StalkLogic(bool inSight, bool looking)
+    {
+        if (!inSight)
+        {
+            SetState(EnemyState.Patrol);
+            return;
+        }
+
+        agent.isStopped = true;
+
+        Vector3 lookPos = new Vector3(player.position.x, transform.position.y, player.position.z);
+        transform.LookAt(lookPos);
+
+        if (looking)
+            playerLookTimer += Time.deltaTime;
+        else
+            playerLookTimer = 0f;
+
+        stateTimer += Time.deltaTime;
+
+        if (!looking && stateTimer > 2f)
+        {
+            SetState(EnemyState.Chase);
+            return;
+        }
+
+        if (playerLookTimer > 5f && playerLookTimer < 10f)
+        {
+            SetState(EnemyState.Patrol);
+            return;
+        }
+
+        if (playerLookTimer >= 10f)
+        {
+            SetState(EnemyState.Chase);
+            return;
+        }
+    }
+
+    private void ChaseLogic()
+    {
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        playerInSightRange = distanceToPlayer <= sightRange;
-        playerInAttackRange = distanceToPlayer <= attackRange;
-
-        if (isActive)
+        // If close enough, go back to patrol
+        if (distanceToPlayer <= stopChaseDistance)
         {
-            if (playerInSightRange && stalkingRoutine == null)
-            {
-                currentState = EnemyState.Stalking;
-                stalkingRoutine = StartCoroutine(Stalking());
-            }
-
-            if (currentState == EnemyState.Patrolling)
-            {
-                //if no other state, default to patrolling
-                StartPatrolling();
-            }
+            state = EnemyState.Patrol; // or whatever your patrol enum is
+            return;
         }
-        
-        
-    }
-    private Coroutine stalkingRoutine;
-    IEnumerator Stalking()
-    {
-        agent.speed = stalkSpeed;
-        transform.LookAt(new Vector3(player.position.x, transform.position.y, player.position.z));
-        //wait stalkDelay seconds before attacking.    
-        yield return new WaitForSeconds(stalkDelay);
-        
-        //If player is still in radius attack otherwise return to patrolling.
-        if (playerInSightRange)
-        {
-            currentState = EnemyState.Chasing;
-            StartChase();
 
-        }
-        else
-        {
-            currentState = EnemyState.Patrolling;
-        }
-    }
-
-    private void StartPatrolling()
-    {
-        agent.speed = roamSpeed;
-        Patrolling();
-    }
-
-    private void StartChase()
-    {
+        agent.isStopped = false;
         agent.speed = chaseSpeed;
-        ChasePlayer();
+        agent.SetDestination(player.position);
     }
 
+    private void SetState(EnemyState newState)
+    {
+        state = newState;
+        stateTimer = 0f;
+
+        switch (newState)
+        {
+            case EnemyState.Patrol:
+                agent.isStopped = false;
+                canStalk = true;
+                break;
+
+            case EnemyState.Stalk:
+                agent.ResetPath();
+                agent.isStopped = true;
+                break;
+
+            case EnemyState.Chase:
+                canStalk = false;
+                stalkCooldownTimer = stalkCooldownTime;
+                agent.isStopped = false;
+                break;
+        }
+    }
+
+    // ---------------- COOLDOWN ----------------
+
+    private void UpdateCooldown()
+    {
+        if (!canStalk)
+        {
+            stalkCooldownTimer -= Time.deltaTime;
+
+            if (stalkCooldownTimer <= 0f)
+            {
+                canStalk = true;
+                SetState(EnemyState.Patrol);
+            }
+        }
+    }
+
+    // ---------------- AUDIO: CRAWL (PATROL + CHASE) ----------------
+
+    private void UpdateCrawlAudio(float dist)
+    {
+        if (!isActive || !initialized)
+            return;
+
+        float distFactor = Mathf.Clamp01(1f - (dist / sightRange));
+
+        float volume = 0f;
+        float pitch = 1f;
+
+        if (state == EnemyState.Patrol)
+        {
+            volume = .5f + distFactor * 0.3f;
+            pitch = 0.6f;
+        }
+        else if (state == EnemyState.Chase)
+        {
+            volume = .7f + distFactor * 0.6f;
+            pitch = .7f;
+        }
+        
+        crawlAudio.volume = Mathf.Lerp(crawlAudio.volume, volume, Time.deltaTime * 5f);
+        crawlAudio.pitch = Mathf.Lerp(crawlAudio.pitch, pitch, Time.deltaTime * 5f);
+    }
+
+    // ---------------- AUDIO: STALK (DECISION LAYER) ----------------
+
+    private void UpdateStalkAudio(bool looking)
+    {
+        
+        AudioClip targetClip = stalkIdleClip;
+        
+        if (state == EnemyState.Chase || !initialized)
+        {
+            targetClip = stalkBreakClip;
+        }
+        else if (state != EnemyState.Stalk )
+        {
+            if (stalkAudio.isPlaying)
+                stalkAudio.Stop();
+            return;
+        }
+        
+
+        if (!stalkAudio.isPlaying)
+            stalkAudio.Play();
+
+        
+        if (stalkAudio.clip != targetClip)
+        {
+            stalkAudio.clip = targetClip;
+            stalkAudio.Play();
+        }
+
+    }
+
+    // ---------------- SENSING ----------------
+
+    public bool HasLineOfSight()
+    {
+        Vector3 origin = player.position;
+        Vector3 target = transform.position;
+        Vector3 dir = (target - origin).normalized;
+
+        float dist = Vector3.Distance(origin, target);
+
+        if (Physics.Raycast(origin, dir, out RaycastHit hit, dist, LineOfSightMask))
+            return false;
+
+        return true;
+    }
+
+    public bool IsPlayerLookingAtCreature(float maxAngle = 30f)
+    {
+        Vector3 toCreature = (transform.position - player.position).normalized;
+        float dot = Vector3.Dot(player.forward, toCreature);
+
+        return dot >= Mathf.Cos(maxAngle * Mathf.Deg2Rad);
+    }
 }
