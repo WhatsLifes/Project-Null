@@ -14,7 +14,8 @@ public class PauseMenu : MonoBehaviour
 
     [Header("Player")]
     [SerializeField] MonoBehaviour playerLookScript; // your camera look script
-
+    [SerializeField] MonoBehaviour CamerabobScript;
+    
     [Header("Options UI")]
     public Slider sensitivitySlider;
     public Slider ambienceVolumeSlider;
@@ -121,6 +122,8 @@ public class PauseMenu : MonoBehaviour
 
         if (playerLookScript != null)
             playerLookScript.enabled = false;
+        if (CamerabobScript != null)
+            CamerabobScript.enabled = false;
     }
 
     public void Resume()
@@ -136,6 +139,8 @@ public class PauseMenu : MonoBehaviour
 
         if (playerLookScript != null)
             playerLookScript.enabled = true;
+        if (CamerabobScript != null)
+            CamerabobScript.enabled = true;
     }
 
     // Called by Options button
