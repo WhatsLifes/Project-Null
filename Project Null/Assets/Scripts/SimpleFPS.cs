@@ -7,6 +7,7 @@ public class SimpleFPS : MonoBehaviour
     public float speed = 5f;
     public float mouseSensitivity = 2f;
     public Transform Camera;
+    [HideInInspector] public float speedMultiplier = 1f;
 
     [Header("Crouch Settings")]
     public float crouchHeight = 1f;
@@ -93,7 +94,8 @@ public class SimpleFPS : MonoBehaviour
             if (move.magnitude > 0.1f)
                 move = move.normalized;
 
-            float currentSpeed = isCrouching ? crouchSpeed : speed;
+            float baseSpeed = isCrouching ? crouchSpeed : speed;
+            float currentSpeed = baseSpeed * speedMultiplier;
 
             Vector3 horizontalVel = move * currentSpeed;
 
