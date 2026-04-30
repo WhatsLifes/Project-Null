@@ -11,21 +11,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1df8d1c2-9c55-4490-9770-8175c563cebb" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.Project Null/.idea/indexLayout.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Audio/Carnival.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Audio/Carnival/dragon-studio-giant-spider-walking-504034.mp3" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Audio/Carnival/dragon-studio-giant-spider-walking-504034.mp3.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Audio/Carnival/freesounds123-jumpscare-v2-335599.mp3" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Audio/Carnival/freesounds123-jumpscare-v2-335599.mp3.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Audio/Carnival/jusatti890-scream-horror-sfx-490909.mp3" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Audio/Carnival/jusatti890-scream-horror-sfx-490909.mp3.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Project Null/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Project Null/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Audio/Dialogue/Stage2&amp;3 Sounds/Cutscene/CutsceneTrigger.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Audio/Dialogue/Stage2&amp;3 Sounds/Cutscene/CutsceneTrigger.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Fabs/Carnival/CreatureMovement/Creature.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Fabs/Carnival/CreatureMovement/Creature.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Fabs/Carnival/CreatureMovement/CreatureEnemy.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Fabs/Carnival/CreatureMovement/CreatureEnemy.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Stage1.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Stage1.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Stage2.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Stage2.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/TagManager.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -191,6 +177,7 @@
       <workItem from="1776805812768" duration="343000" />
       <workItem from="1776831296057" duration="712000" />
       <workItem from="1777319609029" duration="15990000" />
+      <workItem from="1777493867157" duration="1310000" />
     </task>
     <servers />
   </component>
