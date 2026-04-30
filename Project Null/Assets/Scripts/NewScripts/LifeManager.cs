@@ -9,7 +9,7 @@ public class LifeManager : MonoBehaviour
 
     [Header("Lives")]
     public int maxLives = 3;
-    private int currentLives;
+    [SerializeField] private int currentLives;
 
     [Header("Screen Fade")]
     public Image blackScreenImage;
@@ -29,6 +29,8 @@ public class LifeManager : MonoBehaviour
     [Header("Death Manager")]
     public DeathManager deathManager;
 
+    CharacterController playerController; 
+    
     public static System.Action<int> OnLivesChanged;
 
     private bool isDying = false;
@@ -37,6 +39,7 @@ public class LifeManager : MonoBehaviour
     {
         Instance = this;
         currentLives = maxLives;
+        playerController = player.GetComponent<CharacterController>();
     }
 
     private void Start()
@@ -68,11 +71,22 @@ public class LifeManager : MonoBehaviour
         yield return StartCoroutine(FadeTo(1f));
         yield return new WaitForSeconds(0.5f);
 
+        if (playerController != null)
+        {
+            playerController.enabled = false;
+        }
+        
         player.transform.position = respawnPoint.position;
         player.transform.rotation = respawnPoint.rotation;
 
+        if (playerController != null)
+        {
+            playerController.enabled = true;
+        }
+        
         yield return StartCoroutine(FadeTo(0f));
         isDying = false;
+        DeathZone.Instance.resetTrigger();
     }
 
     private IEnumerator FadeAndRestart()
@@ -94,6 +108,7 @@ public class LifeManager : MonoBehaviour
         SetBlackScreen(0f);
         blackScreenImage.enabled = false;
         isDying = false;
+        DeathZone.Instance.resetTrigger();
     }
 
     private IEnumerator FadeTo(float targetAlpha)
