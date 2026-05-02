@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
     public float flashlightBattery = 100f;
     public float flashlightMaxBattery = 100f;
     public bool flashlightPickedUp = false;
+
+    // This now mirrors the static Inventory value
     public bool holdingSyringe = false;
 
     private void Awake()
@@ -46,10 +48,8 @@ public class GameManager : MonoBehaviour
             flashlightPickedUp = flashlight.isPickedUp;
         }
 
-        if (inventory != null)
-        {
-            holdingSyringe = inventory.holdingSyringe;
-        }
+        // FIX: Use static access
+        holdingSyringe = Inventory.holdingSyringe;
     }
 
     public void LoadPlayerState(Player player, Sanity sanity, FlashlightToggle flashlight, Inventory inventory)
@@ -73,10 +73,8 @@ public class GameManager : MonoBehaviour
             flashlight.isPickedUp = flashlightPickedUp;
         }
 
-        if (inventory != null)
-        {
-            inventory.holdingSyringe = holdingSyringe;
-        }
+        // FIX: Assign back to static variable
+        Inventory.holdingSyringe = holdingSyringe;
     }
 
     public void ResetGameData()
@@ -88,6 +86,8 @@ public class GameManager : MonoBehaviour
         flashlightBattery = 100f;
         flashlightMaxBattery = 100f;
         flashlightPickedUp = false;
+
         holdingSyringe = false;
+        Inventory.holdingSyringe = false;
     }
 }

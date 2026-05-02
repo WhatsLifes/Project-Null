@@ -280,7 +280,7 @@ public class HUD : MonoBehaviour
     {
         if (inventory == null || syringeGroup == null || syringeImage == null) return;
 
-        if (inventory.holdingSyringe)
+        if (Inventory.holdingSyringe)
         {
             if (!syringeGroup.gameObject.activeSelf)
             {
