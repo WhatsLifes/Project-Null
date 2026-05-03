@@ -182,7 +182,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -25.177
+      value: -22.17536
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
       propertyPath: m_LocalPosition.y
@@ -190,23 +190,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 221.003
+      value: 222.09198
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.7896013
+      value: -0.76033497
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.046872973
+      value: -0.045081794
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.61068255
+      value: 0.6467567
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.037409753
+      value: -0.039549973
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -214,7 +214,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -75.431
+      value: -80.764
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0dc47a45d2e8abf4797f6db5f52f1c9e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -262,9 +262,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bossAI: {fileID: 0}
   player: {fileID: 0}
-  detectionRadius: 2.5
+  detectionRadius: 4.66
   audioSource: {fileID: 0}
   crowAlertSound: {fileID: 8300000, guid: dfe6fd4b85cc9402b887cb763e28a3d3, type: 3}
-  alertCooldown: 10
+  alertCooldown: 9
   visualIndicator: {fileID: 0}
   indicatorDuration: 1
