@@ -111,8 +111,13 @@ public class Sanity : MonoBehaviour
 
         if (passiveDrainTimer >= 60f)
         {
-            TakeSanityDamage(passiveDrainPerMinute, false);
+            if (restoreCoroutine == null)
+            {
+                TakeSanityDamage(passiveDrainPerMinute, false);
+            }
+            
             passiveDrainTimer = 0f;
+
         }
 
         ApplySanityEffects();
