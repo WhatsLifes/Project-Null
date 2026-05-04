@@ -4,8 +4,8 @@ using UnityEngine.SceneManagement;
 public class MainMenuController : MonoBehaviour
 {
     [Header("Menu References")]
-    public GameObject mainMenu;
-    public GameObject settingsMenu;
+    public CanvasGroup mainMenu;
+    public CanvasGroup settingsMenu;
 
     public void PlayGame()
     {
@@ -14,12 +14,31 @@ public class MainMenuController : MonoBehaviour
 
     public void OpenSettings()
     {
-        mainMenu.SetActive(false);
-        settingsMenu.SetActive(true);
+        Show(settingsMenu);
+        Hide(mainMenu);
     }
 
     public void ExitGame()
     {
         Application.Quit();
+    }
+
+    void Show(CanvasGroup cg)
+    {
+        cg.alpha = 1;
+        cg.interactable = true;
+        cg.blocksRaycasts = true;
+    }
+
+    void Hide(CanvasGroup cg)
+    {
+        cg.alpha = 0;
+        cg.interactable = false;
+        cg.blocksRaycasts = false;
+    }
+    void Start()
+    {
+        Show(mainMenu);
+        Hide(settingsMenu);
     }
 }
