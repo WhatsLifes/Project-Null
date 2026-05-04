@@ -26,11 +26,11 @@ MonoBehaviour:
     voiceClip: {fileID: 0}
     playerText: breathe
     delayBeforeNext: 2
-  - isDoctor: 0
+  - isDoctor: 1
     voiceClip: {fileID: 8300000, guid: 061ae5fe5008aed46b549e927ce1dee5, type: 3}
     playerText: 
     delayBeforeNext: 0
-  - isDoctor: 0
+  - isDoctor: 1
     voiceClip: {fileID: 8300000, guid: 5c4fdc35dbcb3264e867d83995aa36b7, type: 3}
     playerText: 
     delayBeforeNext: 0
