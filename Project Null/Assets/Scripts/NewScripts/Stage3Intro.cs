@@ -100,7 +100,7 @@ public class Stage3Intro : MonoBehaviour
             hud.ShowSanityBar();
             hud.ShowBatteryDisplay();
             hud.ShowInventorySlot();
-            hud.ShowObjective13(); // Show Objective 11 for Stage 3
+            hud.ShowObjective18(); // Show Objective 11 for Stage 3
         }
     }
 

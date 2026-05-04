@@ -161,8 +161,8 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
         // Show objective to turn on generators
         if (hud != null)
         {
-            hud.ShowObjective15(); // "Turn on the generators (0/2)"
-            Debug.Log("Power shutdown - Objective 15 shown");
+            hud.ShowObjective20(); // "Turn on the generators (0/2)"
+            Debug.Log("Power shutdown - Objective 20 shown");
         }
     }
 

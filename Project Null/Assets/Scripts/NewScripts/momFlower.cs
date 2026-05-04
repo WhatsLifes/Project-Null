@@ -3,6 +3,8 @@ using UnityEngine;
 public class FlowerPickup : MonoBehaviour, InteractableScript
 {
     [SerializeField] private FlowerPlacement momFlowerPlacement;
+    [SerializeField] private HUD hud;
+
 
     public void InteractScript()
     {
@@ -14,6 +16,8 @@ public class FlowerPickup : MonoBehaviour, InteractableScript
 
         // Mark mom flower as picked up
         momFlowerPlacement.MarkFlowerAsPickedUp();
+        hud.ShowObjective19();
+
 
         Debug.Log("Picked up Mom's flower!");
 
