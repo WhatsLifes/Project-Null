@@ -20,9 +20,14 @@ public class InspectableObject : MonoBehaviour, InteractableScript
     [Header("Inspect UI (optional)")]
     [SerializeField] private Canvas inspectPromptCanvas;
 
+    [Header("Objective On Pickup (optional)")]
+    [Tooltip("Enable this if the object has a code on it that should update the objective.")]
+    [SerializeField] private bool hasCode = false;
+
     private bool isBeingHeld = false;
     private bool isInspecting = false;
     private bool justPickedUp = false;
+    private bool hasTriggeredObjective = false;
     private Quaternion inspectRotation;
     private Quaternion holdRotationOffset = Quaternion.identity;
     private float currentScrollOffset = 0f;
@@ -45,7 +50,6 @@ public class InspectableObject : MonoBehaviour, InteractableScript
 
     private void ResolveCamera()
     {
-        // Always try to find the player controller so canLook/canMove can be toggled
         playerController = FindObjectOfType<SimpleFPS>();
 
         if (cameraOverride != null)
@@ -84,6 +88,17 @@ public class InspectableObject : MonoBehaviour, InteractableScript
         justPickedUp = true;
         PlayerHold.Instance.Pickup(gameObject);
 
+        // Only report to the manager once, and only if this object has a code on it
+        if (!hasTriggeredObjective && hasCode)
+        {
+            hasTriggeredObjective = true;
+
+            if (CodeManager.Instance != null)
+                CodeManager.Instance.CodeFound();
+            else
+                Debug.LogWarning("InspectableObject: DollCodeManager not found in scene.");
+        }
+
         if (inspectPromptCanvas != null)
             inspectPromptCanvas.gameObject.SetActive(true);
     }
@@ -106,14 +121,13 @@ public class InspectableObject : MonoBehaviour, InteractableScript
             float mouseY = Input.GetAxis("Mouse Y");
             if (mouseX != 0 || mouseY != 0)
             {
-                // Rotate the object independently of the camera
                 inspectRotation = Quaternion.AngleAxis(-mouseX * rotationSpeed * Time.deltaTime, Vector3.up) * inspectRotation;
                 inspectRotation = Quaternion.AngleAxis(mouseY * rotationSpeed * Time.deltaTime, Vector3.right) * inspectRotation;
             }
 
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             if (scroll != 0)
-                inspectPositionOffset.z = Mathf.Clamp(inspectPositionOffset.z - scroll * scrollSpeed, scrollMin, scrollMax); // Adjust zoom by modifying z-offset
+                inspectPositionOffset.z = Mathf.Clamp(inspectPositionOffset.z - scroll * scrollSpeed, scrollMin, scrollMax);
 
             if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Escape))
                 ExitInspect();
@@ -144,7 +158,6 @@ public class InspectableObject : MonoBehaviour, InteractableScript
         }
         else
         {
-            // Position the object relative to the camera when holding, but dont move camera
             transform.position =
                   cameraTransform.position
                 + cameraTransform.forward * holdPositionOffset.z
@@ -161,7 +174,6 @@ public class InspectableObject : MonoBehaviour, InteractableScript
         inspectRotation = transform.rotation;
         currentScrollOffset = 0f;
 
-        // Snapshot the camera's world basis so it stays locked for the duration of inspect
         frozenCamPos = cameraTransform.position;
         frozenCamForward = cameraTransform.forward;
         frozenCamUp = cameraTransform.up;
@@ -200,9 +212,5 @@ public class InspectableObject : MonoBehaviour, InteractableScript
 
         if (inspectPromptCanvas != null)
             inspectPromptCanvas.gameObject.SetActive(false);
-
-        // Removed resetting to original position and rotation to retain final orientation
-        // transform.position = originalWorldPosition;
-        // transform.rotation = originalWorldRotation;
     }
 }

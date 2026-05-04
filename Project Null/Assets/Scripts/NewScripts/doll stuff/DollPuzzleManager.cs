@@ -99,7 +99,7 @@ public class DollPuzzleManager : MonoBehaviour
                 feedbackLight.Flash(true);
             }
 
-            hud.ShowObjective5();
+            hud.ShowObjective9();
 
             // ✅ NEW: mark puzzle as solved in global progress
             if (GameProgressManager.Instance != null)
