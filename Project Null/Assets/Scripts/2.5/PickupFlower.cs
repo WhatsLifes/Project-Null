@@ -29,13 +29,13 @@ public class PickupFlower : MonoBehaviour, InteractableScript
         {
             Stage2_5ProgressManager.Instance.boyFlowerPickedUp = true;
             Debug.Log("[PickupFlower] Boy flower picked up.");
-            hud.ShowObjective12();
+            hud.ShowObjective17();
         }
         else if (flowerType == FlowerType.GirlFlower)
         {
             Stage2_5ProgressManager.Instance.girlFlowerPickedUp = true;
             Debug.Log("[PickupFlower] Girl flower picked up.");
-            hud.ShowObjective11();
+            hud.ShowObjective16();
         }
 
         // Trigger dialogue if present

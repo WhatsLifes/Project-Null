@@ -100,7 +100,7 @@ public class Stage2_5Intro : MonoBehaviour
             hud.ShowSanityBar();
             hud.ShowBatteryDisplay();
             hud.ShowInventorySlot();
-            hud.ShowObjective10(); // CHANGED: Show Objective 10 for Stage 2.5
+            hud.ShowObjective15(); // CHANGED: Show Objective 10 for Stage 2.5
         }
     }
 
