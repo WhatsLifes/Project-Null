@@ -96,6 +96,15 @@ public class PlayerInteraction : MonoBehaviour
         // now find that object
         foreach (var obj in nearbyObjects)
         {
+            // never show dot or prompt on the object currently being held
+            if (playerHold.heldObject != null && obj.gameObject == playerHold.heldObject)
+            {
+                obj.HideWhiteDot();
+                obj.HidePrompt();
+                if (currentTarget == obj) ClearCurrentTarget();
+                continue;
+            }
+
             if (obj == directHitTarget)
             {
                 obj.HideWhiteDot();
