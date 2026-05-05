@@ -18,7 +18,7 @@ public class FlashlightToggle : MonoBehaviour
     [Header("Battery Settings")]
     public float maxBattery = 100f;
     public float currentBattery = 100f;
-    public float drainRate = 10f;
+    public float drainRate = 1.5f;
     public float rechargeRate = 5f;
 
     [Header("Battery Pickup Settings")]
