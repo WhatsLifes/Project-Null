@@ -11,6 +11,7 @@ public class CrowAlert : MonoBehaviour
 
     [Header("Audio")]
     public AudioSource audioSource;
+    public AudioClip crowAlertSound;
 
     [Header("Cooldown Settings")]
     public float alertCooldown = 10f;
@@ -34,9 +35,6 @@ public class CrowAlert : MonoBehaviour
 
         if (visualIndicator != null)
             visualIndicator.SetActive(false);
-        
-        // crows start out silent
-        if (audioSource != null) audioSource.mute = true;
     }
 
     void Update()
@@ -73,9 +71,9 @@ public class CrowAlert : MonoBehaviour
         cooldownTimer = alertCooldown;
 
         // Play sound effect
-        if (audioSource != null)
+        if (audioSource != null && crowAlertSound != null)
         {
-            audioSource.mute = false;
+            audioSource.PlayOneShot(crowAlertSound);
         }
 
         // Show visual indicator
