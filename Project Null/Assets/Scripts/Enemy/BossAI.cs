@@ -11,17 +11,17 @@ public class BossAI : MonoBehaviour
     public NavMeshAgent agent;
 
     [Header("Audio")]
-    public AudioSource audioSource;
-    public AudioClip normalAudio;
-    public AudioClip chaseAudio;
-    [Header("Chase Audio System (NEW)")]
-    public float chaseAudioPlayDuration = 10f;
-    public float chaseAudioFadeDuration = 2f;
-    public float chaseAudioCooldown = 5f;
+    // public AudioSource audioSource;
+    // public AudioClip normalAudio;
+    public AudioSource chaseAudioSource;
+    // [Header("Chase Audio System (NEW)")]
+    // public float chaseAudioPlayDuration = 10f;
+    // public float chaseAudioFadeDuration = 2f;
+    // public float chaseAudioCooldown = 5f;
 
-    private float chaseAudioCooldownTimer = 0f;
-    private Coroutine chaseAudioRoutine;
-    private bool chaseAudioPlaying = false;
+    // private float chaseAudioCooldownTimer = 0f;
+    // private Coroutine chaseAudioRoutine;
+    // private bool chaseAudioPlaying = false;
 
     [Header("Hearing Settings")]
     public float hearingRadius = 15f;
@@ -79,8 +79,11 @@ public class BossAI : MonoBehaviour
         if (player == null)
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
-        if (audioSource == null)
-            audioSource = GetComponent<AudioSource>();
+        // if (audioSource == null)
+        //     audioSource = GetComponent<AudioSource>();
+
+        // chase audio starts silent
+        if (chaseAudioSource !=null) chaseAudioSource.Stop();
 
         // Agent baseline configuration to avoid unintended stops
         agent.speed = patrolSpeed;
@@ -90,11 +93,11 @@ public class BossAI : MonoBehaviour
         agent.angularSpeed = Mathf.Max(agent.angularSpeed, 120f);
         agent.acceleration = Mathf.Max(agent.acceleration, 16f);
         SetNewPatrolTarget();
-        // Only switch back if chase audio is NOT playing
-        if (!chaseAudioPlaying)
-        {
-            PlayNormalAudio();
-        }
+        // // Only switch back if chase audio is NOT playing
+        // if (!chaseAudioPlaying)
+        // {
+        //     PlayNormalAudio();
+        // }
 
         if (showDebugLogs)
         {
@@ -121,8 +124,8 @@ public class BossAI : MonoBehaviour
         if (hearingPingTimer > 0f)
             hearingPingTimer -= Time.deltaTime;
 
-        if (chaseAudioCooldownTimer > 0f)
-            chaseAudioCooldownTimer -= Time.deltaTime;
+        // if (chaseAudioCooldownTimer > 0f)
+        //     chaseAudioCooldownTimer -= Time.deltaTime;
 
         // Set Movement State
         bool isMoving = agent.velocity.sqrMagnitude > 0.1f;
@@ -407,8 +410,9 @@ public class BossAI : MonoBehaviour
         if (player != null)
             agent.SetDestination(player.position);
 
-        // NEW SYSTEM
-        PlayChaseAudio();
+        // // NEW SYSTEM
+        // PlayChaseAudio();
+        if (chaseAudioSource != null && !chaseAudioSource.isPlaying) chaseAudioSource.Play();
     }
 
     private void ExitChaseState()
@@ -416,7 +420,8 @@ public class BossAI : MonoBehaviour
         currentState = BossState.Patrolling;
         agent.isStopped = false;
         SetNewPatrolTarget();
-        PlayNormalAudio();
+        // PlayNormalAudio();
+        if (chaseAudioSource != null) chaseAudioSource.Stop();
         if (showDebugLogs) Debug.Log("Boss lost sight of player, returning to patrol");
     }
 
@@ -491,40 +496,40 @@ public class BossAI : MonoBehaviour
         EnterInvestigateState();
     }
 
-    private void PlayNormalAudio()
-    {
-        if (audioSource == null || normalAudio == null)
-            return;
+    // private void PlayNormalAudio()
+    // {
+    //     if (audioSource == null || normalAudio == null)
+    //         return;
 
-        if (chaseAudioPlaying)
-            return; // IMPORTANT FIX
+    //     if (chaseAudioPlaying)
+    //         return; // IMPORTANT FIX
 
-        if (audioSource.isPlaying && audioSource.clip == normalAudio)
-            return;
+    //     if (audioSource.isPlaying && audioSource.clip == normalAudio)
+    //         return;
 
-        audioSource.clip = normalAudio;
-        audioSource.loop = true;
-        audioSource.volume = 1f;
-        audioSource.Play();
-    }
+    //     audioSource.clip = normalAudio;
+    //     audioSource.loop = true;
+    //     audioSource.volume = 1f;
+    //     audioSource.Play();
+    // }
 
-    private void PlayChaseAudio()
-    {
-        if (audioSource == null || chaseAudio == null)
-            return;
+    // private void PlayChaseAudio()
+    // {
+    //     if (audioSource == null || chaseAudio == null)
+    //         return;
 
-        if (chaseAudioPlaying)
-            return;
+    //     if (chaseAudioPlaying)
+    //         return;
 
-        if (chaseAudioCooldownTimer > 0f)
-            return;
+    //     if (chaseAudioCooldownTimer > 0f)
+    //         return;
 
-        // prevent duplicate coroutine
-        if (chaseAudioRoutine != null)
-            return;
+    //     // prevent duplicate coroutine
+    //     if (chaseAudioRoutine != null)
+    //         return;
 
-        chaseAudioRoutine = StartCoroutine(ChaseAudioRoutine());
-    }
+    //     chaseAudioRoutine = StartCoroutine(ChaseAudioRoutine());
+    // }
     // Visualization in editor - ALWAYS VISIBLE for testing
     private void OnDrawGizmos()
     {
@@ -621,39 +626,39 @@ public class BossAI : MonoBehaviour
 
         modelRoot.localRotation = endRot;
     }
-    private IEnumerator ChaseAudioRoutine()
-    {
-        chaseAudioPlaying = true;
+//     private IEnumerator ChaseAudioRoutine()
+//     {
+//         chaseAudioPlaying = true;
 
-        audioSource.clip = chaseAudio;
-        audioSource.loop = false;
-        audioSource.volume = 1f;
-        audioSource.Play();
+//         audioSource.clip = chaseAudio;
+//         audioSource.loop = false;
+//         audioSource.volume = 1f;
+//         audioSource.Play();
 
-        float playTime = Mathf.Min(chaseAudioPlayDuration, chaseAudio.length);
+//         float playTime = Mathf.Min(chaseAudioPlayDuration, chaseAudio.length);
 
-        // wait while clip plays
-        yield return new WaitForSeconds(playTime);
+//         // wait while clip plays
+//         yield return new WaitForSeconds(playTime);
 
-        // fade out
-        float startVolume = audioSource.volume;
-        float t = 0f;
+//         // fade out
+//         float startVolume = audioSource.volume;
+//         float t = 0f;
 
-        while (t < chaseAudioFadeDuration)
-        {
-            t += Time.deltaTime;
-            audioSource.volume = Mathf.Lerp(startVolume, 0f, t / chaseAudioFadeDuration);
-            yield return null;
-        }
+//         while (t < chaseAudioFadeDuration)
+//         {
+//             t += Time.deltaTime;
+//             audioSource.volume = Mathf.Lerp(startVolume, 0f, t / chaseAudioFadeDuration);
+//             yield return null;
+//         }
 
-        audioSource.Stop();
+//         audioSource.Stop();
 
-        // fixes
-        chaseAudioPlaying = false;
-        chaseAudioRoutine = null; // THIS was missing (major bug)
-        chaseAudioCooldownTimer = chaseAudioCooldown;
+//         // fixes
+//         chaseAudioPlaying = false;
+//         chaseAudioRoutine = null; // THIS was missing (major bug)
+//         chaseAudioCooldownTimer = chaseAudioCooldown;
 
-        // return to normal audio AFTER chase clip fully ends
-        PlayNormalAudio();
-    }
+//         // return to normal audio AFTER chase clip fully ends
+//         PlayNormalAudio();
+//     }
 }
