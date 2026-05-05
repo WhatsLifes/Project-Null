@@ -67,6 +67,7 @@ public class GateDoorOpen : MonoBehaviour, stage2_InteractableScript
             if (lockedSound != null && canPlayLockedSound)
             {
                 audioSource.PlayOneShot(lockedSound, volume);
+                Debug.Log("Lock sound played.");
                 canPlayLockedSound = false;
                 StartCoroutine(ResetLockedCooldown());
             }
@@ -77,6 +78,7 @@ public class GateDoorOpen : MonoBehaviour, stage2_InteractableScript
 
         if (openSound != null)
             audioSource.PlayOneShot(openSound, volume);
+            Debug.Log("Gate opened.");
 
         StartCoroutine(OpenDoor());
 
