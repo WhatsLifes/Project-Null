@@ -14,6 +14,9 @@ public class CobwebZone : MonoBehaviour
     private float baseVolume;
     private float currentVolume;
 
+    private float originalSpeedMultiplier;
+    private bool isSlowed = false;
+
     void Start()
     {
         if (cobwebSound == null) return;
@@ -59,12 +62,19 @@ public class CobwebZone : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
 
-        player = other.GetComponent<SimpleFPS>();
-        if (player == null) return;
+        SimpleFPS entering = other.GetComponent<SimpleFPS>();
+        if (entering == null) return;
 
+        player = entering;
         playersInside++;
 
-        player.speedMultiplier *= slowMultiplier;
+        // Apply slow only once
+        if (!isSlowed)
+        {
+            originalSpeedMultiplier = player.speedMultiplier;
+            player.speedMultiplier = originalSpeedMultiplier * slowMultiplier;
+            isSlowed = true;
+        }
 
         Debug.Log("Entered cobweb");
     }
@@ -74,28 +84,31 @@ public class CobwebZone : MonoBehaviour
         if (!other.CompareTag("Player")) return;
 
         SimpleFPS exiting = other.GetComponent<SimpleFPS>();
+        if (exiting == null) return;
 
-        if (exiting != null)
+        playersInside--;
+
+        if (playersInside <= 0)
         {
-            playersInside--;
+            playersInside = 0;
 
-            exiting.speedMultiplier /= slowMultiplier;
-
-            if (playersInside <= 0)
+            // Restore original speed safely
+            if (isSlowed)
             {
-                playersInside = 0;
-                player = null;
-
-                currentVolume = 0f;
-
-                if (cobwebSound != null)
-                {
-                    cobwebSound.Stop();
-                    cobwebSound.time = 0f;
-                }
-
-                Debug.Log("Exited cobweb (audio forced stop)");
+                exiting.speedMultiplier = originalSpeedMultiplier;
+                isSlowed = false;
             }
+
+            player = null;
+            currentVolume = 0f;
+
+            if (cobwebSound != null)
+            {
+                cobwebSound.Stop();
+                cobwebSound.time = 0f;
+            }
+
+            Debug.Log("Exited cobweb (audio forced stop)");
         }
     }
 }
