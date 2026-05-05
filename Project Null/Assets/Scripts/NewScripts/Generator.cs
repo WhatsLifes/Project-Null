@@ -133,13 +133,13 @@ public class Generator : MonoBehaviour, InteractableScript
         // Update objective based on count
         if (generatorsOn == 1)
         {
-            hud.ShowObjective21(); // "Turn on the generators (1/2)"
-            Debug.Log("First generator on - Objective 21 shown");
+            hud.ShowObjective20(); // "Turn on the generators (1/2)"
+            Debug.Log("First generator on - Objective 20 shown");
         }
         else if (generatorsOn == 2)
         {
-            hud.ShowObjective22(); // "Return to the workstation & try again"
-            Debug.Log("Both generators on - Objective 22 shown");
+            hud.ShowObjective21(); // "Return to the workstation & try again"
+            Debug.Log("Both generators on - Objective 21 shown");
         }
     }
 
