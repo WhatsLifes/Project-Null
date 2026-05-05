@@ -208,7 +208,7 @@ public class HUD : MonoBehaviour
         gateKeyPickedUp = false;
         UpdateObjective13();
     }
-    public void ShowObjective14() => ShowObjective("Survive and find a way to the next floor");
+    public void ShowObjective14() => ShowObjective("Survive and find a way \n to the next floor");
     public void ShowObjective15() => ShowObjective("Pick up the flowers (0/2)");
     public void ShowObjective16() => ShowObjective("Pick up the flowers (1/2)");
     public void ShowObjective17() => ShowObjective("Continue to the next floor");
