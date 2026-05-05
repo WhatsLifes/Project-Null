@@ -109,6 +109,49 @@ public class ShowObjectiveTrigger : MonoBehaviour
             case 8:
                 hud.ShowObjective8();
                 break;
+            case 9:
+                 hud.ShowObjective9();
+                break;
+            case 10:
+                hud.ShowObjective10();
+                break;
+            case 11:
+                hud.ShowObjective11();
+                break;
+            case 12:
+                hud.ShowObjective12();
+                break;
+            case 13:
+                hud.ShowObjective13();
+                break;
+            case 14:
+                hud.ShowObjective14();
+                break;
+            case 15:
+                hud.ShowObjective15();
+                break;
+            case 16:
+                hud.ShowObjective16();
+                break;
+            case 17:
+                hud.ShowObjective17();
+                break;
+            case 18:
+                hud.ShowObjective18();
+                break;
+            case 19:
+                hud.ShowObjective19();
+                break;
+            case 20:
+                hud.ShowObjective20();
+                break;
+            case 21:
+                hud.ShowObjective21();
+                break;  
+            case 22:
+                hud.ShowObjective22();
+                break;
+
             default:
                 Debug.LogWarning($"Invalid preset objective number: {presetObjectiveNumber}");
                 hud.ShowObjective(newObjectiveText);
