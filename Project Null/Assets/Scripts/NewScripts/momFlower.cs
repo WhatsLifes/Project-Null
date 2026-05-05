@@ -16,8 +16,6 @@ public class FlowerPickup : MonoBehaviour, InteractableScript
 
         // Mark mom flower as picked up
         momFlowerPlacement.MarkFlowerAsPickedUp();
-        hud.ShowObjective19();
-
 
         Debug.Log("Picked up Mom's flower!");
 
