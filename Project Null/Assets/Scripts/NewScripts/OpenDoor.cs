@@ -28,6 +28,7 @@ public class DoorButton : MonoBehaviour, InteractableScript
     [Range(0f, 1f)] public float volume = 1f;
 
     private Transform player;
+    private bool mannequinsTriggered = false;
 
     void Start()
     {
@@ -53,13 +54,14 @@ public class DoorButton : MonoBehaviour, InteractableScript
         if (player == null || mannequinObsDoor == null) return;
 
         // 🔊 Play button press sound
-        if (buttonPressSound != null)
+        if (buttonPressSound != null && !mannequinsTriggered)
         {
             audioSource.PlayOneShot(buttonPressSound, volume);
         }
 
         // Start the delayed opening
         StartCoroutine(OpenDoorsWithDelay());
+        mannequinsTriggered = true;
     }
 
     private IEnumerator OpenDoorsWithDelay()

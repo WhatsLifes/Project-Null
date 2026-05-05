@@ -8,10 +8,10 @@ public class PlankManager : MonoBehaviour
     public GameObject[] allPlanks;
 
     [Header("Audio")]
-    public AudioSource sfxAudioSource;          // sfx audio source for buzzer
-    public AudioClip buzzerSFX;                 // buzzer sound to stop music
+    public AudioSource sfxAudioSource;          // sfx audio source for stop/go sfx
+    public AudioClip stopSFX;                   // buzzer sound to stop music
     public AudioClip goSFX;                     // ding sound to play music again
-    public GameObject speaker;                  // speaker where doll theme music will come from
+    public GameObject musicSpeaker;             // speaker object where doll theme music will come from
 
     [Range(0f, 1f)]
     [Tooltip("Fraction of planks that disappear on red light (e.g., 0.4 = 40%)")]
@@ -21,8 +21,9 @@ public class PlankManager : MonoBehaviour
 
     public void OnRedLight()
     {
-        sfxAudioSource.PlayOneShot(buzzerSFX);
-        AudioSource green_music = speaker.GetComponent<AudioSource>();
+        Debug.Log("Red light triggered");
+        sfxAudioSource.PlayOneShot(stopSFX);
+        AudioSource green_music = musicSpeaker.GetComponent<AudioSource>();
         green_music.Pause();
 
         RestoreAll();
@@ -46,8 +47,9 @@ public class PlankManager : MonoBehaviour
 
     public void OnGreenLight()
     {
+        Debug.Log("Green light triggered");
         sfxAudioSource.PlayOneShot(goSFX);
-        AudioSource green_music = speaker.GetComponent<AudioSource>();
+        AudioSource green_music = musicSpeaker.GetComponent<AudioSource>();
         green_music.Play();
 
         RestoreAll();
