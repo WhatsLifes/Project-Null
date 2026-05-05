@@ -241,19 +241,16 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
 
     private void ActivateMachine()
     {
-        if (showDebugLogs)
-            Debug.Log("★★★ MACHINE ACTIVATING! ★★★");
+        if (showDebugLogs) Debug.Log("★★★ MACHINE ACTIVATING! ★★★");
 
         machineCompleted = true;
 
-        // Restore lights to normal
+        if (hud != null) hud.KeyboardInteracted();
+
         RestoreLights();
 
-        // Play machine start dialogue
-        if (machineStartDialogue != null)
-            machineStartDialogue.TriggerNow();
+        if (machineStartDialogue != null) machineStartDialogue.TriggerNow();
 
-        // Start the ending sequence
         StartCoroutine(MachineSuccessSequence());
     }
 
@@ -292,22 +289,22 @@ public class FlowerMachine : MonoBehaviour, InteractableScript
     public void PlaceSonFlower()
     {
         sonFlower = true;
-        if (showDebugLogs)
-            Debug.Log("Son's flower placed!");
+        if (hud != null) hud.FlowerPlaced();
+        if (showDebugLogs) Debug.Log("Son's flower placed!");
     }
 
     public void PlaceDaughterFlower()
     {
         daughterFlower = true;
-        if (showDebugLogs)
-            Debug.Log("Daughter's flower placed!");
+        if (hud != null) hud.FlowerPlaced();
+        if (showDebugLogs) Debug.Log("Daughter's flower placed!");
     }
 
     public void PlaceMomFlower()
     {
         momFlower = true;
-        if (showDebugLogs)
-            Debug.Log("Mom's flower placed!");
+        if (hud != null) hud.FlowerPlaced();
+        if (showDebugLogs) Debug.Log("Mom's flower placed!");
     }
 
     public void SetGenerator1On()

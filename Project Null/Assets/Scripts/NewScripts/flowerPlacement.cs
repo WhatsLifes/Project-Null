@@ -28,6 +28,9 @@ public class FlowerPlacement : MonoBehaviour, InteractableScript
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs = true;
 
+    [SerializeField] private HUD hud;
+
+
     private void Start()
     {
         // Hide flower visual at start
@@ -100,8 +103,9 @@ public class FlowerPlacement : MonoBehaviour, InteractableScript
     public void MarkFlowerAsPickedUp()
     {
         flowerPickedUp = true;
-        if (showDebugLogs)
-            Debug.Log($"{flowerType} flower marked as picked up!");
+        if (flowerType == FlowerType.Mom && hud != null)
+            hud.FoundLastFlower();
+        if (showDebugLogs) Debug.Log($"{flowerType} flower marked as picked up!");
     }
 
     [ContextMenu("Debug: Reset Placement")]

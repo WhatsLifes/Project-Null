@@ -188,6 +188,49 @@ public class HUD : MonoBehaviour
         gateKeyPickedUp = true;
         UpdateObjective13();
     }
+    // Objective 18 state
+    private bool lastFlowerFound = false;
+    private int flowersPlaced = 0;
+    private bool keyboardInteracted = false;
+
+    private void UpdateObjective18()
+    {
+        bool compoundReady = lastFlowerFound && flowersPlaced >= 3;
+
+        string flowerLine = lastFlowerFound
+            ? "<s>Find the last flower</s>"
+            : "Find the last flower";
+
+        string placeLine = flowersPlaced >= 3
+            ? "<s>Place the flowers (3/3)</s>"
+            : $"Place the flowers ({flowersPlaced}/3)";
+
+        string keyboardLine = compoundReady
+            ? (keyboardInteracted
+                ? "<s>Interact with the Keyboard</s>"
+                : "Interact with the Keyboard")
+            : "<color=#808080>Interact with the Keyboard</color>";
+
+        ShowObjective($"Make the Tri-Flora Compound\n  - {flowerLine}\n  - {placeLine}\n  - {keyboardLine}");
+    }
+
+    public void FoundLastFlower()
+    {
+        lastFlowerFound = true;
+        UpdateObjective18();
+    }
+
+    public void FlowerPlaced()
+    {
+        flowersPlaced = Mathf.Min(flowersPlaced + 1, 3);
+        UpdateObjective18();
+    }
+
+    public void KeyboardInteracted()
+    {
+        keyboardInteracted = true;
+        UpdateObjective18();
+    }
 
     public void ShowObjective1() => ShowObjective("Look around the room");
     public void ShowObjective2() => ShowObjective("Explore the laboratory");
@@ -212,11 +255,16 @@ public class HUD : MonoBehaviour
     public void ShowObjective15() => ShowObjective("Pick up the flowers (0/2)");
     public void ShowObjective16() => ShowObjective("Pick up the flowers (1/2)");
     public void ShowObjective17() => ShowObjective("Continue to the next floor");
-    public void ShowObjective18() => ShowObjective("Find the last flower");
-    public void ShowObjective19() => ShowObjective("Make the Tri-Flora Compound");
-    public void ShowObjective20() => ShowObjective("Turn on the generators (0/2)");
-    public void ShowObjective21() => ShowObjective("Turn on the generators (1/2)");
-    public void ShowObjective22() => ShowObjective("Return to the workstation & try again");
+    public void ShowObjective18()
+    {
+        lastFlowerFound = false;
+        flowersPlaced = 0;
+        keyboardInteracted = false;
+        UpdateObjective18();
+    }
+    public void ShowObjective19() => ShowObjective("Turn on the generators (0/2)");
+    public void ShowObjective20() => ShowObjective("Turn on the generators (1/2)");
+    public void ShowObjective21() => ShowObjective("Return to the workstation & try again");
 
     public void ShowObjective(string objectiveMessage)
     {
