@@ -9,6 +9,7 @@ TagManager:
   - Chair
   - Door
   - MonsterHitbox
+  - grass
   layers:
   - Default
   - TransparentFX
