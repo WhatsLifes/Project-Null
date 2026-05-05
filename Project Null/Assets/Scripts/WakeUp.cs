@@ -73,6 +73,14 @@ public class WakeUpSequence : MonoBehaviour
     [Tooltip("Camera tilt when standing")]
     public float standingCameraAngle = 0f;
 
+    [Header("Skip Settings")]
+    [Tooltip("Key the player presses to skip the cutscene")]
+    public KeyCode skipKey = KeyCode.Space;
+    [Tooltip("Duration of the fade to black when skipping")]
+    public float skipFadeDuration = 0.5f;
+    [Tooltip("Optional UI text object showing the skip prompt (assign a Text or TMP_Text child of eyelidCanvas)")]
+    public GameObject skipPromptObject;
+
     private float sequenceTimer = 0f;
     private bool sequenceComplete = false;
     private float initialPlayerRotation;
@@ -81,6 +89,9 @@ public class WakeUpSequence : MonoBehaviour
     private bool phase1Logged = false;
     private bool phase2Logged = false;
     private bool phase3Logged = false;
+    private bool isSkipping = false;
+    private float skipFadeTimer = 0f;
+
     [SerializeField] private HUD hud;
 
     void Start()
@@ -123,10 +134,51 @@ public class WakeUpSequence : MonoBehaviour
     void Update()
     {
         if (sequenceComplete) return;
-        if (Input.GetKeyDown(KeyCode.Escape))
+
+        // Handle skip fade-out
+        if (isSkipping)
         {
+            skipFadeTimer += Time.deltaTime;
+            float progress = skipFadeTimer / skipFadeDuration;
+
+            if (fadeImage != null)
+            {
+                fadeImage.gameObject.SetActive(true);
+                fadeImage.color = Color.Lerp(Color.clear, Color.black, progress);
+            }
+
+            if (progress >= 1f)
+            {
+                CompleteSequence();
+            }
             return;
         }
+
+        // Check for skip input
+        if (Input.GetKeyDown(skipKey))
+        {
+            isSkipping = true;
+            skipFadeTimer = 0f;
+
+            // Snap player body to final rotation
+            if (playerBody != null)
+                playerBody.rotation = Quaternion.Euler(0, initialPlayerRotation + 90f, 0);
+
+            // Snap camera to final position
+            if (mainCamera != null && playerCameraPosition != null)
+            {
+                mainCamera.transform.position = playerCameraPosition.position;
+                mainCamera.transform.rotation = playerCameraPosition.rotation;
+            }
+
+            // Hide skip prompt immediately
+            if (skipPromptObject != null)
+                skipPromptObject.SetActive(false);
+
+            SetEyelidPosition(1f);
+            return;
+        }
+
         sequenceTimer += Time.deltaTime;
         RunSequence();
     }
@@ -182,11 +234,11 @@ public class WakeUpSequence : MonoBehaviour
 
             float blinkTimer = t;
 
-            // Close eyes - LINEAR (no easing for fast, natural close)
+            // Close eyes
             if (blinkTimer < blinkCloseDuration)
             {
                 float progress = blinkTimer / blinkCloseDuration;
-                float eyelidPos = 1f - progress;  // Changed from: 1f - EaseInCubic(progress)
+                float eyelidPos = 1f - progress;
                 SetEyelidPosition(eyelidPos);
                 if (blinkTimer < 0.05f)
                 {
@@ -235,7 +287,6 @@ public class WakeUpSequence : MonoBehaviour
         float thirdBlinkDuration = blinkCloseDuration + blinkOpenDuration;
         if (t < thirdBlinkDuration)
         {
-            // Close eyes
             if (t < blinkCloseDuration)
             {
                 float progress = t / blinkCloseDuration;
@@ -243,7 +294,6 @@ public class WakeUpSequence : MonoBehaviour
                 SetCameraAngle(halfwaySitCameraAngle, 0f);
                 return;
             }
-            // Reopen eyes
             else
             {
                 float reopenTime = t - blinkCloseDuration;
