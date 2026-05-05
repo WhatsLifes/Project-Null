@@ -1,64 +1,41 @@
 using UnityEngine;
 
-public class FootstepsScript : MonoBehaviour
+public class FootstepManager : MonoBehaviour
 {
-    public GameObject footstepsObj;
+    [Header("Audio Settings")]
+    public AudioSource footstepAudioSource;
+
+    [Header("Movement Settings")]
+    [Tooltip("How fast must the player move to trigger sound?")]
+    public float velocityThreshold = 0.1f;
+
+    private Vector3 lastPosition;
+    private float currentVelocity;
 
     void Start()
     {
-        footstepsObj.SetActive(false);
+        // start muted until we move
+        footstepAudioSource.mute = true;
+        
+        // initialize previous position
+        lastPosition = transform.position;
     }
 
     void Update()
     {
-        if (Input.GetKey("w"))
+        // calculate velocity
+        currentVelocity = (transform.position - lastPosition).magnitude / Time.deltaTime;
+
+        // check velocity against threshold - move if above threshold
+        if (currentVelocity > velocityThreshold)
         {
-            StartFootsteps();
+            if (footstepAudioSource.mute) footstepAudioSource.mute = false;
+        }
+        else
+        {
+            if (!footstepAudioSource.mute) footstepAudioSource.mute = true;
         }
 
-        if (Input.GetKeyDown("a"))
-        {
-            StartFootsteps();
-        }
-
-        if (Input.GetKeyDown("s"))
-        {
-            StartFootsteps();
-        }
-
-        if (Input.GetKeyDown("d"))
-        {
-            StartFootsteps();
-        }
-
-        if (Input.GetKeyUp("w"))
-        {
-            StopFootsteps();
-        }
-
-        if (Input.GetKeyUp("a"))
-        {
-            StopFootsteps();
-        }
-
-        if (Input.GetKeyUp("s"))
-        {
-            StopFootsteps();
-        }
-
-        if (Input.GetKeyUp("d"))
-        {
-            StopFootsteps();
-        }
-    }
-    
-    void StartFootsteps()
-    {
-        footstepsObj.SetActive(true);
-    }
-
-    void StopFootsteps()
-    {
-        footstepsObj.SetActive(false);
+        lastPosition = transform.position;
     }
 }
