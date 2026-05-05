@@ -14,6 +14,14 @@ public class BossAI : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip normalAudio;
     public AudioClip chaseAudio;
+    [Header("Chase Audio System (NEW)")]
+    public float chaseAudioPlayDuration = 10f;
+    public float chaseAudioFadeDuration = 2f;
+    public float chaseAudioCooldown = 5f;
+
+    private float chaseAudioCooldownTimer = 0f;
+    private Coroutine chaseAudioRoutine;
+    private bool chaseAudioPlaying = false;
 
     [Header("Hearing Settings")]
     public float hearingRadius = 15f;
@@ -82,7 +90,11 @@ public class BossAI : MonoBehaviour
         agent.angularSpeed = Mathf.Max(agent.angularSpeed, 120f);
         agent.acceleration = Mathf.Max(agent.acceleration, 16f);
         SetNewPatrolTarget();
-        PlayNormalAudio();
+        // Only switch back if chase audio is NOT playing
+        if (!chaseAudioPlaying)
+        {
+            PlayNormalAudio();
+        }
 
         if (showDebugLogs)
         {
@@ -108,6 +120,9 @@ public class BossAI : MonoBehaviour
         // tick down timers
         if (hearingPingTimer > 0f)
             hearingPingTimer -= Time.deltaTime;
+
+        if (chaseAudioCooldownTimer > 0f)
+            chaseAudioCooldownTimer -= Time.deltaTime;
 
         // Set Movement State
         bool isMoving = agent.velocity.sqrMagnitude > 0.1f;
@@ -386,13 +401,14 @@ public class BossAI : MonoBehaviour
     {
         currentState = BossState.Chasing;
         agent.isStopped = false;
-        // Ensure agent is actively pursuing the player
         agent.ResetPath();
         agent.speed = chaseSpeed;
+
         if (player != null)
             agent.SetDestination(player.position);
+
+        // NEW SYSTEM
         PlayChaseAudio();
-        if (showDebugLogs) Debug.Log("Boss entering chase state!");
     }
 
     private void ExitChaseState()
@@ -477,27 +493,38 @@ public class BossAI : MonoBehaviour
 
     private void PlayNormalAudio()
     {
-        if (audioSource != null && normalAudio != null && !hasPlayedChaseAudio)
-        {
-            audioSource.clip = normalAudio;
-            audioSource.loop = true;
-            audioSource.Play();
-        }
-        hasPlayedChaseAudio = false;
+        if (audioSource == null || normalAudio == null)
+            return;
+
+        if (chaseAudioPlaying)
+            return; // IMPORTANT FIX
+
+        if (audioSource.isPlaying && audioSource.clip == normalAudio)
+            return;
+
+        audioSource.clip = normalAudio;
+        audioSource.loop = true;
+        audioSource.volume = 1f;
+        audioSource.Play();
     }
 
     private void PlayChaseAudio()
     {
-        if (audioSource != null && chaseAudio != null)
-        {
-            audioSource.clip = chaseAudio;
-            audioSource.loop = true;
-            audioSource.volume = 0.8f;
-            audioSource.Play();
-            hasPlayedChaseAudio = true;
-        }
-    }
+        if (audioSource == null || chaseAudio == null)
+            return;
 
+        if (chaseAudioPlaying)
+            return;
+
+        if (chaseAudioCooldownTimer > 0f)
+            return;
+
+        // prevent duplicate coroutine
+        if (chaseAudioRoutine != null)
+            return;
+
+        chaseAudioRoutine = StartCoroutine(ChaseAudioRoutine());
+    }
     // Visualization in editor - ALWAYS VISIBLE for testing
     private void OnDrawGizmos()
     {
@@ -593,5 +620,40 @@ public class BossAI : MonoBehaviour
         }
 
         modelRoot.localRotation = endRot;
+    }
+    private IEnumerator ChaseAudioRoutine()
+    {
+        chaseAudioPlaying = true;
+
+        audioSource.clip = chaseAudio;
+        audioSource.loop = false;
+        audioSource.volume = 1f;
+        audioSource.Play();
+
+        float playTime = Mathf.Min(chaseAudioPlayDuration, chaseAudio.length);
+
+        // wait while clip plays
+        yield return new WaitForSeconds(playTime);
+
+        // fade out
+        float startVolume = audioSource.volume;
+        float t = 0f;
+
+        while (t < chaseAudioFadeDuration)
+        {
+            t += Time.deltaTime;
+            audioSource.volume = Mathf.Lerp(startVolume, 0f, t / chaseAudioFadeDuration);
+            yield return null;
+        }
+
+        audioSource.Stop();
+
+        // fixes
+        chaseAudioPlaying = false;
+        chaseAudioRoutine = null; // THIS was missing (major bug)
+        chaseAudioCooldownTimer = chaseAudioCooldown;
+
+        // return to normal audio AFTER chase clip fully ends
+        PlayNormalAudio();
     }
 }
