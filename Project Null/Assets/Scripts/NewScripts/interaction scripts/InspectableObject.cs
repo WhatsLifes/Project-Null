@@ -20,10 +20,16 @@ public class InspectableObject : MonoBehaviour, InteractableScript
     [Header("Inspect UI (optional)")]
     [SerializeField] private Canvas inspectPromptCanvas;
 
+    [Header("Objective On Pickup (optional)")]
+    [Tooltip("Enable this if the object has a code on it that should update the objective.")]
+    [SerializeField] private bool hasCode = false;
+
     private bool isBeingHeld = false;
     private bool isInspecting = false;
     private bool justPickedUp = false;
+    private bool hasTriggeredObjective = false;
     private Quaternion inspectRotation;
+    private Quaternion holdRotationOffset = Quaternion.identity;
     private float currentScrollOffset = 0f;
 
     private Transform cameraTransform;
@@ -44,7 +50,6 @@ public class InspectableObject : MonoBehaviour, InteractableScript
 
     private void ResolveCamera()
     {
-        // Always try to find the player controller so canLook/canMove can be toggled
         playerController = FindObjectOfType<SimpleFPS>();
 
         if (cameraOverride != null)
@@ -69,7 +74,8 @@ public class InspectableObject : MonoBehaviour, InteractableScript
 
     public void InteractScript()
     {
-        if (PlayerHold.Instance == null || PlayerHold.Instance.IsHoldingObject()) return;
+        if (PlayerHold.Instance == null) { Debug.LogError("InspectableObject: PlayerHold.Instance is null — add PlayerHold to the Player GameObject."); return; }
+        if (PlayerHold.Instance.IsHoldingObject()) return;
 
         if (cameraTransform == null) ResolveCamera();
         if (cameraTransform == null) return;
@@ -77,13 +83,24 @@ public class InspectableObject : MonoBehaviour, InteractableScript
         originalWorldPosition = transform.position;
         originalWorldRotation = transform.rotation;
 
+        holdRotationOffset = Quaternion.identity;
         isBeingHeld = true;
         justPickedUp = true;
+        PlayerHold.Instance.Pickup(gameObject);
+
+        // Only report to the manager once, and only if this object has a code on it
+        if (!hasTriggeredObjective && hasCode)
+        {
+            hasTriggeredObjective = true;
+
+            if (CodeManager.Instance != null)
+                CodeManager.Instance.CodeFound();
+            else
+                Debug.LogWarning("InspectableObject: DollCodeManager not found in scene.");
+        }
 
         if (inspectPromptCanvas != null)
             inspectPromptCanvas.gameObject.SetActive(true);
-
-        PlayerHold.Instance.Pickup(gameObject);
     }
 
     private void Update()
@@ -96,10 +113,7 @@ public class InspectableObject : MonoBehaviour, InteractableScript
 
         if (!isBeingHeld) return;
 
-        if (justPickedUp) { 
-            justPickedUp = false; 
-            return; 
-        }
+        if (justPickedUp) { justPickedUp = false; return; }
 
         if (isInspecting)
         {
@@ -107,14 +121,13 @@ public class InspectableObject : MonoBehaviour, InteractableScript
             float mouseY = Input.GetAxis("Mouse Y");
             if (mouseX != 0 || mouseY != 0)
             {
-                // Rotate the object independently of the camera
                 inspectRotation = Quaternion.AngleAxis(-mouseX * rotationSpeed * Time.deltaTime, Vector3.up) * inspectRotation;
                 inspectRotation = Quaternion.AngleAxis(mouseY * rotationSpeed * Time.deltaTime, Vector3.right) * inspectRotation;
             }
 
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             if (scroll != 0)
-                inspectPositionOffset.z = Mathf.Clamp(inspectPositionOffset.z - scroll * scrollSpeed, scrollMin, scrollMax); // Adjust zoom by modifying z-offset
+                inspectPositionOffset.z = Mathf.Clamp(inspectPositionOffset.z - scroll * scrollSpeed, scrollMin, scrollMax);
 
             if (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.Escape))
                 ExitInspect();
@@ -135,8 +148,6 @@ public class InspectableObject : MonoBehaviour, InteractableScript
 
         if (isInspecting)
         {
-            // Use the frozen camera basis so the object stays fixed in front of where
-            // the camera was when the player pressed R — camera does not move or rotate.
             transform.position =
                   frozenCamPos
                 + frozenCamForward * inspectPositionOffset.z
@@ -147,14 +158,13 @@ public class InspectableObject : MonoBehaviour, InteractableScript
         }
         else
         {
-            // Position the object relative to the camera when holding, but do not move the camera
             transform.position =
                   cameraTransform.position
                 + cameraTransform.forward * holdPositionOffset.z
                 + cameraTransform.up * holdPositionOffset.y
                 + cameraTransform.right * holdPositionOffset.x;
 
-            transform.rotation = cameraTransform.rotation;
+            transform.rotation = cameraTransform.rotation * holdRotationOffset;
         }
     }
 
@@ -164,7 +174,6 @@ public class InspectableObject : MonoBehaviour, InteractableScript
         inspectRotation = transform.rotation;
         currentScrollOffset = 0f;
 
-        // Snapshot the camera's world basis so it stays locked for the duration of inspect
         frozenCamPos = cameraTransform.position;
         frozenCamForward = cameraTransform.forward;
         frozenCamUp = cameraTransform.up;
@@ -184,6 +193,7 @@ public class InspectableObject : MonoBehaviour, InteractableScript
     {
         isInspecting = false;
         currentScrollOffset = 0f;
+        holdRotationOffset = Quaternion.Inverse(cameraTransform.rotation) * inspectRotation;
 
         if (playerController != null)
         {
@@ -202,8 +212,5 @@ public class InspectableObject : MonoBehaviour, InteractableScript
 
         if (inspectPromptCanvas != null)
             inspectPromptCanvas.gameObject.SetActive(false);
-
-        //transform.position = originalWorldPosition;
-        //transform.rotation = originalWorldRotation;
     }
 }

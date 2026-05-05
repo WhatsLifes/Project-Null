@@ -8,6 +8,7 @@ TagManager:
   - Pickable
   - Chair
   - Door
+  - MonsterHitbox
   layers:
   - Default
   - TransparentFX
@@ -21,8 +22,8 @@ TagManager:
   - Pickable
   - Chair
   - interactable
-  - 
-  - 
+  - Door
+  - ObstructionMask
   - 
   - 
   - 

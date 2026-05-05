@@ -58,7 +58,6 @@ private bool ElevatorIsOpen
 
     private bool playerLookingAtButton = false;
 
-    // ✅ Elevator must exist and be open
     private bool CanTransition => ElevatorIsOpen;
 
 

@@ -80,17 +80,8 @@ public class PickupSonPicture : MonoBehaviour, stage2_InteractableScript
             Stage2ProgressManager.Instance.sonPhotoPickedUp = true;
             Debug.Log("Stage2ProgressManager updated: sonPhotoPickedUp = true");
         }
+        hud.PickedUpPicturePiece();
 
-        // NEW: Show Objective 9
-        if (hud != null)
-        {
-            hud.ShowObjective9();
-            Debug.Log("Objective 9 shown!");
-        }
-        else
-        {
-            Debug.LogWarning("HUD reference is null - cannot show objective!");
-        }
 
         // Play the dialogue line
         if (dialogueTrigger != null)

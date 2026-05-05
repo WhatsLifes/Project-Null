@@ -123,6 +123,10 @@ public class WakeUpSequence : MonoBehaviour
     void Update()
     {
         if (sequenceComplete) return;
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            return;
+        }
         sequenceTimer += Time.deltaTime;
         RunSequence();
     }

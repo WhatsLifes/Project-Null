@@ -115,6 +115,14 @@ public class FilePickup : MonoBehaviour, InteractableScript, stage2_Interactable
                 PlayerInteraction.instance.AddNearbyObject(interactableObj);
             }
         }
+        else if (stage2_interaction.instance != null)
+        {
+            stage2_interactableOBJ interactableObj = GetComponent<stage2_interactableOBJ>();
+            if (interactableObj != null)
+            {
+                stage2_interaction.instance.AddNearbyObject(interactableObj);
+            }
+        }
     }
 
     void HidePhysicalObject()

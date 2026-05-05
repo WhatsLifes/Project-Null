@@ -20,13 +20,13 @@ public class SlidingDoorController : MonoBehaviour
         // Save initial closed position
         closedPosition = transform.position;
 
-        // 🚪 Automatically pick a slide direction along WORLD X axis (horizontal)
+        //Automatically pick a slide direction along WORLD X axis (horizontal)
         // If the door is on the left (negative X), slide left
         // If the door is on the right (positive X), slide right
         float direction = (transform.position.x >= 0f) ? 1f : -1f;
 
         // Move along WORLD X only (horizontal)
-        openPosition = closedPosition + new Vector3(slideDistance * direction, 0f, 0f);
+        openPosition = closedPosition + new Vector3(0f, 0f, slideDistance * direction);
     }
 
     public void OpenDoor()

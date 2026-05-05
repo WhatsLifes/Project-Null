@@ -9,7 +9,7 @@ public class Sanity : MonoBehaviour
 
     [Header("Sanity Settings")]
     public float maxSanity = 100f;
-    public float currentSanity = 100f;  // Start at max instead of 0
+    public float currentSanity = 100f;
     public float passiveDrainPerMinute = 5f;
 
     [Header("Sanity Restoration")]
@@ -33,7 +33,7 @@ public class Sanity : MonoBehaviour
     public AudioClip ringingClip;
     public AudioClip[] randomSanityClips;
 
-    [Header("Post Processing")] //Visual Effects
+    [Header("Post Processing")]
     public Volume postProcessVolume;
 
     [Header("Camera Shake")]
@@ -47,11 +47,20 @@ public class Sanity : MonoBehaviour
     private LensDistortion lensDistortion;
     private MotionBlur motionBlur;
 
-    public event System.Action<float, float> OnSanityChanged; // (current, max)
+    public event System.Action<float, float> OnSanityChanged;
 
     private void Awake()
     {
-        Instance = this;
+        // Singleton setup
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
     }
 
     private void Start()
@@ -65,19 +74,24 @@ public class Sanity : MonoBehaviour
             lightStates[i] = true;
         }
 
-        ringingAudioSource.spatialBlend = 0f;
-        ringingAudioSource.loop = false;
-        ringingAudioSource.playOnAwake = false;
-        ringingAudioSource.volume = 0.2f;
+        if (ringingAudioSource != null)
+        {
+            ringingAudioSource.spatialBlend = 0f;
+            ringingAudioSource.loop = false;
+            ringingAudioSource.playOnAwake = false;
+            ringingAudioSource.volume = 0.2f;
 
-        if (ringingClip != null)
-            ringingAudioSource.clip = ringingClip;
+            if (ringingClip != null)
+                ringingAudioSource.clip = ringingClip;
+        }
 
-        sanityAudioSource.playOnAwake = false;
-        sanityAudioSource.spatialBlend = 0f;
-        sanityAudioSource.loop = false;
+        if (sanityAudioSource != null)
+        {
+            sanityAudioSource.playOnAwake = false;
+            sanityAudioSource.spatialBlend = 0f;
+            sanityAudioSource.loop = false;
+        }
 
-        //Visual Effects for Sanity
         if (postProcessVolume != null && postProcessVolume.profile != null)
         {
             postProcessVolume.profile.TryGet(out chromaticAberration);
@@ -85,17 +99,25 @@ public class Sanity : MonoBehaviour
             postProcessVolume.profile.TryGet(out motionBlur);
         }
 
-        originalLocalRot = playerCamera.transform.localRotation;
+        if (playerCamera != null)
+            originalLocalRot = playerCamera.transform.localRotation;
+
         FindPlayerCamera();
     }
 
     private void Update()
     {
         passiveDrainTimer += Time.deltaTime;
+
         if (passiveDrainTimer >= 60f)
         {
-            TakeSanityDamage(passiveDrainPerMinute, false);
+            if (restoreCoroutine == null)
+            {
+                TakeSanityDamage(passiveDrainPerMinute, false);
+            }
+            
             passiveDrainTimer = 0f;
+
         }
 
         ApplySanityEffects();
@@ -104,7 +126,6 @@ public class Sanity : MonoBehaviour
         FindPlayerCamera();
     }
 
-    //ShakeCamera function with a duration and intensity value
     public void ShakeCamera(float duration, float intensity)
     {
         if (playerCamera == null)
@@ -116,21 +137,18 @@ public class Sanity : MonoBehaviour
 
     public void TakeSanityDamage(float amount, bool playShake = true)
     {
-        // Stop any ongoing restoration when taking damage
         if (restoreCoroutine != null)
         {
             StopCoroutine(restoreCoroutine);
             restoreCoroutine = null;
         }
 
-        //Temporary cut out to not lose sanity when being attacked
         currentSanity -= amount;
         currentSanity = Mathf.Clamp(currentSanity, 0f, maxSanity);
 
         if (playShake)
             ShakeCamera(0.25f, 0.75f);
 
-        // Invoke the event
         OnSanityChanged?.Invoke(currentSanity, maxSanity);
     }
 
@@ -141,7 +159,6 @@ public class Sanity : MonoBehaviour
 
     public void RestoreSanity(float amount, float ratePerSecond)
     {
-        // Stop any previous restoration
         if (restoreCoroutine != null)
             StopCoroutine(restoreCoroutine);
 
@@ -153,7 +170,6 @@ public class Sanity : MonoBehaviour
         currentSanity += amount;
         currentSanity = Mathf.Clamp(currentSanity, 0f, maxSanity);
 
-        // Invoke the event
         OnSanityChanged?.Invoke(currentSanity, maxSanity);
     }
 
@@ -164,15 +180,12 @@ public class Sanity : MonoBehaviour
         while (amountRestored < totalAmount && currentSanity < maxSanity)
         {
             float restoreThisFrame = ratePerSecond * Time.deltaTime;
-
-            // Don't restore more than needed
             restoreThisFrame = Mathf.Min(restoreThisFrame, totalAmount - amountRestored);
 
             currentSanity += restoreThisFrame;
             currentSanity = Mathf.Clamp(currentSanity, 0f, maxSanity);
             amountRestored += restoreThisFrame;
 
-            // Invoke the event
             OnSanityChanged?.Invoke(currentSanity, maxSanity);
 
             yield return null;
@@ -208,12 +221,12 @@ public class Sanity : MonoBehaviour
         OnSanityChanged?.Invoke(currentSanity, maxSanity);
     }
 
-    //Function so that there is no breakage when camera updates
     private void FindPlayerCamera()
     {
         if (playerCamera == null)
         {
             playerCamera = Camera.main;
+
             if (playerCamera != null)
                 originalLocalRot = playerCamera.transform.localRotation;
         }
@@ -224,7 +237,6 @@ public class Sanity : MonoBehaviour
         ApplyCameraShake();
     }
 
-    //Function to apply the effect on playerCamera
     private void ApplyCameraShake()
     {
         if (playerCamera == null)
@@ -232,11 +244,11 @@ public class Sanity : MonoBehaviour
 
         if (shakeTime > 0)
         {
-
             float x = Mathf.Sin(Time.time * shakeSpeed) * shakeAmount;
             float y = Mathf.Cos(Time.time * shakeSpeed * 0.9f) * shakeAmount;
 
             Quaternion shakeRot = Quaternion.Euler(x, y, 0f);
+
             playerCamera.transform.localRotation = Quaternion.Slerp(
                 playerCamera.transform.localRotation,
                 playerCamera.transform.localRotation * shakeRot,
@@ -246,6 +258,7 @@ public class Sanity : MonoBehaviour
             shakeTime -= Time.deltaTime;
         }
     }
+
     private void ApplySanityEffects()
     {
         float sanityPercent = currentSanity / maxSanity;
@@ -256,6 +269,7 @@ public class Sanity : MonoBehaviour
         if (ringingAudioSource != null && ringingClip != null)
         {
             ringingTimer -= Time.deltaTime;
+
             if (sanityPercent < 0.5f && !ringingAudioSource.isPlaying && ringingTimer <= 0f)
             {
                 float volume = Mathf.Lerp(0.1f, 0.8f, 1f - sanityPercent);
@@ -271,32 +285,25 @@ public class Sanity : MonoBehaviour
             }
         }
 
-        //Temporary
         if (chromaticAberration != null)
-        {
             chromaticAberration.intensity.value = Mathf.Lerp(1f, 0f, sanityPercent);
-        }
 
-        //Temporary
         if (lensDistortion != null)
-        {
             lensDistortion.intensity.value = Mathf.Lerp(-0.5f, 0f, sanityPercent);
-        }
 
-        //Temporary
         if (motionBlur != null)
-        {
             motionBlur.intensity.value = Mathf.Lerp(0.5f, 0f, sanityPercent);
-        }
     }
 
     private void HandleRandomSanitySounds()
     {
         float sanityPercent = currentSanity / maxSanity;
+
         if (sanityPercent > 0.5f || randomSanityClips == null || randomSanityClips.Length == 0)
             return;
 
         randomSoundTimer -= Time.deltaTime;
+
         if (randomSoundTimer <= 0f)
         {
             int index = Random.Range(0, randomSanityClips.Length);
@@ -330,6 +337,7 @@ public class Sanity : MonoBehaviour
             }
             return;
         }
+
         float minInterval = Mathf.Lerp(1.5f, 0.05f, 1f - sanityPercent);
         float maxInterval = Mathf.Lerp(3f, 0.3f, 1f - sanityPercent);
 
@@ -339,6 +347,7 @@ public class Sanity : MonoBehaviour
             if (light == null) continue;
 
             flickerTimers[i] -= Time.deltaTime;
+
             if (flickerTimers[i] <= 0f)
             {
                 light.intensity = Random.Range(0.01f, 1f);
@@ -349,7 +358,6 @@ public class Sanity : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Clean up coroutine
         if (restoreCoroutine != null)
             StopCoroutine(restoreCoroutine);
     }

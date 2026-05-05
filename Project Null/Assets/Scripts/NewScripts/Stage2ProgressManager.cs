@@ -6,6 +6,7 @@ public class Stage2ProgressManager : MonoBehaviour
 
     [Header("Stage 2 Conditions")]
     public bool sonPhotoPickedUp = false;
+    public bool gateKeyPickedUp = false;
 
     void Awake()
     {

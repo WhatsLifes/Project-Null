@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
 
 public class StageTimer : MonoBehaviour
@@ -24,7 +25,7 @@ public class StageTimer : MonoBehaviour
     public Sanity sanitySystem;
 
     [Header("UI (Optional)")]
-    public Text timerText;
+    public TMP_Text timerText;
     public Image warningPanel; // Optional red overlay when time is low
     public float warningFlashSpeed = 2f;
     [Tooltip("Time remaining when warning starts (seconds)")]

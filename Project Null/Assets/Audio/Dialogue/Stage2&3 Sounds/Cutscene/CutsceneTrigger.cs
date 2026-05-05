@@ -20,7 +20,7 @@ public class CutsceneTrigger : MonoBehaviour
 
     [Header("Cameras")]
     public Camera playerCamera;
-    public Camera animationCamera;
+    public GameObject animationCamera;
 
     [Header("Fade")]
     public CanvasGroup fadeCanvas;
@@ -61,7 +61,7 @@ public class CutsceneTrigger : MonoBehaviour
             timeline.Stop();
 
         if (animationCamera != null)
-            animationCamera.enabled = false;
+            animationCamera.SetActive(false);
 
         // Hide cutscene objects
         foreach (var obj in cutsceneObjects)
@@ -163,7 +163,7 @@ public class CutsceneTrigger : MonoBehaviour
             playerCamera.enabled = false;
 
         if (animationCamera != null)
-            animationCamera.enabled = true;
+            animationCamera.SetActive(true);
     }
 
     private void OnCutsceneEnd(PlayableDirector pd)
@@ -188,7 +188,7 @@ public class CutsceneTrigger : MonoBehaviour
             playerCamera.enabled = true;
 
         if (animationCamera != null)
-            animationCamera.enabled = false;
+            animationCamera.SetActive(true);
 
         // Show player model
         if (playerModel != null)
@@ -208,9 +208,14 @@ public class CutsceneTrigger : MonoBehaviour
         // resume main lab ambience
         mainLabAudioSource.UnPause();
 
+        
         // Enable player control AFTER everything
         if (playerController != null)
             playerController.enabled = true;
+
+        if(animationCamera != null)
+            animationCamera.SetActive(false);
+        
     }
 
     private IEnumerator Fade(float start, float end)
@@ -254,6 +259,7 @@ public class CutsceneTrigger : MonoBehaviour
                 vignette.intensity.value = Mathf.Lerp(0.4f, 0f, lerp);
 
             yield return null;
+            
         }
     }
 }

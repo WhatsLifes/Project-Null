@@ -10,6 +10,7 @@ public class TriggerCollider : MonoBehaviour
     // when you enter the collider
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log($"TriggerCollider hit by: {other.gameObject.name} (tag: {other.tag})");
         // check for player
         if (other.CompareTag("Player"))
         {

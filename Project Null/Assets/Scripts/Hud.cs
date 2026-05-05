@@ -161,24 +161,62 @@ public class HUD : MonoBehaviour
         if (sanityGroup != null)
             StartCoroutine(FadeOutCanvasGroup(sanityGroup));
     }
+    private bool picturePiecePickedUp = false;
+    private bool gateKeyPickedUp = false;
+    private void UpdateObjective13()
+    {
+        string pictureText = picturePiecePickedUp
+            ? "<s>Find the picture piece</s>"
+            : "Find the picture piece";
+
+        string keyText = gateKeyPickedUp
+            ? "<s>Find the gate key</s>"
+            : "Find the gate key";
+
+        string fullObjective = pictureText + "\n" + keyText;
+
+        ShowObjective(fullObjective);
+    }
+    public void PickedUpPicturePiece()
+    {
+        picturePiecePickedUp = true;
+        UpdateObjective13();
+    }
+
+    public void PickedUpGateKey()
+    {
+        gateKeyPickedUp = true;
+        UpdateObjective13();
+    }
 
     public void ShowObjective1() => ShowObjective("Look around the room");
     public void ShowObjective2() => ShowObjective("Explore the laboratory");
     public void ShowObjective3() => ShowObjective("Investigate the Doll Room");
-    public void ShowObjective4() => ShowObjective("Solve her puzzle");
-    public void ShowObjective5() => ShowObjective("Find a way to the second floor");
-    public void ShowObjective6() => ShowObjective("Identify the voice");
-    public void ShowObjective7() => ShowObjective("Explore the Carnival Room");
-    public void ShowObjective8() => ShowObjective("Locate the next picture piece");
-    public void ShowObjective9() => ShowObjective("Find a way to the next floor");
-    public void ShowObjective10() => ShowObjective("Pick up the flowers (0/2)");
-    public void ShowObjective11() => ShowObjective("Pick up the flowers (1/2)");
-    public void ShowObjective12() => ShowObjective("Continue to the next floor");
-    public void ShowObjective13() => ShowObjective("Find the last flower");
-    public void ShowObjective14() => ShowObjective("Make the Tri-Flora Compound");
-    public void ShowObjective15() => ShowObjective("Turn on the generators (0/2)");
-    public void ShowObjective16() => ShowObjective("Turn on the generators (1/2)");
-    public void ShowObjective17() => ShowObjective("Return to the workstation & try again");
+    public void ShowObjective4() => ShowObjective("Find the missing dolls");
+    public void ShowObjective5() => ShowObjective("Locate the codes (0/3)");
+    public void ShowObjective6() => ShowObjective("Locate the codes (1/3)");
+    public void ShowObjective7() => ShowObjective("Locate the codes (2/3)");
+    public void ShowObjective8() => ShowObjective("Solve the puzzle");
+
+    public void ShowObjective9() => ShowObjective("Find a way to the second floor");
+    public void ShowObjective10() => ShowObjective("Identify the voice");
+    public void ShowObjective11() => ShowObjective("Explore the Carnival Room");
+    public void ShowObjective12() => ShowObjective("Investigate the next area");
+    public void ShowObjective13()
+    {
+        picturePiecePickedUp = false;
+        gateKeyPickedUp = false;
+        UpdateObjective13();
+    }
+    public void ShowObjective14() => ShowObjective("Survive and find a way to the next floor");
+    public void ShowObjective15() => ShowObjective("Pick up the flowers (0/2)");
+    public void ShowObjective16() => ShowObjective("Pick up the flowers (1/2)");
+    public void ShowObjective17() => ShowObjective("Continue to the next floor");
+    public void ShowObjective18() => ShowObjective("Find the last flower");
+    public void ShowObjective19() => ShowObjective("Make the Tri-Flora Compound");
+    public void ShowObjective20() => ShowObjective("Turn on the generators (0/2)");
+    public void ShowObjective21() => ShowObjective("Turn on the generators (1/2)");
+    public void ShowObjective22() => ShowObjective("Return to the workstation & try again");
 
     public void ShowObjective(string objectiveMessage)
     {
@@ -280,7 +318,7 @@ public class HUD : MonoBehaviour
     {
         if (inventory == null || syringeGroup == null || syringeImage == null) return;
 
-        if (inventory.holdingSyringe)
+        if (Inventory.holdingSyringe)
         {
             if (!syringeGroup.gameObject.activeSelf)
             {

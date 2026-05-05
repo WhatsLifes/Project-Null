@@ -31,6 +31,7 @@ public class InteractableObject : MonoBehaviour
 
    public virtual void InteractItem()
    {
+      Debug.Log($"InteractItem called on {gameObject.name}");
       // gets the object we are trying to interact with
       InteractableScript TheInteractScript = gameObject.GetComponent<InteractableScript>();
       HidePrompt();  // hide prompt
