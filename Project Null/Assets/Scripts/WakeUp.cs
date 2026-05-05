@@ -540,6 +540,8 @@ public class WakeUpSequence : MonoBehaviour
             if (bottomEyelid != null) bottomEyelid.gameObject.SetActive(false);
         }
         if (fadeImage != null) fadeImage.gameObject.SetActive(false);
+        if (skipPromptObject != null)
+            skipPromptObject.SetActive(false);
 
         hud.ShowHealthBar();
         hud.ShowSanityBar();
