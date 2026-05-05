@@ -148,10 +148,6 @@ public class ShowObjectiveTrigger : MonoBehaviour
             case 21:
                 hud.ShowObjective21();
                 break;  
-            case 22:
-                hud.ShowObjective22();
-                break;
-
             default:
                 Debug.LogWarning($"Invalid preset objective number: {presetObjectiveNumber}");
                 hud.ShowObjective(newObjectiveText);
